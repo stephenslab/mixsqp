@@ -1,0 +1,83 @@
+---
+title: "mix-SQP"
+output: html_document
+---
+
+## R Markdown
+
+We load "mixSQP" for the mixSQP code, "lowrank" for the low-rank approximation code and define "rebays_kwdual".
+
+```{r}
+source("mixSQP.R");
+source("lowrank.R");
+require(REBayes)
+rebayes_kwdual = function(L){
+  res = KWDual(L, rep(1,dim(L)[2]), rep(1,dim(L)[1])/dim(L)[1])
+  x = res$f; x[x < 1e-3] = 0; x = x/sum(x)
+return(x)
+}
+```
+
+For the small matrix
+
+```{r}
+L = as.matrix(read.table("sample5000x20.txt", header = F)); colnames(L) = NULL
+mixSQP(L, lowrank = "svd")
+```
+
+It seems like the algorithm is fastest without low-rank approximation.
+
+```{r}
+cat("mixSQP with no lowrank approx.\n")
+mixSQP(L, lowrank = "none")
+cat("mixSQP with svd approx. in R\n")
+mixSQP(L, lowrank = "svd", rank = 15)
+cat("mixSQP with svd approx. in julia\n")
+mixSQP(L, lowrank = "svd_julia", ptol = 1e-10)
+cat("mixSQP with qr approx. in julia\n")
+mixSQP(L, lowrank = "qr_julia", ptol = 1e-10)
+cat("REBayes/KWdual\n")
+t = system.time(rebayes_kwdual(L))[3]; names(t) = NULL; t
+```
+
+For moderate size,
+
+```{r}
+L2 = as.matrix(read.table("sample10000x40.txt", header = F)); colnames(L) = NULL
+cat("mixSQP with no lowrank approx.\n")
+mixSQP(L2, lowrank = "none")
+cat("mixSQP with svd approx. in R\n")
+mixSQP(L2, lowrank = "svd", rank = 15)
+cat("mixSQP with svd approx. in julia\n")
+mixSQP(L2, lowrank = "svd_julia", ptol = 1e-10)
+cat("mixSQP with qr approx. in julia\n")
+mixSQP(L2, lowrank = "qr_julia", ptol = 1e-10)
+cat("REBayes/KWdual\n")
+t = system.time(rebayes_kwdual(L2))[3]; names(t) = NULL; t
+```
+
+For large size,
+
+```{r}
+L3 = as.matrix(read.table("sample100000x100.txt", header = F)); colnames(L) = NULL
+cat("mixSQP with no lowrank approx.\n")
+mixSQP(L3, lowrank = "none")
+cat("mixSQP with svd approx. in R\n")
+mixSQP(L3, lowrank = "svd", rank = 15)
+cat("mixSQP with svd approx. in julia\n")
+mixSQP(L3, lowrank = "svd_julia", ptol = 1e-10)
+cat("mixSQP with qr approx. in julia\n")
+mixSQP(L3, lowrank = "qr_julia", ptol = 1e-10)
+cat("REBayes/KWdual\n")
+t = system.time(rebayes_kwdual(L3))[3]; names(t) = NULL; t
+```
+
+I don't think R computation is reliable. See the following two results..
+
+```{r}
+system.time(mixSQP(L3, lowrank = "none"))
+```
+
+```{r}
+system.time(mixSQP(L3, lowrank = "qr_julia"))
+```
