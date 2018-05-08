@@ -54,15 +54,9 @@ mixSQP = function(L, x = rep(1,dim(L)[2]), lowrank = "svd",
     if(min(g + 1) >= -convtol) break;
     
     # Initialize the solution to the QP subproblem (y).
-    if (i > 1){
-      ind    = which(x > sptol);
-      y      = rep(0,m);
-      y[ind] = 1/length(ind);
-    } else{
-      ind       = c(1,m);
-      y         = rep(0,m);
-      y[c(1,m)] = 0.5;
-    }
+    ind    = which(x > sptol);
+    y      = rep(0,m);
+    y[ind] = 1/length(ind);
     
     for(j in 1:maxqpiter){
       # Define the smaller QP subproblem.
