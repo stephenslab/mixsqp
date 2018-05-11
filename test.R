@@ -1,5 +1,7 @@
 library("RcppArmadillo")
 library("Rcpp")
+#source("mixSQP.R");
+#source("lowrank.R");
 setwd("~/git/mixsqp")
 convtol = 1e-8; ptol = 1e-10; eps = 1e-8; sptol = 1e-3; maxiter = 100; maxqpiter = 100; verbose = T;
 sourceCpp("temp.cpp")

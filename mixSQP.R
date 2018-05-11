@@ -133,3 +133,9 @@ mixSQP = function(L, x = rep(1,dim(L)[2]), lowrank = "svd",
               t = c(t_lowrank = t_lowrank, t_gradhess = t_gradhess,
                     t_activeset = t_activeset, t_linesearch = t_linesearch)))
 }
+
+REBayes = function(L){
+  res = KWDual(L, rep(1,dim(L)[2]), rep(1,dim(L)[1])/dim(L)[1])
+  x = res$f; x[x < 1e-3] = 0; x = x/sum(x)
+  return(x)
+}
