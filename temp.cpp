@@ -167,5 +167,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& x0,
     x = y;
   }
   
-  return List::create(Named("x") = x, Named("p") = p);
+  x.elem(find(x < sptol)).fill(0);
+  
+  return List::create(Named("x") = x/sum(x));
 }
