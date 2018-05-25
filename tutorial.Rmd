@@ -1,0 +1,67 @@
+---
+title: "mix-SQP"
+output: html_document
+---
+
+## Test setting
+
+For the test you must be able to run
+
+```{r}
+# install Rcpp
+# library("Rcpp")
+# library("RcppArmadillo")
+```
+
+```{r}
+setwd("~/git/mixsqp")
+# install Rcpp
+library("Rcpp")
+library("RcppArmadillo")
+#sourceCpp("temp.cpp")
+sourceCpp("mixSQP.cpp")
+convtol = 1e-8; ptol = 1e-10; eps = 1e-8; sptol = 1e-3; maxiter = 100; maxqpiter = 100; verbose = F;
+mixSQP_rcpp = function(L){
+  x0 = rep(1,dim(L)[2])/dim(L)[2];
+  mixSQP(L, x0, convtol, ptol, eps, sptol, maxiter, maxqpiter, verbose)$x
+}
+```
+
+```{r}
+library("REBayes")
+library("rjulia")
+library("microbenchmark")
+```
+
+```{r}
+source("testdata.R")
+source("testfunctions.R")
+```
+
+```{r}
+set.seed(2018)
+L = testdata(1e3,10)
+print(cbind(x_rebayes = REBayes(L), x_julia = mixSQP_julia(L),
+            x_rcpp = mixSQP_rcpp(L)), digits = 3)
+```
+
+```{r}
+#devtools::install_github("olafmersmann/microbenchmarkCore")
+#devtools::install_github("olafmersmann/microbenchmark")
+simple_test(1e3,10)
+```
+
+```{r}
+simple_test(1e4,10)
+```
+
+```{r}
+# devtools::install_github("jabiru/tictoc")
+# library("tictoc")
+# n = 1e4; m = 10;
+# L = testdata(n,m)
+# x0 = rep(1,m)/m
+# tic("REBayes"); x_rebayes <- REBayes(L); toc();
+# tic("mixSQP_julia"); x_julia <- mixSQP_julia(L); toc();
+# tic("mixSQP_Rcpp"); x_rcpp <- mixSQP_rcpp(L); toc();
+```
