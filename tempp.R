@@ -20,19 +20,25 @@ drop0(R. <- qr.R(qX), tol=1e-15)
 Q. <- qr.Q(qX)
 
 
-L = testdata(1e5,400, type = 2)
+L = testdata(1e5,50, type = 1)
 x = mixSQP_julia(L)
-convtol = 1e-8; ptol = 1e-10; eps = 1e-8; sptol = 1e-3; maxiter = 100; maxqpiter = 100; verbose = T;
+x3 = REBayes(L)
+convtol = 1e-8; ptol = 1e-10; eps = 1e-8; sptol = 1e-3; maxiter = 100; maxqpiter = 100; verbose = F;
 tic("mixSQP_Rcpp"); x_rcpp <- mixSQP_rcpp(L); toc();
 setwd("~/git/mixsqp")
 sourceCpp("mixSQP.cpp")
 sourceCpp("mixSQP_qp.cpp")
+library(tictoc)
 
+L = testdata(2 * 1e5,40, type = 2)
 x0 = rep(1,dim(L)[2])/dim(L)[2];
 tic(); x = mixSQP_julia(L); toc();
-tic(); x1 = mixSQP(L, x0, convtol, ptol, eps, sptol, maxiter, maxqpiter, verbose)$x; toc();
-tic();
-qrfact = Matrix::qr(L);
-Q = qr.Q(qrfact)[,1:qrfact$rank];
-R = qr.R(qrfact)[1:qrfact$rank,order(qrfact$pivot)]; toc();
-tic(); x2 = mixSQP_qp(Q, R, x0, convtol, ptol, eps, sptol, maxiter, maxqpiter, verbose)$x; toc();
+tic(); x3 = REBayes(L); toc();
+tic(); x1 = mixSQP_rcpp(L); toc();
+tic(); x2 = mixSQP_QP(L); toc();
+
+eval_f = function(x){
+  -sum(log(L %*% x + eps))/dim(L)[1]
+}
+
+c(eval_f(x),eval_f(x1),eval_f(x2),eval_f(x3)) - min(c(eval_f(x),eval_f(x1),eval_f(x2),eval_f(x3)))

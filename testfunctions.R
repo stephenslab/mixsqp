@@ -8,11 +8,17 @@ REBayes = function(L){
 julia_init()
 jDo('using LowRankApprox')
 jDo('include("../mixsqp-paper/code/julia/mixSQP.jl")')
+
 mixSQP_julia = function(L){
   r2j(L,'L')
-  jDo('x_julia = mixSQP(L,lowrank = "qr", verbose = false)["x"]')
+  jDo('x_julia = mixSQP(L,lowrank = "svd", verbose = false)["x"]')
   x_julia = j2r('x_julia')
   return (x_julia)
+}
+
+mixSQP_rcpp = function(L){
+  x0 = rep(1,dim(L)[2])/dim(L)[2];
+  mixSQP(L, x0, convtol, ptol, eps, sptol, maxiter, maxqpiter, verbose)$x
 }
 
 mixSQP_QP = function(L){
