@@ -1,5 +1,5 @@
 X = matrix(rnorm(5*2),nrow = 5)
-a = qr(X)
+a = qr(L)
 
 
 
@@ -20,7 +20,19 @@ drop0(R. <- qr.R(qX), tol=1e-15)
 Q. <- qr.Q(qX)
 
 
-L = testdata(1e5,10)
+L = testdata(1e5,400, type = 2)
 x = mixSQP_julia(L)
-convtol = 1e-8; ptol = 1e-10; eps = 1e-7; sptol = 1e-3; maxiter = 100; maxqpiter = 100; verbose = T;
+convtol = 1e-8; ptol = 1e-10; eps = 1e-8; sptol = 1e-3; maxiter = 100; maxqpiter = 100; verbose = T;
 tic("mixSQP_Rcpp"); x_rcpp <- mixSQP_rcpp(L); toc();
+setwd("~/git/mixsqp")
+sourceCpp("mixSQP.cpp")
+sourceCpp("mixSQP_qp.cpp")
+
+x0 = rep(1,dim(L)[2])/dim(L)[2];
+tic(); x = mixSQP_julia(L); toc();
+tic(); x1 = mixSQP(L, x0, convtol, ptol, eps, sptol, maxiter, maxqpiter, verbose)$x; toc();
+tic();
+qrfact = Matrix::qr(L);
+Q = qr.Q(qrfact)[,1:qrfact$rank];
+R = qr.R(qrfact)[1:qrfact$rank,order(qrfact$pivot)]; toc();
+tic(); x2 = mixSQP_qp(Q, R, x0, convtol, ptol, eps, sptol, maxiter, maxqpiter, verbose)$x; toc();

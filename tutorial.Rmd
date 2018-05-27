@@ -8,19 +8,37 @@ output: html_document
 For the test you must be able to run
 
 ```{r}
-# install Rcpp
-# library("Rcpp")
-# library("RcppArmadillo")
-```
-
-```{r}
+# set working directory
 setwd("~/git/mixsqp")
+
 # install Rcpp
 library("Rcpp")
 library("RcppArmadillo")
-#sourceCpp("temp.cpp")
+
+# load mixSQP.cpp
 sourceCpp("mixSQP.cpp")
-convtol = 1e-8; ptol = 1e-10; eps = 1e-8; sptol = 1e-3; maxiter = 100; maxqpiter = 100; verbose = F;
+```
+
+```{r}
+# this libraries must be called for the test, but not for the package itself
+library("REBayes")
+library("rjulia")
+library("microbenchmark")
+# devtools::install_github("olafmersmann/microbenchmarkCore")
+# devtools::install_github("olafmersmann/microbenchmark")
+```
+
+```{r}
+# these source codes are only for the test
+source("testdata.R")
+source("testfunctions.R")
+```
+
+```{r}
+# setting
+convtol = 1e-8; ptol = 1e-10; eps = 1e-8; sptol = 1e-3; maxiter = 100; maxqpiter = 100; verbose = T;
+
+# make a function
 mixSQP_rcpp = function(L){
   x0 = rep(1,dim(L)[2])/dim(L)[2];
   mixSQP(L, x0, convtol, ptol, eps, sptol, maxiter, maxqpiter, verbose)$x
@@ -28,31 +46,16 @@ mixSQP_rcpp = function(L){
 ```
 
 ```{r}
-library("REBayes")
-library("rjulia")
-library("microbenchmark")
-```
-
-```{r}
-source("testdata.R")
-source("testfunctions.R")
-```
-
-```{r}
 set.seed(2018)
+verbose = F;
 L = testdata(1e3,10)
-print(cbind(x_rebayes = REBayes(L), x_julia = mixSQP_julia(L),
+print(cbind(x_rebayes = REBayes(L), #x_julia = mixSQP_julia(L),
             x_rcpp = mixSQP_rcpp(L)), digits = 3)
 ```
 
 ```{r}
-#devtools::install_github("olafmersmann/microbenchmarkCore")
-#devtools::install_github("olafmersmann/microbenchmark")
 simple_test(1e3,10)
-```
-
-```{r}
-simple_test(1e4,10)
+simple_test(1e4,20)
 ```
 
 ```{r}
