@@ -1,7 +1,11 @@
-testdata <- function(n,m){
+testdata <- function(n,m, type = 1){
   
   temp = floor(n/4)
-  x = c(rnorm(n-3*temp),3*rnorm(temp),5*rnorm(temp),rt(temp,df = 2))
+  if (type == 1){
+    x = c(rnorm(n-3*temp),3*rnorm(temp),5*rnorm(temp),rt(temp,df = 2))
+  } else{
+    x =  c(rnorm(n-3*temp),3*rnorm(temp),6*rnorm(2*temp))
+  }
   
   smin = 1/10;
   if (all(x^2 < 1)){
