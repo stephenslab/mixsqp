@@ -4,7 +4,7 @@ testdata <- function(n,m, type = 1){
   if (type == 1){
     x = c(rnorm(n-3*temp),3*rnorm(temp),5*rnorm(temp),rt(temp,df = 2))
   } else{
-    x =  c(rnorm(n-3*temp),3*rnorm(temp),6*rnorm(2*temp))
+    x =  c(rnorm(n-2*temp),3*rnorm(temp),6*rnorm(temp))
   }
   
   smin = 1/10;

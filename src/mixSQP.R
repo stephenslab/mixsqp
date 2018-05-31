@@ -1,9 +1,10 @@
 
-mixSQP = function(L, x = rep(1,dim(L)[2]), lowrank = "svd",
-                  eps = 1e-8, convtol = 1e-10, sptol = 1e-3, ptol = 1e-12, rank = 20,
-                  maxiter = 100, maxqpiter = 100){
+mixSQP_r = function(L, x0 = rep(1,dim(L)[2]),
+                   convtol = 1e-8, sptol = 1e-3, eps = 1e-8, ptol = 1e-10, 
+                   maxiter = 100, maxqpiter = 100, verbose = T){
   # make x sum up to 1
-  x = x/sum(x)
+  x = x0/sum(x0)
+  lowrank = "none"
   
   # Get the number of rows (n) and columns (m) of L
   n = dim(L)[1]; m = dim(L)[2];
@@ -67,7 +68,8 @@ mixSQP = function(L, x = rep(1,dim(L)[2]), lowrank = "svd",
       
       # Solve the smaller problem.
       p      = rep(0,m);
-      p_s    = -solve(H_s,d_s);
+      C = chol(H_s);
+      p_s    = -backsolve(C,forwardsolve(t(C),d_s))
       p[ind] = p_s;
       
       # If reached at the solution in the current active set
@@ -75,7 +77,8 @@ mixSQP = function(L, x = rep(1,dim(L)[2]), lowrank = "svd",
         if (all(d >= -convtol)){
           break; # Check global convergence using KKT
         } else{
-          ind_min = which.min(d);          # Find an index with smallest multiplier
+          d2 = d; d[ind] = Inf;
+          ind_min = which.min(d2);          # Find an index with smallest multiplier
           ind     = sort(c(ind, ind_min)); # Add this to the inactive set
         }
       } else{     
@@ -132,10 +135,4 @@ mixSQP = function(L, x = rep(1,dim(L)[2]), lowrank = "svd",
   return(list(x = x, numiter = i,
               t = c(t_lowrank = t_lowrank, t_gradhess = t_gradhess,
                     t_activeset = t_activeset, t_linesearch = t_linesearch)))
-}
-
-REBayes = function(L){
-  res = KWDual(L, rep(1,dim(L)[2]), rep(1,dim(L)[1])/dim(L)[1])
-  x = res$f; x[x < 1e-3] = 0; x = x/sum(x)
-  return(x)
 }
