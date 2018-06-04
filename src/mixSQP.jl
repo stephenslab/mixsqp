@@ -3,7 +3,7 @@
 # more fine-grained assessment of the mix-SQP algorithm's computational
 # complexity.
 
-function mixSQP_record_runtime(L; eps=1e-8, tol=1e-8, pqrtol = 1e-10, sptol=1e-3, lowrank = "svd")
+function mixSQP(L; eps=1e-8, tol=1e-8, pqrtol = 1e-10, sptol=1e-3, lowrank = "svd")
   n = size(L,1); k = size(L,2);
   if lowrank == "qr"
       F = pqrfact(L, rtol=pqrtol);

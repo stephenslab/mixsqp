@@ -36,6 +36,7 @@ You may want to look into the following R files for detailed implementation sett
 
 ```{r}
 # these source codes are only for the test
+source("../src/mixSQP.R")
 source("../src/testdata.R")
 source("../src/testfunctions.R")
 ```
@@ -47,7 +48,7 @@ Let's check if the following code is successfully runnable.
 set.seed(2018)
 convtol = 1e-8; ptol = 1e-10; eps = 1e-8; sptol = 1e-3; maxiter = 100; maxqpiter = 100; verbose = F;
 L = testdata(1e4,20)
-print(cbind(x_rebayes = REBayes(L), x_julia = mixSQP_julia(L),
+print(cbind(x_rebayes = REBayes_default(L), x_julia = mixSQP_julia(L),
             x_rcpp = mixSQP_rcpp(L), x_rcpp = mixSQP_QP(L)), digits = 3)
 ```
 
