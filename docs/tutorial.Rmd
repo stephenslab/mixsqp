@@ -11,7 +11,7 @@ This is only required for the following test -- you should be able to run the co
 
 ```{r}
 # set working directory
-setwd("~/git/mixsqp/src")
+setwd("../src")
 
 # install Rcpp
 library("Rcpp")
@@ -56,10 +56,22 @@ For reference, we provide an example to run the test for L of size 1e4 times 20.
 
 ```{r}
 # REBayes      : Rmosek version without low-rank approximation
+# mixSQP_R     : R version without low-rank approximation
 # mixSQP_julia : Julia version without rank revealing QR (RRQR)
 # mixSQP_Rcpp  : Rcpp version without low-rank approximation
 # mixSQP_QP    : Rcpp version without rank revealing QR (RRQR)
 simple_test(1e4,20, t = 10)
+```
+
+We also run the test for L of size 1e5 times 100
+
+```{r}
+# REBayes      : Rmosek version without low-rank approximation
+# mixSQP_R     : R version without low-rank approximation
+# mixSQP_julia : Julia version without rank revealing QR (RRQR)
+# mixSQP_Rcpp  : Rcpp version without low-rank approximation
+# mixSQP_QP    : Rcpp version without rank revealing QR (RRQR)
+simple_test(1e5,100, t = 10)
 ```
 
 #### Test using other timing packages
