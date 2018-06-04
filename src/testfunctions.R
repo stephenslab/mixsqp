@@ -10,9 +10,9 @@ jDo('using LowRankApprox')
 jDo('include("../src/mixSQP.jl")')
 
 mixSQP_julia = function(L){
-  r2j(L,'L')
-  jDo('x_julia = mixSQP(L,lowrank = "qr")["x"]')
-  x_julia = j2r('x_julia')
+  r2j(L,'L');
+  jDo('x_julia = mixSQP(L,lowrank = "qr")["x"]');
+  x_julia = j2r('x_julia');
   return (x_julia)
 }
 
