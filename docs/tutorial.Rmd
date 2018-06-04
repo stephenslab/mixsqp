@@ -11,15 +11,15 @@ This is only required for the following test -- you should be able to run the co
 
 ```{r}
 # set working directory
-setwd("../src")
+# setwd("../src")
 
 # install Rcpp
 library("Rcpp")
 library("RcppArmadillo")
 
 # load mixSQP.cpp
-sourceCpp("mixSQP.cpp")
-sourceCpp("mixSQP_qp.cpp")
+sourceCpp("../src/mixSQP.cpp")
+sourceCpp("../src/mixSQP_qp.cpp")
 ```
 
 ```{r}
@@ -27,6 +27,7 @@ sourceCpp("mixSQP_qp.cpp")
 library("REBayes")
 library("rjulia")
 library("microbenchmark")
+# devtools::install_github("armgong/rjulia")
 # devtools::install_github("olafmersmann/microbenchmarkCore")
 # devtools::install_github("olafmersmann/microbenchmark")
 ```
@@ -35,8 +36,8 @@ You may want to look into the following R files for detailed implementation sett
 
 ```{r}
 # these source codes are only for the test
-source("testdata.R")
-source("testfunctions.R")
+source("../src/testdata.R")
+source("../src/testfunctions.R")
 ```
 
 Let's check if the following code is successfully runnable.
