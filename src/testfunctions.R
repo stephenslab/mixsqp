@@ -7,11 +7,11 @@ REBayes_default = function(L){
 
 julia_init()
 jDo('using LowRankApprox')
-jDo('include("../mixsqp-paper/code/julia/mixSQP.jl")')
+jDo('include("../src/mixSQP.jl")')
 
 mixSQP_julia = function(L){
   r2j(L,'L')
-  jDo('x_julia = mixSQP(L,lowrank = "qr", verbose = false)["x"]')
+  jDo('x_julia = mixSQP(L,lowrank = "qr")["x"]')
   x_julia = j2r('x_julia')
   return (x_julia)
 }
