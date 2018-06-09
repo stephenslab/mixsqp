@@ -1,0 +1,3 @@
+useDynLib(RmixSQP, .registration=TRUE)
+importFrom(Rcpp, evalCpp)
+exportPattern("^[[:alpha:]]+")
