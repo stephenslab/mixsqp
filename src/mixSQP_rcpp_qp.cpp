@@ -12,7 +12,7 @@ using namespace Rcpp;
 // the help and comments accompanying the "mixsqp" function in R.
 // 
 // [[Rcpp::export]]
-List mixSQP_rcpp_qp   (const arma::mat& Q, const arma::mat& R, const arma::vec& x0,
+List mixSQP_rcpp_qr   (const arma::mat& Q, const arma::mat& R, const arma::vec& x0,
                       double convtol, double sparsetol, double eps,
                       int maxiter, int maxqpiter,
                       bool verbose) {
