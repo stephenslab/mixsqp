@@ -26,16 +26,19 @@ List mixSQP_rcpp_noapprox  (const arma::mat& L, const arma::vec& x0,
   if (verbose) {
     Rprintf("Running SQP algorithm with the following settings:\n");
     Rprintf("- %d x %d data matrix\n",n,k);
-    Rprintf("- convergence tolerance = %0.2e\n",convtol);
-    Rprintf("- zero threshold        = %0.2e\n",sparsetol);
+    Rprintf("- convergence tolerance         = %0.1e\n",convtol);
+    Rprintf("- zero threshold                = %0.1e\n",sparsetol);
+    Rprintf("- max # of outer loop iteration = %3d\n",maxiter);
+    Rprintf("- max # of inner loop iteration = %3d\n",maxqpiter);
   }
   
   // PREPARE DATA STRUCTURES FOR OPTIMIZATION ALGORITHM
   // Initialize storage for the outputs obj, gmin, nnz and nqp.
   arma::vec obj(maxiter);
   arma::vec gmin(maxiter);
-  arma::vec nnz(maxiter);
-  arma::vec nqp(maxiter);
+  arma::uvec nnz(maxiter);
+  arma::uvec nqp(maxiter);
+  arma::uvec nls(maxiter);
   
   // Initialize the solution.
   arma::vec x = x0;
@@ -62,7 +65,7 @@ List mixSQP_rcpp_noapprox  (const arma::mat& L, const arma::vec& x0,
   
   // Print the column labels for reporting the algorithm's progress.
   if (verbose)
-    Rprintf("iter       objective -min(g+1) #nnz #qp\n");
+    Rprintf("iter  objective   -min(g+1) #nnz #nqp #nls\n");
   
   // Repeat until we reach the maximum number of outer loop iterations.
   for (int i = 0; i < maxiter; i++) {
@@ -91,9 +94,12 @@ List mixSQP_rcpp_noapprox  (const arma::mat& L, const arma::vec& x0,
     obj[i]  = -sum(log(u));
     gmin[i] = 1 + g.min();
     nnz[i]  = sum(t);
-    nqp[i]  = j;
-    if (verbose)
-      Rprintf("%4d %0.8e %+0.2e %4d %3d\n",i,obj[i],-gmin[i],nnz[i],j);
+    if (verbose) {
+      if (i == 0)
+        Rprintf("%4d  %0.5e %+0.2e %4d \n",i+1,obj[i],-gmin[i],nnz[i]);
+      else
+        Rprintf("%4d  %0.5e %+0.2e %4d %4d %4d\n",i+1,obj[i],-gmin[i],nnz[i],nqp[i-1],nls[i-1]);
+    }
     
     // Check convergence.
     
@@ -155,12 +161,14 @@ List mixSQP_rcpp_noapprox  (const arma::mat& L, const arma::vec& x0,
       // Move to the new "inner loop" iterate (y) along the search direction.
       y += alpha * p;
     }
+    nqp[i]  = j+1;
     
     // PERFORM LINE SEARCH
     for (j = 0; j < 10; j++){
       if (obj[i] + sum(log(L * y + eps)) > dot(x-y, g)/2 ) break;
       y = (y-x)/2 + x;
     }
+    nls[i]  = j+1;
     
     // UPDATE THE SOLUTION
     x = y;
