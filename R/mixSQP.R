@@ -5,7 +5,7 @@ mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], optmethod = "Rcpp", lowran
                   convtol = 1e-8, sparsetol = 1e-3, eps = 1e-8,
                   maxiter = 100, maxqpiter = 100, verbose = T){
   
-  if (lowrankmethod == "Julia_lowrankapprox"){
+  if ((lowrankmethod == "Julia_lowrankapprox") & (lowrank == "qr")){
     library("rjulia")
     jDo('using LowRankApprox');
   }

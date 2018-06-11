@@ -24,9 +24,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// mixSQP_rcpp_qp
-List mixSQP_rcpp_qp(const arma::mat& Q, const arma::mat& R, const arma::vec& x0, double convtol, double sparsetol, double eps, int maxiter, int maxqpiter, bool verbose);
-RcppExport SEXP _mixSQP_mixSQP_rcpp_qp(SEXP QSEXP, SEXP RSEXP, SEXP x0SEXP, SEXP convtolSEXP, SEXP sparsetolSEXP, SEXP epsSEXP, SEXP maxiterSEXP, SEXP maxqpiterSEXP, SEXP verboseSEXP) {
+// mixSQP_rcpp_qr
+List mixSQP_rcpp_qr(const arma::mat& Q, const arma::mat& R, const arma::vec& x0, double convtol, double sparsetol, double eps, int maxiter, int maxqpiter, bool verbose);
+RcppExport SEXP _mixSQP_mixSQP_rcpp_qr(SEXP QSEXP, SEXP RSEXP, SEXP x0SEXP, SEXP convtolSEXP, SEXP sparsetolSEXP, SEXP epsSEXP, SEXP maxiterSEXP, SEXP maxqpiterSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -39,14 +39,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type maxiter(maxiterSEXP);
     Rcpp::traits::input_parameter< int >::type maxqpiter(maxqpiterSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(mixSQP_rcpp_qp(Q, R, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose));
+    rcpp_result_gen = Rcpp::wrap(mixSQP_rcpp_qr(Q, R, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_mixSQP_mixSQP_rcpp_noapprox", (DL_FUNC) &_mixSQP_mixSQP_rcpp_noapprox, 8},
-    {"_mixSQP_mixSQP_rcpp_qp", (DL_FUNC) &_mixSQP_mixSQP_rcpp_qp, 9},
+    {"_mixSQP_mixSQP_rcpp_qr", (DL_FUNC) &_mixSQP_mixSQP_rcpp_qr, 9},
     {NULL, NULL, 0}
 };
 
