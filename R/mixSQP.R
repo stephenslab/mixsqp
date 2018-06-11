@@ -1,3 +1,5 @@
+
+
 mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], optmethod = "Rcpp", lowrank = "none",
                   lowrankmethod = "Julia_lowrankapprox", lowranktol = 1e-10, 
                   convtol = 1e-8, sparsetol = 1e-3, eps = 1e-8,
@@ -26,7 +28,7 @@ mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], optmethod = "Rcpp", lowran
     if (lowrank == "none"){
       mixSQP_rcpp_noapprox(L, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
     } else if (lowrank == "qr"){
-      mixSQP_rcpp_qp(Q, P, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
+      mixSQP_rcpp_qr(Q, R, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
     } else{
       stop("Error : optmethod:", optmethod," does not support ",lowrank," option.")
     }
