@@ -1,10 +1,10 @@
-Package: RmixSQP
+Package: mixSQP
 Type: Package
 Title: What the package does (short line)
 Version: 1.0
-Date: 2018-06-09
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
+Date: 2018-06-10
+Author: Youngseok Kim
+Maintainer: Who to complain to <youngseok@uchicago.edu>
 Description: More about what it does (maybe more than one line)
 License: What license is it under?
 Imports: Rcpp (>= 0.12.17)

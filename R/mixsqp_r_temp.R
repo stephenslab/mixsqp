@@ -1,6 +1,6 @@
 
-mixSQP_r = function(L, x0 = rep(1,dim(L)[2]),
-                   convtol = 1e-8, sptol = 1e-3, eps = 1e-8, ptol = 1e-10, 
+mixSQP_R = function(L, x0 = rep(1,dim(L)[2]), lowrank = "none",
+                   convtol = 1e-8, sparsetol = 1e-3, lowranktol = 1e-10, eps = 1e-8,
                    maxiter = 100, maxqpiter = 100, verbose = T){
   # make x sum up to 1
   x = x0/sum(x0)
@@ -12,9 +12,9 @@ mixSQP_r = function(L, x0 = rep(1,dim(L)[2]),
   # low-rank approximation
   t_lowrank = 0
   if (lowrank == "qr_julia"){
-    t_lowrank = system.time(f <- qr_julia(L, ptol = ptol))[3]
+    t_lowrank = system.time(f <- qr_julia(L, lowranktol = lowranktol))[3]
   } else if (lowrank == "svd_julia"){
-    t_lowrank = system.time(f <- svd_julia(L, ptol = ptol))[3]
+    t_lowrank = system.time(f <- svd_julia(L, lowranktol = lowranktol))[3]
   } else if (lowrank == "svd"){
     t_lowrank = system.time(f <- svd_R(L, rank = rank))[3]
   }
@@ -55,7 +55,7 @@ mixSQP_r = function(L, x0 = rep(1,dim(L)[2]),
     if(min(g + 1) >= -convtol) break;
     
     # Initialize the solution to the QP subproblem (y).
-    ind    = which(x > sptol);
+    ind    = which(x > sparsetol);
     y      = rep(0,m);
     y[ind] = 1/length(ind);
     
@@ -131,8 +131,8 @@ mixSQP_r = function(L, x0 = rep(1,dim(L)[2]),
     t_activeset = t_activeset + t3-t2
     t_linesearch = t_linesearch + t4-t3
   }
-  x[x < sptol] = 0; x = x/sum(x);
-  return(list(x = x, numiter = i,
-              t = c(t_lowrank = t_lowrank, t_gradhess = t_gradhess,
+  x[x < sparsetol] = 0; x = x/sum(x);
+  return(list(x = x, num_iter = i,
+              comp_time = c(t_lowrank = t_lowrank, t_gradhess = t_gradhess,
                     t_activeset = t_activeset, t_linesearch = t_linesearch)))
 }

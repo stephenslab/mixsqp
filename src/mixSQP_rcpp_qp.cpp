@@ -12,22 +12,23 @@ using namespace Rcpp;
 // the help and comments accompanying the "mixsqp" function in R.
 // 
 // [[Rcpp::export]]
-List mixSQP       (const arma::mat& L, const arma::vec& x0,
-                  double convtol, double ptol, double eps,
-                  double sptol, int maxiter, int maxqpiter,
-                  bool verbose) {
+List mixSQP_rcpp_qp   (const arma::mat& Q, const arma::mat& R, const arma::vec& x0,
+                      double convtol, double sparsetol, double eps,
+                      int maxiter, int maxqpiter,
+                      bool verbose) {
   
   // Get the number of rows (n) and columns (k) of the conditional
   // likelihood matrix.
-  int n = L.n_rows;
-  int k = L.n_cols;
+  int n = Q.n_rows;
+  int r = Q.n_cols;
+  int k = R.n_cols;
   
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
     Rprintf("Running SQP algorithm with the following settings:\n");
     Rprintf("- %d x %d data matrix\n",n,k);
     Rprintf("- convergence tolerance = %0.2e\n",convtol);
-    Rprintf("- zero threshold        = %0.2e\n",sptol);
+    Rprintf("- zero threshold        = %0.2e\n",sparsetol);
   }
   
   // PREPARE DATA STRUCTURES FOR OPTIMIZATION ALGORITHM
@@ -45,7 +46,7 @@ List mixSQP       (const arma::mat& L, const arma::vec& x0,
   arma::vec    g(k);   // Vector of length k storing the gradient.
   arma::vec    u(n);   // Vector of length n storing L*x + eps or its log.
   arma::mat    H(k,k); // k x k matrix storing Hessian.
-  arma::mat    Z(n,k); // n x k matrix storing  Z = diag(1/(L*x + eps))*L.
+  arma::mat    Z(n,r); // n x r matrix storing Z
   arma::mat    I(k,k); // k x k diagonal matrix eps*I.
   arma::uvec   t(k);   // Temporary unsigned integer vector result of length k.
   
@@ -68,18 +69,20 @@ List mixSQP       (const arma::mat& L, const arma::vec& x0,
   for (int i = 0; i < maxiter; i++) {
     
     // COMPUTE GRADIENT AND HESSIAN
-    // Compute Z = diag(1/(L*x + eps)) * L.
-    u = L * x + eps;
-    Z = L;
+    // Compute u
+    u = Q * (R * x) + eps;
+    
+    // Compute Z
+    Z = Q;
     Z.each_col() /= u;
     
-    // Compute the gradient g = -Z'*1/n.
-    g = arma::sum(Z.t(),1);
-    g = -g/n;
+    // Compute the gradient g
+    g = -R.t() * arma::sum(Z.t(),1)/n;
     
-    // Compute the Hessian H = Z'*Z/n + eps*I.
-    H = Z.t() * Z;
-    H = H/n + I;
+    // Compute the Hessian H
+    Z = Q;
+    Z.each_col() /= u;
+    H = R.t() * (Z.t() * Z) * R/n + I;
     
     // Report on the algorithm's progress. Here we compute: the value
     // of the objective at x (obj); the smallest gradient value
@@ -87,13 +90,13 @@ List mixSQP       (const arma::mat& L, const arma::vec& x0,
     // nonzeros in the solution (nnz); and the number of inner-loop
     // iterations (nqp).
     
-    t       = (x > sptol);
+    t       = (x > sparsetol);
     obj[i]  = -sum(log(u));
     gmin[i] = 1 + g.min();
     nnz[i]  = sum(t);
     nqp[i]  = j;
     if (verbose)
-      Rprintf("%4d %0.8e %+0.2e %4d %3d\n",i,obj[i],-gmin[i],nnz[i],j);
+      Rprintf("%4d %0.8e %+0.2e %4d %3d\n",i,obj[i],-gmin[i],nnz[i],nqp[i]);
     
     // Check convergence.
     
@@ -158,7 +161,7 @@ List mixSQP       (const arma::mat& L, const arma::vec& x0,
     
     // PERFORM LINE SEARCH
     for (j = 0; j < 10; j++){
-      if (obj[i] + sum(log(L * y + eps)) > dot(x-y, g)/2 ) break;
+      if (obj[i] + sum(log(Q * (R * y) + eps)) > dot(x-y, g)/2 ) break;
       y = (y-x)/2 + x;
     }
     
@@ -166,7 +169,8 @@ List mixSQP       (const arma::mat& L, const arma::vec& x0,
     x = y;
   }
   
-  x.elem(find(x < sptol)).fill(0);
+  arma::vec x_sparse = x;
+  x_sparse.elem(find(x < sparsetol)).fill(0);
   
   return List::create(Named("x") = x/sum(x));
 }
