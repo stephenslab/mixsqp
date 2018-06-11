@@ -1,24 +1,24 @@
-\name{RmixSQP-package}
-\alias{RmixSQP-package}
-\alias{RmixSQP}
+\name{mixSQP-package}
+\alias{mixSQP-package}
+\alias{mixSQP}
 \docType{package}
 \title{
-\packageTitle{RmixSQP}
+\packageTitle{mixSQP}
 }
 \description{
-\packageDescription{RmixSQP}
+\packageDescription{mixSQP}
 }
 \details{
 
 The DESCRIPTION file:
-\packageDESCRIPTION{RmixSQP}
-\packageIndices{RmixSQP}
+\packageDESCRIPTION{mixSQP}
+\packageIndices{mixSQP}
 ~~ An overview of how to use the package, including the most important functions ~~
 }
 \author{
-\packageAuthor{RmixSQP}
+\packageAuthor{mixSQP}
 
-Maintainer: \packageMaintainer{RmixSQP}
+Maintainer: \packageMaintainer{mixSQP}
 }
 \references{
 ~~ Literature or other references for background information ~~
