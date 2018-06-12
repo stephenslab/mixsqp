@@ -1,13 +1,13 @@
-#' @title mixSQP solves a convex optimization problem originated from ...
-#' 
-#' @description (Adaptive SHrinkage, see https://github.com/stephens999/ashr)
+#' @title mixSQP
+#' @description mixSQP solves a convex optimization problem originated from ASH
+#' (Adaptive SHrinkage, see https://github.com/stephens999/ashr)
 #' When L is a (n) by (m) matrix of nonnegative entries, mixSQP maximizes
 #' the objective function
 #' \deqn{f(x) = \sum_j w_j \log  \sum_{k=1}^m L_{jk} x_{k}}
 #' subject to the (unit) probability simplex constraint
 #' \deqn{\sum_k x_k = 1, x_k >= 0}
 #' under additional constraint \eqn{\sum_{j=1} w_j = 1}.
-#' \sum_{j=1}^n \log \sum_{k=1}^m L_{jk} x_{k} + \sum_{k=1}^m w_{k} \log x_{k}
+#' \deqn{\sum_{j=1}^n \log \sum_{k=1}^m L_{jk} x_{k} + \sum_{k=1}^m w_{k} \log x_{k}}
 #' @param L a matrix of log-likelihoods of mixture components
 #' @param x0 a initial value for the optimization problem
 #' @param optmethod Describe optmethod here.
