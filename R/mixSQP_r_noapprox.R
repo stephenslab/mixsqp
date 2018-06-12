@@ -8,25 +8,14 @@ mixSQP_r_noapprox = function(L, x0 = rep(1,dim(L)[2]),
   # Get the number of rows (n) and columns (m) of L
   n = dim(L)[1]; m = dim(L)[2];
   
-  # timer
-  t_gradhess = 0
-  t_activeset = 0
-  t_linesearch = 0
-  
   # start loop
   for (i in 1:maxiter){
-    
-    # timer
-    t1 = Sys.time()
     
     # compute objective gradient hessian
     D = as.vector(1/(L %*% x + eps));
     G = L*D;
     g = -colSums(G) / n;
     H = t(G) %*% G / n + eps * diag(m);
-    
-    # timer
-    t2 = Sys.time()
     
     # Check convergence of outer loop
     if(min(g + 1) >= -convtol) break;
@@ -79,9 +68,6 @@ mixSQP_r_noapprox = function(L, x0 = rep(1,dim(L)[2]),
       }
     }
     
-    # timer
-    t3 = Sys.time()
-    
     # Perform backtracking line search
     for (t in 1:10){
       D_new_inv = as.vector(L %*% y + eps);
@@ -89,18 +75,9 @@ mixSQP_r_noapprox = function(L, x0 = rep(1,dim(L)[2]),
       y = (y-x)/2 + x;
     }
     
-    # timer
-    t4 = Sys.time()
-    
     # Update the solution to the original optimization problem.
     x = y;
-    
-    # update timer
-    t_gradhess = t_gradhess + t2-t1
-    t_activeset = t_activeset + t3-t2
-    t_linesearch = t_linesearch + t4-t3
   }
   x[x < sparsetol] = 0; x = x/sum(x);
-  return(list(x = x, num_iter = i,
-              comp_time = c(t_gradhess = t_gradhess, t_activeset = t_activeset, t_linesearch = t_linesearch)))
+  return(list(x = x))
 }

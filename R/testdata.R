@@ -1,3 +1,4 @@
+#' @export
 testdata <- function(n,m, type = 1){
   
   temp = floor(n/4)

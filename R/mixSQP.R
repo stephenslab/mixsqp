@@ -1,18 +1,16 @@
-
-#' mixSQP solves a convex optimization problem originated from
+#' @title mixSQP solves a convex optimization problem originated from ...
 #' 
-#' (Adaptive SHrinkage, see https://github.com/stephens999/ashr)
+#' @description (Adaptive SHrinkage, see https://github.com/stephens999/ashr)
 #' When L is a (n) by (m) matrix of nonnegative entries, mixSQP maximizes
 #' the objective function
-#' f(x) = \sum_{j=1}^n w_j \log  \sum_{k=1}^m L_{jk} x_{k}
+#' \deqn{f(x) = \sum_j w_j \log  \sum_{k=1}^m L_{jk} x_{k}}
 #' subject to the (unit) probability simplex constraint
-#' \sum_{k=1}^m x_{k} = 1, x_k >= 0
-#' under additional constraint \sum_{j=1}
-#' 
+#' \deqn{\sum_k x_k = 1, x_k >= 0}
+#' under additional constraint \eqn{\sum_{j=1} w_j = 1}.
 #' \sum_{j=1}^n \log \sum_{k=1}^m L_{jk} x_{k} + \sum_{k=1}^m w_{k} \log x_{k}
 #' @param L a matrix of log-likelihoods of mixture components
 #' @param x0 a initial value for the optimization problem
-#' @param optmethod
+#' @param optmethod Describe optmethod here.
 #' @param outputlevel controls a level of output
 #' @return returns a list of 
 #' @examples
@@ -21,19 +19,30 @@
 #' x0 = rep(1,m)/m;
 #' optmethod = "Rcpp"; lowrank = "qr"; lowrankmethod = "R_Matrix";
 #' mixSQP(L, x0, optmethod, lowrank, lowrankmethod);
+#' 
+#' @useDynLib mixSQP
+#' @importFrom Rcpp evalCpp
 #' @export
-
 mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], optmethod = "Rcpp", lowrank = "none",
                   lowrankmethod = "Julia_lowrankapprox", lowranktol = 1e-10, 
                   convtol = 1e-8, sparsetol = 1e-3, eps = 1e-8,
                   maxiter = 100, maxqpiter = 100, verbose = T){
   
+  # TO DO : match.arg
+  
   if ((lowrankmethod == "Julia_lowrankapprox") & (lowrank == "qr")){
-    if (!("rjulia" %in% (.packages())) ){
-      require("rjulia");
+    if (!require(rjulia))
+      stop("no rjulia package installed: you must install rjulia package or use another
+           low-rank approximaton method (arg: lowrankmethod)")
+    
+    require("rjulia");
+    if (!(j2r('isdefined(:LowRankApprox)')) ){
       jDo('using LowRankApprox');
     }
   }
+  
+  # timer
+  t1 = Sys.time();
   
   if (lowrank == "qr"){
     if (lowrankmethod == "R_Matrix"){
@@ -50,23 +59,36 @@ mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], optmethod = "Rcpp", lowran
     }
   }
   
+  # timer
+  t2 = Sys.time();
+  
   if (optmethod == "Rcpp"){
     if (lowrank == "none"){
-      mixSQP_rcpp_noapprox(L, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
+      out = mixSQP_rcpp_noapprox(L, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
     } else if (lowrank == "qr"){
-      mixSQP_rcpp_qr(Q, R, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
+      out = mixSQP_rcpp_qr(Q, R, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
     } else{
       stop("Error : optmethod:", optmethod," does not support ",lowrank," option.")
     }
   } else if (optmethod == "R"){
     if (lowrank == "none"){
-      mixSQP_r_noapprox(L, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
+      out = mixSQP_r_noapprox(L, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
     } else if (lowrank == "qr"){
-      
+      out = mixSQP_r_qr(Q, R, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
     } else{
       stop("Error : optmethod:", optmethod," does not support ",lowrank," option.")
     }
   } else{
     stop("Error : optmethod:", optmethod," is an invalid option")
   }
+  
+  # timer
+  t3 = Sys.time();
+  
+  # show timings
+  if (lowrank == "qr")
+    cat("A low-rank approximation using",lowrank,"took",t2-t1,"seconds\n");
+  cat("A convex programming took",t3-t2,"seconds");
+  
+  return (out$x)
 }

@@ -1,24 +1,12 @@
 
-mixSQP_R = function(L, x0 = rep(1,dim(L)[2]), lowrank = "none",
-                   convtol = 1e-8, sparsetol = 1e-3, lowranktol = 1e-10, eps = 1e-8,
-                   maxiter = 100, maxqpiter = 100, verbose = T){
+mixSQP_r_qr   = function(Q, R, x0 = rep(1,dim(L)[2]),
+                         convtol = 1e-8, sparsetol = 1e-3, eps = 1e-8,
+                         maxiter = 100, maxqpiter = 100, verbose = T){
   # make x sum up to 1
   x = x0/sum(x0)
-  lowrank = "none"
   
   # Get the number of rows (n) and columns (m) of L
   n = dim(L)[1]; m = dim(L)[2];
-  
-  # low-rank approximation
-  t_lowrank = 0
-  if (lowrank == "qr_julia"){
-    t_lowrank = system.time(f <- qr_julia(L, lowranktol = lowranktol))[3]
-  } else if (lowrank == "svd_julia"){
-    t_lowrank = system.time(f <- svd_julia(L, lowranktol = lowranktol))[3]
-  } else if (lowrank == "svd"){
-    t_lowrank = system.time(f <- svd_R(L, rank = rank))[3]
-  }
-  names(t_lowrank) = NULL
   
   # timer
   t_gradhess = 0
@@ -28,28 +16,11 @@ mixSQP_R = function(L, x0 = rep(1,dim(L)[2]), lowrank = "none",
   # start loop
   for (i in 1:maxiter){
     
-    # timer
-    t1 = Sys.time()
-    
     # compute objective gradient hessian
-    if (lowrank == "svd"){
-      D = as.vector( 1 / (f$Q %*% ( t((t(f$u) * f$d[1:rank])) %*% (t(f$v) %*% x)) + eps))
-      G = (f$Q %*% f$u %*% (t(f$v) * f$d[1:rank])) * D;
-    } else if(lowrank == "qr_julia"){
-      D = as.vector( 1 / (f$Q %*% (f$R %*% x) + eps))
-      G = (f$Q * D) %*% f$R;
-    } else if(lowrank == "svd_julia"){
-      D = as.vector( 1 / ( f$u %*% (diag(f$d) %*% (t(f$v) %*% x)) + eps))
-      G = ( f$u %*% (t(f$v) * f$d)) * D;
-    } else{
-      D = as.vector(1/(L %*% x + eps));
-      G = L*D;
-    }
+    D = as.vector( 1 / (Q %*% (R %*% x) + eps))
+    G = (Q * D) %*% R;
     g = -colSums(G) / n;
     H = t(G) %*% G / n + eps * diag(m);
-    
-    # timer
-    t2 = Sys.time()
     
     # Check convergence of outer loop
     if(min(g + 1) >= -convtol) break;
@@ -102,37 +73,16 @@ mixSQP_R = function(L, x0 = rep(1,dim(L)[2]), lowrank = "none",
       }
     }
     
-    # timer
-    t3 = Sys.time()
-    
     # Perform backtracking line search
     for (t in 1:10){
-      if (lowrank == "svd"){
-        D_new_inv = as.vector(f$Q %*% ( t((t(f$u) * f$d[1:rank])) %*% (t(f$v) %*% y)) + eps)
-      } else if(lowrank == "qr_julia"){
-        D_new_inv = as.vector(f$Q %*% (f$R %*% y) + eps)
-      } else if(lowrank == "svd_julia"){
-        D_new_inv = as.vector(f$u %*% (diag(f$d) %*% (t(f$v) %*% y)) + eps)
-      } else{
-        D_new_inv = as.vector(L %*% y + eps);
-      }
+      D_new_inv = as.vector(Q %*% (R %*% y) + eps);
       if (sum(log(D)) + sum(log(D_new_inv)) > sum((x-y) * g) / 2) break;
       y = (y-x)/2 + x;
     }
     
-    # timer
-    t4 = Sys.time()
-    
     # Update the solution to the original optimization problem.
     x = y;
-    
-    # update timer
-    t_gradhess = t_gradhess + t2-t1
-    t_activeset = t_activeset + t3-t2
-    t_linesearch = t_linesearch + t4-t3
   }
   x[x < sparsetol] = 0; x = x/sum(x);
-  return(list(x = x, num_iter = i,
-              comp_time = c(t_lowrank = t_lowrank, t_gradhess = t_gradhess,
-                    t_activeset = t_activeset, t_linesearch = t_linesearch)))
+  return(list(x = x))
 }
