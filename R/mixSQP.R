@@ -6,8 +6,10 @@ mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], optmethod = "Rcpp", lowran
                   maxiter = 100, maxqpiter = 100, verbose = T){
   
   if ((lowrankmethod == "Julia_lowrankapprox") & (lowrank == "qr")){
-    library("rjulia")
-    jDo('using LowRankApprox');
+    if (!require("rjulia")){
+      require("rjulia");
+      Do('using LowRankApprox');
+    }
   }
   
   if (lowrank == "qr"){
@@ -15,6 +17,7 @@ mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], optmethod = "Rcpp", lowran
       qrfact = Matrix::qr(L, tol = lowranktol);
       Q = qr.Q(qrfact)[,1:qrfact$rank]
       R = qr.R(qrfact)[1:qrfact$rank,order(qrfact$pivot)]
+      cat()
     } else if(lowrankmethod == "Julia_lowrankapprox"){
       r2j(L,"L"); r2j(lowranktol,"lowranktol");
       jDo("Q,R,P = pqr(L, rtol = lowranktol[1]); R = R[:,sortperm(P)]");
