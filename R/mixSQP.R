@@ -1,8 +1,20 @@
 
-#' Solve a convex program in ASH (Adaptive SHrinkage, see https://github.com/stephens999/ashr)
-#' @param L 
-#' @param outputlevel controls a level of output; 1: only output estimated mixture component proportions, 2: output complete result, 99: additionally output debugging information
-#' @return a list of 
+#' mixSQP solves a convex optimization problem originated from
+#' 
+#' (Adaptive SHrinkage, see https://github.com/stephens999/ashr)
+#' When L is a (n) by (m) matrix of nonnegative entries, mixSQP maximizes
+#' the objective function
+#' f(x) = \sum_{j=1}^n w_j \log  \sum_{k=1}^m L_{jk} x_{k}
+#' subject to the (unit) probability simplex constraint
+#' \sum_{k=1}^m x_{k} = 1, x_k >= 0
+#' under additional constraint \sum_{j=1}
+#' 
+#' \sum_{j=1}^n \log \sum_{k=1}^m L_{jk} x_{k} + \sum_{k=1}^m w_{k} \log x_{k}
+#' @param L a matrix of log-likelihoods of mixture components
+#' @param x0 a initial value for the optimization problem
+#' @param optmethod
+#' @param outputlevel controls a level of output
+#' @return returns a list of 
 #' @examples
 #' n = 1e4; m = 1e1;
 #' L = testdata(n,m) # create some simulated data
@@ -17,9 +29,9 @@ mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], optmethod = "Rcpp", lowran
                   maxiter = 100, maxqpiter = 100, verbose = T){
   
   if ((lowrankmethod == "Julia_lowrankapprox") & (lowrank == "qr")){
-    if (!require("rjulia")){
+    if (!("rjulia" %in% (.packages())) ){
       require("rjulia");
-      Do('using LowRankApprox');
+      jDo('using LowRankApprox');
     }
   }
   
