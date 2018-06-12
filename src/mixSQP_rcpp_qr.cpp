@@ -181,5 +181,5 @@ List mixSQP_rcpp_qr   (const arma::mat& Q, const arma::mat& R, const arma::vec& 
   arma::vec x_sparse = x;
   x_sparse.elem(find(x < sparsetol)).fill(0);
   
-  return List::create(Named("x") = x/sum(x));
+  return List::create(Named("x") = x/sum(x), Named("x_sparse") = x_sparse/sum(x_sparse));
 }

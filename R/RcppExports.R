@@ -2,10 +2,10 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 mixSQP_rcpp_noapprox <- function(L, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose) {
-    .Call(`_mixSQP_mixSQP_rcpp_noapprox`, L, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
+    .Call('_mixSQP_mixSQP_rcpp_noapprox', PACKAGE = 'mixSQP', L, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
 }
 
 mixSQP_rcpp_qr <- function(Q, R, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose) {
-    .Call(`_mixSQP_mixSQP_rcpp_qr`, Q, R, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
+    .Call('_mixSQP_mixSQP_rcpp_qr', PACKAGE = 'mixSQP', Q, R, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
 }
 

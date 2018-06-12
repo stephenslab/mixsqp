@@ -1,6 +1,5 @@
 \name{mixSQP-package}
 \alias{mixSQP-package}
-\alias{mixSQP}
 \docType{package}
 \title{
 \packageTitle{mixSQP}
