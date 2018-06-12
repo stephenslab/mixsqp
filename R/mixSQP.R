@@ -1,4 +1,15 @@
 
+#' Solve a convex program in ASH (Adaptive SHrinkage, see https://github.com/stephens999/ashr)
+#' @param L 
+#' @param outputlevel controls a level of output; 1: only output estimated mixture component proportions, 2: output complete result, 99: additionally output debugging information
+#' @return a list of 
+#' @examples
+#' n = 1e4; m = 1e1;
+#' L = testdata(n,m) # create some simulated data
+#' x0 = rep(1,m)/m;
+#' optmethod = "Rcpp"; lowrank = "qr"; lowrankmethod = "R_Matrix";
+#' mixSQP(L, x0, optmethod, lowrank, lowrankmethod);
+#' @export
 
 mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], optmethod = "Rcpp", lowrank = "none",
                   lowrankmethod = "Julia_lowrankapprox", lowranktol = 1e-10, 
@@ -13,7 +24,7 @@ mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], optmethod = "Rcpp", lowran
   }
   
   if (lowrank == "qr"){
-    if (lowrankmethod == "R_matrix"){
+    if (lowrankmethod == "R_Matrix"){
       qrfact = Matrix::qr(L, tol = lowranktol);
       Q = qr.Q(qrfact)[,1:qrfact$rank]
       R = qr.R(qrfact)[1:qrfact$rank,order(qrfact$pivot)]

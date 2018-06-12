@@ -1,11 +1,11 @@
 Package: mixSQP
 Type: Package
-Title: What the package does (short line)
-Version: 1.0
+Title: mix-SQP: Sequentional Quadratic Programming for fast maximum-likelihood estimation of mixture proportions
+Version: 0.1-1
 Date: 2018-06-10
 Author: Youngseok Kim
 Maintainer: Who to complain to <youngseok@uchicago.edu>
 Description: More about what it does (maybe more than one line)
 License: What license is it under?
-Imports: Rcpp (>= 0.12.17)
+Imports: Rcpp (>= 0.12.15)
 LinkingTo: Rcpp, RcppArmadillo
