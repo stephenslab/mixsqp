@@ -1,9 +1,11 @@
 
 mixSQP_r_qr   = function(Q, R, x0 = rep(1,dim(L)[2]), w = rep(1,dim(L)[1]),
-                         convtol = 1e-8, sparsetol = 1e-3, eps = 1e-8,
-                         maxiter = 100, maxqpiter = 100, verbose = T){
+                         convtol = 1e-8, sparsetol = 1e-3, eps = 1e-6,
+                         maxiter = 50, maxqpiter = 100, verbose = T){
   # make x sum up to 1
   x = x0/sum(x0)
+  # make w sum up to 1
+  w = w/sum(w);
   
   # Get the number of rows (n) and columns (m) of L
   n = dim(L)[1]; m = dim(L)[2];
@@ -14,8 +16,8 @@ mixSQP_r_qr   = function(Q, R, x0 = rep(1,dim(L)[2]), w = rep(1,dim(L)[1]),
     # compute objective gradient hessian
     D = as.vector( 1 / (Q %*% (R %*% x) + eps))
     G = (Q * D) %*% R;
-    g = -colSums(G * w) / n;
-    H = t(G) %*% (G * w) / n + eps * diag(m);
+    g = -colSums(G * w);
+    H = t(G) %*% (G * w) + eps * diag(m);
     
     # Check convergence of outer loop
     if(min(g + 1) >= -convtol) break;
@@ -79,5 +81,5 @@ mixSQP_r_qr   = function(Q, R, x0 = rep(1,dim(L)[2]), w = rep(1,dim(L)[1]),
     x = y;
   }
   x[x < sparsetol] = 0; x = x/sum(x);
-  return(list(x = x))
+  return(list(x_sparse = x, niter = i))
 }

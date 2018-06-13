@@ -23,7 +23,7 @@ mixSQP(L, x0 = rep(1, dim(L)[2])/dim(L)[2], w = rep(1, dim(L)[1])/dim(L)[1],
 
 \item{lowrankmethod}{determines what library is used for low-rank approximation c("R_matrix","Julia_lowrankapprox")}
 
-\item{lowranktol}{a tolerance used for low-rank approximation. for enough accuracy, set at most 1e-3 for "R_matrix" and 1e-10 for "Julia_lowrankapprox"}
+\item{lowranktol}{a tolerance used for low-rank approximation (default 1e-5): for enough accuracy, set at most 1e-4 for "R_matrix" and 1e-10 for "Julia_lowrankapprox"}
 
 \item{convtol}{a convergence tolerance used for algorithm's convergence criterion}
 
