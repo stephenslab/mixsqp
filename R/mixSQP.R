@@ -29,7 +29,7 @@
 #' mixSQP(L, x0, optmethod, lowrank, lowrankmethod); # using default tolerances
 #' ## solves ASH problem \sum_j log (\sum_k L_jk x_k) + \sum_k w_k log x_k
 #' @useDynLib mixSQP
-#' @importFrom Rcpp sourceCpp
+#' @importFrom Rcpp evalCpp
 #' @export
 mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], w = rep(1,dim(L)[1])/dim(L)[1],
                   optmethod = "Rcpp", lowrank = "none",
