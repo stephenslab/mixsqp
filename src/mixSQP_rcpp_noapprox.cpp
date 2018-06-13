@@ -96,9 +96,9 @@ List mixSQP_rcpp_noapprox  (const arma::mat& L, const arma::vec& x0,
     nnz[i]  = sum(t);
     if (verbose) {
       if (i == 0)
-        Rprintf("%4d  %0.5e %+0.2e %4d \n",i+1,obj[i],-gmin[i],nnz[i]);
+        Rprintf("%4d  %0.5e %+0.2e %4d \n",i+1,obj[i],-gmin[i],int(nnz[i]));
       else
-        Rprintf("%4d  %0.5e %+0.2e %4d %4d %4d\n",i+1,obj[i],-gmin[i],nnz[i],nqp[i-1],nls[i-1]);
+        Rprintf("%4d  %0.5e %+0.2e %4d %4u %4u\n",i+1,obj[i],-gmin[i],int(nnz[i]),nqp[i-1],nls[i-1]);
     }
     
     // Check convergence.
