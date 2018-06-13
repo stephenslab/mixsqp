@@ -41,8 +41,9 @@ List mixSQP_rcpp_qr   (const arma::mat& Q, const arma::mat& R, const arma::vec& 
   arma::uvec nqp(maxiter);
   arma::uvec nls(maxiter);
   
-  // Initialize the solution.
-  arma::vec x = x0;
+  // Initialize the solution and normalize x and w
+  arma::vec x = x0/sum(x0);
+  w = w/sum(w);
   
   // Initialize storage for matrices and vectors used in the
   // computations below.
@@ -169,7 +170,7 @@ List mixSQP_rcpp_qr   (const arma::mat& Q, const arma::mat& R, const arma::vec& 
     
     // PERFORM LINE SEARCH
     for (j = 0; j < 9; j++){
-      if (obj[i] + sum(log(Q * (R * y) + eps) * w) > dot(x-y, g) / (2 * n) ) break;
+      if (obj[i] + sum(log(Q * (R * y) + eps) % w) > dot(x-y, g) / (2 * n) ) break;
       y = (y-x)/2 + x;
     }
     nls[i]  = j + 1;
