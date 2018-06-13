@@ -105,5 +105,6 @@ mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], w = rep(1,dim(L)[1])/dim(L
     cat("A convex programming took",t3-t2,"seconds\n");
   }
   
-  return (list(x = as.vector(out$x_sparse), niter = out$niter, status = ifelse(out$niter < maxiter, "OPTIMAL", "SUBOPTIMAL")))
+  return (list(x = as.vector(out$x_sparse), niter = out$niter,
+               status = ifelse(out$niter < maxiter, "OPTIMAL", "SUBOPTIMAL")))
 }
