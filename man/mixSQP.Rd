@@ -4,7 +4,7 @@
 \alias{mixSQP}
 \title{mixSQP}
 \usage{
-mixSQP(L, x0 = rep(1, dim(L)[2]), w = rep(1, dim(L)[1]),
+mixSQP(L, x0 = rep(1, dim(L)[2])/dim(L)[2], w = rep(1, dim(L)[1])/dim(L)[1],
   optmethod = "Rcpp", lowrank = "none",
   lowrankmethod = "Julia_lowrankapprox", lowranktol = 1e-10,
   convtol = 1e-08, sparsetol = 0.001, eps = 1e-06, maxiter = 50,
@@ -14,6 +14,8 @@ mixSQP(L, x0 = rep(1, dim(L)[2]), w = rep(1, dim(L)[1]),
 \item{L}{a matrix of log-likelihoods of mixture components (n by m)}
 
 \item{x0}{a initial value for the optimization problem (default rep(1,m)/m).}
+
+\item{w}{a vector of weight on each data point (default rep(1,n)/n).}
 
 \item{optmethod}{a programming language used for solving the problem c("Rcpp","R")}
 
