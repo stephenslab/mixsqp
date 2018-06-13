@@ -4,10 +4,11 @@
 \alias{mixSQP}
 \title{mixSQP}
 \usage{
-mixSQP(L, x0 = rep(1, dim(L)[2])/dim(L)[2], optmethod = "Rcpp",
-  lowrank = "none", lowrankmethod = "Julia_lowrankapprox",
-  lowranktol = 1e-10, convtol = 1e-08, sparsetol = 0.001, eps = 1e-06,
-  maxiter = 50, maxqpiter = 100, verbose = T)
+mixSQP(L, x0 = rep(1, dim(L)[2]), w = rep(1, dim(L)[1]),
+  optmethod = "Rcpp", lowrank = "none",
+  lowrankmethod = "Julia_lowrankapprox", lowranktol = 1e-10,
+  convtol = 1e-08, sparsetol = 0.001, eps = 1e-06, maxiter = 50,
+  maxqpiter = 100, verbose = T)
 }
 \arguments{
 \item{L}{a matrix of log-likelihoods of mixture components (n by m)}
