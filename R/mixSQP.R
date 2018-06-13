@@ -1,19 +1,25 @@
 #' @title mixSQP
-#' @description mixSQP solves a convex optimization problem originated from ASH
-#' (Adaptive SHrinkage, see https://github.com/stephens999/ashr)
+#' @description mixSQP solves a convex optimization problem from nonparametric maximum-likelihood estimation of mixture proportions. It implements a sequential quadratic programming with active-set subproblem solvers. For gigantic data, use low-rank approximation to speed up the computation.
 #' When L is a (n) by (m) matrix of nonnegative entries, mixSQP maximizes
-#' the objective function
-#' \deqn{f(x) = \sum_j w_j log (\sum_k L_{jk} x_{k})}
+#' the following objective function
+#' \deqn{f(x) = \sum_j w_j log (\sum_k L_jk x_k)}
 #' subject to the (unit) probability simplex constraint
-#' \deqn{\sum_k x_k = 1, x_k \geq 0}
-#' Without loss of generality \eqn{\sum_{j=1} w_j = 1} is required.
-#' 
+#' \deqn{\sum_k x_k = 1, x_k \ge 0}
+#' Without loss of generality \eqn{\sum_j w_j = 1} is required.
+#' The problem is originally from nonparametric empirical Bayes mixture MLE problem (NPMLE or NPEB).
 #' @param L a matrix of log-likelihoods of mixture components (n by m)
 #' @param x0 a initial value for the optimization problem (default rep(1,m)/m).
+#' @param optmethod a programming language used for solving the problem c("Rcpp","R")
+#' @param lowrank a type of low-rank approximation c("none","qr","svd")
+#' @param lowrankmethod determines what library is used for low-rank approximation c("R_matrix","Julia_lowrankapprox")
+#' @param lowranktol a tolerance used for low-rank approximation. for enough accuracy, set at most 1e-3 for "R_matrix" and 1e-10 for "Julia_lowrankapprox"
+#' @param convtol a convergence tolerance used for algorithm's convergence criterion
+#' @param sparsetol a tolerance used for determining active indices
 #' @param eps a small constant to safeguard from a numerical issue (default 1e-6).
-#' @param optmethod Describe optmethod here.
-#' @param outputlevel controls a level of output
-#' @return returns a list of 
+#' @param maxiter a maximum number of outer loop iterations, determining how many qp subproblems will be solved at most.
+#' @param maxqpiter a maximum number of inner loop iterations, determining how many active-set subproblems will be solved at most.
+#' @param verbose a logical indicating if it shows progress of the algorithm at each iteration
+#' @return returns a solution x (in the current version).
 #' @examples
 #' n = 1e4; m = 1e1;
 #' L = testdata(n,m) # create some simulated data
@@ -37,6 +43,10 @@ mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], optmethod = "Rcpp", lowran
            low-rank approximaton method (arg: lowrankmethod)")
     
     require("rjulia");
+    if (j2r('typeof(Pkg.installed("LowRankApprox")) == Void')){
+      cat("installing LowRankApprox package in Julia")
+      jDo('Pkg.add("LowRankApprox")')
+    }
     if (!(j2r('isdefined(:LowRankApprox)')) ){
       jDo('using LowRankApprox');
     }
