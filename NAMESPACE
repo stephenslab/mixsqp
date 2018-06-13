@@ -2,5 +2,5 @@
 
 export(mixSQP)
 export(testdata)
-importFrom(Rcpp,evalCpp)
+importFrom(Rcpp,sourceCpp)
 useDynLib(mixSQP)
