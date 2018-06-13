@@ -22,12 +22,12 @@
 #' @param verbose a logical indicating if it shows progress of the algorithm at each iteration
 #' @return returns a solution x (in the current version).
 #' @examples
-#' n = 1e4; m = 1e1;
+#' n = 1e5; m = 2e1;
 #' L = testdata(n,m) # create some simulated data
 #' x0 = rep(1,m)/m; # initialization
+#' w = rep(1,n)/n; # weight
 #' optmethod = "Rcpp"; lowrank = "qr"; lowrankmethod = "R_Matrix";
 #' mixSQP(L, x0, optmethod, lowrank, lowrankmethod); # using default tolerances
-#' ## solves ASH problem \sum_j log (\sum_k L_jk x_k) + \sum_k w_k log x_k
 #' @useDynLib mixSQP
 #' @importFrom Rcpp evalCpp
 #' @export
