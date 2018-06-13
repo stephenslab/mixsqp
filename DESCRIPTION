@@ -8,7 +8,7 @@ Author: Youngseok Kim <youngseok@uchicago.edu>
 Maintainer: Youngseok Kim <youngseok@uchicago.edu>
 Description: Okay
 License: MIT + file LICENSE
-Imports: Rcpp (>= 0.12.15), Matrix
+Imports: Rcpp (>= 0.12.15)
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 6.0.1
 
