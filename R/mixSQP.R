@@ -77,17 +77,17 @@ mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], w = rep(1,dim(L)[1])/dim(L
   
   if (optmethod == "Rcpp"){
     if (lowrank == "none"){
-      out = mixSQP_rcpp_noapprox(L, x0, w, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
+      out = mixSQP_rcpp_noapprox(L, x0, w, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)$x_sparse
     } else if (lowrank == "qr"){
-      out = mixSQP_rcpp_qr(Q, R, x0, w, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
+      out = mixSQP_rcpp_qr(Q, R, x0, w, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)$x_sparse
     } else{
       stop("Error : optmethod:", optmethod," does not support ",lowrank," option.")
     }
   } else if (optmethod == "R"){
     if (lowrank == "none"){
-      out = mixSQP_r_noapprox(L, x0, w, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
+      out = mixSQP_r_noapprox(L, x0, w, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)$x
     } else if (lowrank == "qr"){
-      out = mixSQP_r_qr(Q, R, x0, w, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
+      out = mixSQP_r_qr(Q, R, x0, w, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)$x
     } else{
       stop("Error : optmethod:", optmethod," does not support ",lowrank," option.")
     }
@@ -99,9 +99,11 @@ mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], w = rep(1,dim(L)[1])/dim(L
   t3 = Sys.time();
   
   # show timings
-  if (lowrank == "qr")
-    cat("A low-rank approximation using",lowrank,"took",t2-t1,"seconds\n");
-  cat("A convex programming took",t3-t2,"seconds\n");
+  if (verbose){
+    if (lowrank == "qr")
+      cat("A low-rank approximation using",lowrank,"took",t2-t1,"seconds\n");
+    cat("A convex programming took",t3-t2,"seconds\n");
+  }
   
-  return (out$x)
+  return (out)
 }
