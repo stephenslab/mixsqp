@@ -49,14 +49,14 @@ List mixSQP_rcpp_qr   (const arma::mat& Q, const arma::mat& R, const arma::vec& 
   arma::vec    g(k);   // Vector of length k storing the gradient.
   arma::vec    u(n);   // Vector of length n storing L*x + eps or its log.
   arma::mat    H(k,k); // k x k matrix storing Hessian.
-  arma::mat    Z(n,r); // n x r matrix storing Z
-  arma::mat    I(k,k); // k x k diagonal matrix eps*I.
+  arma::mat    Z(n,k); // n x k matrix storing  Z = diag(1/(L*x + eps))*L.
   arma::mat    Zw(n,k); // n x k matrix storing  Z * w
+  arma::mat    I(k,k); // k x k diagonal matrix eps*I.
   arma::uvec   t(k);   // Temporary unsigned integer vector result of length k.
   
-  arma::vec  y(k);   // Vector of length k storing y
-  arma::vec  p(k);   // Vector of length k storing y
-  arma::vec  b(k);   // Vector of length k storing H*y+2+g+1
+  arma::vec    y(k);   // Vector of length k storing y
+  arma::vec    p(k);   // Vector of length k storing y
+  arma::vec    b(k);   // Vector of length k storing H*y+2+g+1
   int          newind = 0;    // new index to be added or deleted
   double       alpha = 1;     // Define step size
   
@@ -75,16 +75,18 @@ List mixSQP_rcpp_qr   (const arma::mat& Q, const arma::mat& R, const arma::vec& 
   for (int i = 0; i < maxiter; i++) {
     
     // COMPUTE GRADIENT AND HESSIAN
-    // Compute Z = diag(1/(L*x + eps)) * L.
-    u = L * x + eps;
-    Z = L; Z.each_col() /= u;
+    // Compute u
+    u = Q * (R * x) + eps;
+    
+    // Compute Z
+    Z = Q; Z.each_col() /= u;
     Zw = Z; Zw.each_col() %= w;
     
-    // Compute the gradient g = -Z'*1/n.
-    g = -arma::sum(Zw.t(),1);
+    // Compute the gradient g
+    g = -R.t() * arma::sum(Zw.t(),1);
     
-    // Compute the Hessian H = Z'*Z/n + eps*I.
-    H = Z.t() * Zw + I;
+    // Compute the Hessian H
+    H = R.t() * (Z.t() * Zw) * R + I;
     
     // Report on the algorithm's progress. Here we compute: the value
     // of the objective at x (obj); the smallest gradient value
@@ -93,7 +95,7 @@ List mixSQP_rcpp_qr   (const arma::mat& Q, const arma::mat& R, const arma::vec& 
     // iterations (nqp).
     
     t       = (x > sparsetol);
-    obj[i]  = -sum(log(u));
+    obj[i]  = -sum(log(u) % w);
     gmin[i] = 1 + g.min();
     nnz[i]  = sum(t);
     if (verbose) {
@@ -125,8 +127,8 @@ List mixSQP_rcpp_qr   (const arma::mat& Q, const arma::mat& R, const arma::vec& 
       p.fill(0.0);
       p.elem(ind) = - inv_sympd(Hs) * bs;
       
-      int     newind = 0;    // new index to be added or deleted
-      double  alpha = 1;     // Define step size
+      // Reset step size
+      alpha = 1;
       
       // Check convergence.
       
@@ -167,10 +169,10 @@ List mixSQP_rcpp_qr   (const arma::mat& Q, const arma::mat& R, const arma::vec& 
     
     // PERFORM LINE SEARCH
     for (j = 0; j < 9; j++){
-      if (obj[i] + sum(log(L * y + eps) % w) > dot(x-y, g) / (2 * n) ) break;
+      if (obj[i] + sum(log(Q * (R * y) + eps) * w) > dot(x-y, g) / (2 * n) ) break;
       y = (y-x)/2 + x;
     }
-    nls[i] = j + 1;
+    nls[i]  = j + 1;
     
     // UPDATE THE SOLUTION
     x = y;

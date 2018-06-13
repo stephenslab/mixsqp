@@ -125,8 +125,8 @@ List mixSQP_rcpp_noapprox  (const arma::mat& L, const arma::vec& x0, arma::vec w
       p.fill(0.0);
       p.elem(ind) = - inv_sympd(Hs) * bs;
       
-      newind = 0;    // new index to be added or deleted
-      alpha = 1;     // Reset step size
+      // Reset step size
+      alpha = 1;
       
       // Check convergence.
       
