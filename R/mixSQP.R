@@ -3,11 +3,11 @@
 #' (Adaptive SHrinkage, see https://github.com/stephens999/ashr)
 #' When L is a (n) by (m) matrix of nonnegative entries, mixSQP maximizes
 #' the objective function
-#' \deqn{f(x) = \sum_j w_j \log  \sum_{k=1}^m L_{jk} x_{k}}
+#' \deqn{f(x) = \sum_j w_j log  \sum_{k=1}^m L_{jk} x_{k}}
 #' subject to the (unit) probability simplex constraint
 #' \deqn{\sum_k x_k = 1, x_k >= 0}
 #' under additional constraint \eqn{\sum_{j=1} w_j = 1}.
-#' \deqn{\sum_{j=1}^n \log \sum_{k=1}^m L_{jk} x_{k} + \sum_{k=1}^m w_{k} \log x_{k}}
+#' \deqn{\sum_{j=1}^n log \sum_{k=1}^m L_{jk} x_{k} + \sum_{k=1}^m w_{k} log x_{k}}
 #' @param L a matrix of log-likelihoods of mixture components
 #' @param x0 a initial value for the optimization problem
 #' @param optmethod Describe optmethod here.
@@ -21,12 +21,12 @@
 #' mixSQP(L, x0, optmethod, lowrank, lowrankmethod);
 #' 
 #' @useDynLib mixSQP
-#' @importFrom Rcpp evalCpp
+#' @importFrom Rcpp sourceCpp
 #' @export
 mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], optmethod = "Rcpp", lowrank = "none",
                   lowrankmethod = "Julia_lowrankapprox", lowranktol = 1e-10, 
                   convtol = 1e-8, sparsetol = 1e-3, eps = 1e-8,
-                  maxiter = 100, maxqpiter = 100, verbose = T){
+                  maxiter = 50, maxqpiter = 100, verbose = T){
   
   # TO DO : match.arg
   
@@ -88,7 +88,7 @@ mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], optmethod = "Rcpp", lowran
   # show timings
   if (lowrank == "qr")
     cat("A low-rank approximation using",lowrank,"took",t2-t1,"seconds\n");
-  cat("A convex programming took",t3-t2,"seconds");
+  cat("A convex programming took",t3-t2,"seconds\n");
   
   return (out$x)
 }
