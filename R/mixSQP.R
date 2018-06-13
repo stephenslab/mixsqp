@@ -9,6 +9,7 @@
 #' The problem is originally from nonparametric empirical Bayes mixture MLE problem (NPMLE or NPEB).
 #' @param L a matrix of log-likelihoods of mixture components (n by m)
 #' @param x0 a initial value for the optimization problem (default rep(1,m)/m).
+#' @param w a vector of weight on each data point (default rep(1,n)/n).
 #' @param optmethod a programming language used for solving the problem c("Rcpp","R")
 #' @param lowrank a type of low-rank approximation c("none","qr","svd")
 #' @param lowrankmethod determines what library is used for low-rank approximation c("R_matrix","Julia_lowrankapprox")
@@ -30,7 +31,7 @@
 #' @useDynLib mixSQP
 #' @importFrom Rcpp sourceCpp
 #' @export
-mixSQP = function(L, x0 = rep(1,dim(L)[2]), w = rep(1,dim(L)[1]),
+mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], w = rep(1,dim(L)[1])/dim(L)[1],
                   optmethod = "Rcpp", lowrank = "none",
                   lowrankmethod = "Julia_lowrankapprox", lowranktol = 1e-10, 
                   convtol = 1e-8, sparsetol = 1e-3, eps = 1e-6,
