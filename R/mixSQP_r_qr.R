@@ -8,11 +8,6 @@ mixSQP_r_qr   = function(Q, R, x0 = rep(1,dim(L)[2]),
   # Get the number of rows (n) and columns (m) of L
   n = dim(L)[1]; m = dim(L)[2];
   
-  # timer
-  t_gradhess = 0
-  t_activeset = 0
-  t_linesearch = 0
-  
   # start loop
   for (i in 1:maxiter){
     

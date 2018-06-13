@@ -2,7 +2,7 @@
 % Please edit documentation in R/mixSQP.R
 \name{mixSQP}
 \alias{mixSQP}
-\title{mixSQP solves a convex optimization problem originated from ...}
+\title{mixSQP}
 \usage{
 mixSQP(L, x0 = rep(1, dim(L)[2])/dim(L)[2], optmethod = "Rcpp",
   lowrank = "none", lowrankmethod = "Julia_lowrankapprox",
@@ -22,6 +22,7 @@ mixSQP(L, x0 = rep(1, dim(L)[2])/dim(L)[2], optmethod = "Rcpp",
 returns a list of
 }
 \description{
+mixSQP solves a convex optimization problem originated from ASH
 (Adaptive SHrinkage, see https://github.com/stephens999/ashr)
 When L is a (n) by (m) matrix of nonnegative entries, mixSQP maximizes
 the objective function
@@ -29,7 +30,7 @@ the objective function
 subject to the (unit) probability simplex constraint
 \deqn{\sum_k x_k = 1, x_k >= 0}
 under additional constraint \eqn{\sum_{j=1} w_j = 1}.
-\sum_{j=1}^n \log \sum_{k=1}^m L_{jk} x_{k} + \sum_{k=1}^m w_{k} \log x_{k}
+\deqn{\sum_{j=1}^n \log \sum_{k=1}^m L_{jk} x_{k} + \sum_{k=1}^m w_{k} \log x_{k}}
 }
 \examples{
 n = 1e4; m = 1e1;
