@@ -3,29 +3,30 @@
 #' (Adaptive SHrinkage, see https://github.com/stephens999/ashr)
 #' When L is a (n) by (m) matrix of nonnegative entries, mixSQP maximizes
 #' the objective function
-#' \deqn{f(x) = \sum_j w_j log  \sum_{k=1}^m L_{jk} x_{k}}
+#' \deqn{f(x) = \sum_j w_j log (\sum_k L_{jk} x_{k})}
 #' subject to the (unit) probability simplex constraint
-#' \deqn{\sum_k x_k = 1, x_k >= 0}
-#' under additional constraint \eqn{\sum_{j=1} w_j = 1}.
-#' \deqn{\sum_{j=1}^n log \sum_{k=1}^m L_{jk} x_{k} + \sum_{k=1}^m w_{k} log x_{k}}
-#' @param L a matrix of log-likelihoods of mixture components
-#' @param x0 a initial value for the optimization problem
+#' \deqn{\sum_k x_k = 1, x_k \geq 0}
+#' Without loss of generality \eqn{\sum_{j=1} w_j = 1} is required.
+#' 
+#' @param L a matrix of log-likelihoods of mixture components (n by m)
+#' @param x0 a initial value for the optimization problem (default rep(1,m)/m).
+#' @param eps a small constant to safeguard from a numerical issue (default 1e-6).
 #' @param optmethod Describe optmethod here.
 #' @param outputlevel controls a level of output
 #' @return returns a list of 
 #' @examples
 #' n = 1e4; m = 1e1;
 #' L = testdata(n,m) # create some simulated data
-#' x0 = rep(1,m)/m;
+#' x0 = rep(1,m)/m; # initialization
 #' optmethod = "Rcpp"; lowrank = "qr"; lowrankmethod = "R_Matrix";
-#' mixSQP(L, x0, optmethod, lowrank, lowrankmethod);
-#' 
+#' mixSQP(L, x0, optmethod, lowrank, lowrankmethod); # using default tolerances
+#' ## solves ASH problem \sum_j log (\sum_k L_jk x_k) + \sum_k w_k log x_k
 #' @useDynLib mixSQP
 #' @importFrom Rcpp sourceCpp
 #' @export
 mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], optmethod = "Rcpp", lowrank = "none",
                   lowrankmethod = "Julia_lowrankapprox", lowranktol = 1e-10, 
-                  convtol = 1e-8, sparsetol = 1e-3, eps = 1e-8,
+                  convtol = 1e-8, sparsetol = 1e-3, eps = 1e-6,
                   maxiter = 50, maxqpiter = 100, verbose = T){
   
   # TO DO : match.arg
