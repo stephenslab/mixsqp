@@ -97,7 +97,6 @@ List mixSQP_rcpp_qr   (const arma::mat& Q, const arma::mat& R, const arma::vec& 
     obj[i]  = -sum(log(u));
     gmin[i] = 1 + g.min();
     nnz[i]  = sum(t);
-    nqp[i]  = j;
     if (verbose) {
       if (i == 0)
         Rprintf("%4d  %0.5e %+0.2e %4d \n",i+1,obj[i],-gmin[i],nnz[i]);
@@ -116,7 +115,7 @@ List mixSQP_rcpp_qr   (const arma::mat& Q, const arma::mat& R, const arma::vec& 
     y.elem(ind).fill(1/nnz[i]);
     
     // Run active set method to solve the QP subproblem.
-    for (j = 0; j < maxqpiter; j++) {
+    for (j = 0; j < maxqpiter-1; j++) {
       
       // Define the smaller QP subproblem.
       b = H*y + 2*g + 1;
@@ -165,14 +164,14 @@ List mixSQP_rcpp_qr   (const arma::mat& Q, const arma::mat& R, const arma::vec& 
       // Move to the new "inner loop" iterate (y) along the search direction.
       y += alpha * p;
     }
-    nqp[i]  = j+1;
+    nqp[i] = j + 1;
     
     // PERFORM LINE SEARCH
-    for (j = 0; j < 10; j++){
+    for (j = 0; j < 9; j++){
       if (obj[i] + sum(log(Q * (R * y) + eps)) > dot(x-y, g)/2 ) break;
       y = (y-x)/2 + x;
     }
-    nls[i]  = j+1;
+    nls[i]  = j + 1;
     
     // UPDATE THE SOLUTION
     x = y;
