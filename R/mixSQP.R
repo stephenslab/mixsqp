@@ -13,7 +13,7 @@
 #' @param optmethod a programming language used for solving the problem c("Rcpp","R")
 #' @param lowrank a type of low-rank approximation c("none","qr","svd")
 #' @param lowrankmethod determines what library is used for low-rank approximation c("R_matrix","Julia_lowrankapprox")
-#' @param lowranktol a tolerance used for low-rank approximation. for enough accuracy, set at most 1e-3 for "R_matrix" and 1e-10 for "Julia_lowrankapprox"
+#' @param lowranktol a tolerance used for low-rank approximation (default 1e-5): for enough accuracy, set at most 1e-4 for "R_matrix" and 1e-10 for "Julia_lowrankapprox"
 #' @param convtol a convergence tolerance used for algorithm's convergence criterion
 #' @param sparsetol a tolerance used for determining active indices
 #' @param eps a small constant to safeguard from a numerical issue (default 1e-6).
@@ -77,17 +77,17 @@ mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], w = rep(1,dim(L)[1])/dim(L
   
   if (optmethod == "Rcpp"){
     if (lowrank == "none"){
-      out = mixSQP_rcpp_noapprox(L, x0, w, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)$x_sparse
+      out = mixSQP_rcpp_noapprox(L, x0, w, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
     } else if (lowrank == "qr"){
-      out = mixSQP_rcpp_qr(Q, R, x0, w, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)$x_sparse
+      out = mixSQP_rcpp_qr(Q, R, x0, w, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
     } else{
       stop("Error : optmethod:", optmethod," does not support ",lowrank," option.")
     }
   } else if (optmethod == "R"){
     if (lowrank == "none"){
-      out = mixSQP_r_noapprox(L, x0, w, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)$x
+      out = mixSQP_r_noapprox(L, x0, w, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
     } else if (lowrank == "qr"){
-      out = mixSQP_r_qr(Q, R, x0, w, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)$x
+      out = mixSQP_r_qr(Q, R, x0, w, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
     } else{
       stop("Error : optmethod:", optmethod," does not support ",lowrank," option.")
     }
@@ -105,5 +105,5 @@ mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], w = rep(1,dim(L)[1])/dim(L
     cat("A convex programming took",t3-t2,"seconds\n");
   }
   
-  return (out)
+  return (list(x = as.vector(out$x_sparse), niter = out$niter, status = ifelse(out$niter < maxiter, "OPTIMAL", "SUBOPTIMAL")))
 }

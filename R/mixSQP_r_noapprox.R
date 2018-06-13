@@ -1,7 +1,7 @@
 
 mixSQP_r_noapprox = function(L, x0 = rep(1,dim(L)[2]), w = rep(1,dim(L)[1]),
-                             convtol = 1e-8, sparsetol = 1e-3, eps = 1e-8,
-                             maxiter = 100, maxqpiter = 100, verbose = T){
+                             convtol = 1e-8, sparsetol = 1e-3, eps = 1e-6,
+                             maxiter = 50, maxqpiter = 100, verbose = T){
   # make x sum up to 1
   x = x0/sum(x0)
   # make w sum up to 1
@@ -81,5 +81,5 @@ mixSQP_r_noapprox = function(L, x0 = rep(1,dim(L)[2]), w = rep(1,dim(L)[1]),
     x = y;
   }
   x[x < sparsetol] = 0; x = x/sum(x);
-  return(list(x = x))
+  return(list(x_sparse = x, niter = i))
 }

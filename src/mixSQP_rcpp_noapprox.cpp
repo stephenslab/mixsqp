@@ -65,14 +65,14 @@ List mixSQP_rcpp_noapprox  (const arma::mat& L, const arma::vec& x0, arma::vec w
   I *= eps;
   
   // Initialize some loop variables used in the loops below.
-  int j = 0;
+  int i = 0; int j = 0;
   
   // Print the column labels for reporting the algorithm's progress.
   if (verbose)
     Rprintf("iter  objective   -min(g+1) #nnz #nqp #nls\n");
   
   // Repeat until we reach the maximum number of outer loop iterations.
-  for (int i = 0; i < maxiter; i++) {
+  for (i = 0; i < maxiter; i++) {
     
     // COMPUTE GRADIENT AND HESSIAN
     // Compute Z = diag(1/(L*x + eps)) * L.
@@ -179,5 +179,6 @@ List mixSQP_rcpp_noapprox  (const arma::mat& L, const arma::vec& x0, arma::vec w
   arma::vec x_sparse = x;
   x_sparse.elem(find(x < sparsetol)).fill(0);
   
-  return List::create(Named("x") = x/sum(x), Named("x_sparse") = x_sparse/sum(x_sparse));
+  return List::create(Named("x") = x/sum(x), Named("x_sparse") = x_sparse/sum(x_sparse),
+                      Named("niter") = i+1);
 }
