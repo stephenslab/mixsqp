@@ -1,5 +1,5 @@
 
-mixSQP_r_qr   = function(Q, R, x0 = rep(1,dim(L)[2]),
+mixSQP_r_qr   = function(Q, R, x0 = rep(1,dim(L)[2]), w = rep(1,dim(L)[1]),
                          convtol = 1e-8, sparsetol = 1e-3, eps = 1e-8,
                          maxiter = 100, maxqpiter = 100, verbose = T){
   # make x sum up to 1
@@ -14,8 +14,8 @@ mixSQP_r_qr   = function(Q, R, x0 = rep(1,dim(L)[2]),
     # compute objective gradient hessian
     D = as.vector( 1 / (Q %*% (R %*% x) + eps))
     G = (Q * D) %*% R;
-    g = -colSums(G) / n;
-    H = t(G) %*% G / n + eps * diag(m);
+    g = -colSums(G * w) / n;
+    H = t(G) %*% (G * w) / n + eps * diag(m);
     
     # Check convergence of outer loop
     if(min(g + 1) >= -convtol) break;
@@ -71,7 +71,7 @@ mixSQP_r_qr   = function(Q, R, x0 = rep(1,dim(L)[2]),
     # Perform backtracking line search
     for (t in 1:10){
       D_new_inv = as.vector(Q %*% (R %*% y) + eps);
-      if (sum(log(D)) + sum(log(D_new_inv)) > sum((x-y) * g) / 2) break;
+      if (sum(log(D) * w) + sum(log(D_new_inv) * w) > sum((x-y) * g) / (2 * n)) break;
       y = (y-x)/2 + x;
     }
     

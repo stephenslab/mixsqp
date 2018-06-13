@@ -30,7 +30,8 @@
 #' @useDynLib mixSQP
 #' @importFrom Rcpp sourceCpp
 #' @export
-mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], optmethod = "Rcpp", lowrank = "none",
+mixSQP = function(L, x0 = rep(1,dim(L)[2]), w = rep(1,dim(L)[1]),
+                  optmethod = "Rcpp", lowrank = "none",
                   lowrankmethod = "Julia_lowrankapprox", lowranktol = 1e-10, 
                   convtol = 1e-8, sparsetol = 1e-3, eps = 1e-6,
                   maxiter = 50, maxqpiter = 100, verbose = T){
@@ -75,17 +76,17 @@ mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2], optmethod = "Rcpp", lowran
   
   if (optmethod == "Rcpp"){
     if (lowrank == "none"){
-      out = mixSQP_rcpp_noapprox(L, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
+      out = mixSQP_rcpp_noapprox(L, x0, w, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
     } else if (lowrank == "qr"){
-      out = mixSQP_rcpp_qr(Q, R, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
+      out = mixSQP_rcpp_qr(Q, R, x0, w, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
     } else{
       stop("Error : optmethod:", optmethod," does not support ",lowrank," option.")
     }
   } else if (optmethod == "R"){
     if (lowrank == "none"){
-      out = mixSQP_r_noapprox(L, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
+      out = mixSQP_r_noapprox(L, x0, w, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
     } else if (lowrank == "qr"){
-      out = mixSQP_r_qr(Q, R, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
+      out = mixSQP_r_qr(Q, R, x0, w, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
     } else{
       stop("Error : optmethod:", optmethod," does not support ",lowrank," option.")
     }

@@ -12,7 +12,7 @@ using namespace Rcpp;
 // the help and comments accompanying the "mixsqp" function in R.
 // 
 // [[Rcpp::export]]
-List mixSQP_rcpp_qr   (const arma::mat& Q, const arma::mat& R, const arma::vec& x0,
+List mixSQP_rcpp_qr   (const arma::mat& Q, const arma::mat& R, const arma::vec& x0, arma::vec w,
                       double convtol, double sparsetol, double eps,
                       int maxiter, int maxqpiter,
                       bool verbose) {
@@ -51,11 +51,14 @@ List mixSQP_rcpp_qr   (const arma::mat& Q, const arma::mat& R, const arma::vec& 
   arma::mat    H(k,k); // k x k matrix storing Hessian.
   arma::mat    Z(n,r); // n x r matrix storing Z
   arma::mat    I(k,k); // k x k diagonal matrix eps*I.
+  arma::mat    Zw(n,k); // n x k matrix storing  Z * w
   arma::uvec   t(k);   // Temporary unsigned integer vector result of length k.
   
   arma::vec  y(k);   // Vector of length k storing y
   arma::vec  p(k);   // Vector of length k storing y
   arma::vec  b(k);   // Vector of length k storing H*y+2+g+1
+  int          newind = 0;    // new index to be added or deleted
+  double       alpha = 1;     // Define step size
   
   // This is used in computing the Hessian matrix.
   I  = arma::eye(k,k);
@@ -72,20 +75,16 @@ List mixSQP_rcpp_qr   (const arma::mat& Q, const arma::mat& R, const arma::vec& 
   for (int i = 0; i < maxiter; i++) {
     
     // COMPUTE GRADIENT AND HESSIAN
-    // Compute u
-    u = Q * (R * x) + eps;
+    // Compute Z = diag(1/(L*x + eps)) * L.
+    u = L * x + eps;
+    Z = L; Z.each_col() /= u;
+    Zw = Z; Zw.each_col() %= w;
     
-    // Compute Z
-    Z = Q;
-    Z.each_col() /= u;
+    // Compute the gradient g = -Z'*1/n.
+    g = -arma::sum(Zw.t(),1);
     
-    // Compute the gradient g
-    g = -R.t() * arma::sum(Z.t(),1)/n;
-    
-    // Compute the Hessian H
-    Z = Q;
-    Z.each_col() /= u;
-    H = R.t() * (Z.t() * Z) * R/n + I;
+    // Compute the Hessian H = Z'*Z/n + eps*I.
+    H = Z.t() * Zw + I;
     
     // Report on the algorithm's progress. Here we compute: the value
     // of the objective at x (obj); the smallest gradient value
@@ -168,10 +167,10 @@ List mixSQP_rcpp_qr   (const arma::mat& Q, const arma::mat& R, const arma::vec& 
     
     // PERFORM LINE SEARCH
     for (j = 0; j < 9; j++){
-      if (obj[i] + sum(log(Q * (R * y) + eps)) > dot(x-y, g)/2 ) break;
+      if (obj[i] + sum(log(L * y + eps) % w) > dot(x-y, g) / (2 * n) ) break;
       y = (y-x)/2 + x;
     }
-    nls[i]  = j + 1;
+    nls[i] = j + 1;
     
     // UPDATE THE SOLUTION
     x = y;
