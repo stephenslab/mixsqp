@@ -14,24 +14,38 @@ mixSQP(L, x0 = rep(1, dim(L)[2])/dim(L)[2], optmethod = "Rcpp",
 
 \item{x0}{a initial value for the optimization problem (default rep(1,m)/m).}
 
-\item{optmethod}{Describe optmethod here.}
+\item{optmethod}{a programming language used for solving the problem c("Rcpp","R")}
+
+\item{lowrank}{a type of low-rank approximation c("none","qr","svd")}
+
+\item{lowrankmethod}{determines what library is used for low-rank approximation c("R_matrix","Julia_lowrankapprox")}
+
+\item{lowranktol}{a tolerance used for low-rank approximation. for enough accuracy, set at most 1e-3 for "R_matrix" and 1e-10 for "Julia_lowrankapprox"}
+
+\item{convtol}{a convergence tolerance used for algorithm's convergence criterion}
+
+\item{sparsetol}{a tolerance used for determining active indices}
 
 \item{eps}{a small constant to safeguard from a numerical issue (default 1e-6).}
 
-\item{outputlevel}{controls a level of output}
+\item{maxiter}{a maximum number of outer loop iterations, determining how many qp subproblems will be solved at most.}
+
+\item{maxqpiter}{a maximum number of inner loop iterations, determining how many active-set subproblems will be solved at most.}
+
+\item{verbose}{a logical indicating if it shows progress of the algorithm at each iteration}
 }
 \value{
-returns a list of
+returns a solution x (in the current version).
 }
 \description{
-mixSQP solves a convex optimization problem originated from ASH
-(Adaptive SHrinkage, see https://github.com/stephens999/ashr)
+mixSQP solves a convex optimization problem from nonparametric maximum-likelihood estimation of mixture proportions. It implements a sequential quadratic programming with active-set subproblem solvers. For gigantic data, use low-rank approximation to speed up the computation.
 When L is a (n) by (m) matrix of nonnegative entries, mixSQP maximizes
-the objective function
-\deqn{f(x) = \sum_j w_j log (\sum_k L_{jk} x_{k})}
+the following objective function
+\deqn{f(x) = \sum_j w_j log (\sum_k L_jk x_k)}
 subject to the (unit) probability simplex constraint
-\deqn{\sum_k x_k = 1, x_k \geq 0}
-Without loss of generality \eqn{\sum_{j=1} w_j = 1} is required.
+\deqn{\sum_k x_k = 1, x_k \ge 0}
+Without loss of generality \eqn{\sum_j w_j = 1} is required.
+The problem is originally from nonparametric empirical Bayes mixture MLE problem (NPMLE or NPEB).
 }
 \examples{
 n = 1e4; m = 1e1;
