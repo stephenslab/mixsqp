@@ -49,8 +49,8 @@ List mixSQP_rcpp_qr   (const arma::mat& Q, const arma::mat& R, const arma::vec& 
   arma::vec    g(k);   // Vector of length k storing the gradient.
   arma::vec    u(n);   // Vector of length n storing L*x + eps or its log.
   arma::mat    H(k,k); // k x k matrix storing Hessian.
-  arma::mat    Z(n,k); // n x k matrix storing  Z = diag(1/(L*x + eps))*L.
-  arma::mat    Zw(n,k); // n x k matrix storing  Z * w
+  arma::mat    Z(n,r); // n x r matrix storing  Z
+  arma::mat    Zw(n,r); // n x r matrix storing  Z * w
   arma::mat    I(k,k); // k x k diagonal matrix eps*I.
   arma::uvec   t(k);   // Temporary unsigned integer vector result of length k.
   
