@@ -36,7 +36,7 @@ List mixSQP_rcpp_noapprox  (const arma::mat& L, const arma::vec& x0,
   // Initialize storage for the outputs obj, gmin, nnz and nqp.
   arma::vec obj(maxiter);
   arma::vec gmin(maxiter);
-  arma::uvec nnz(maxiter);
+  arma::vec nnz(maxiter);
   arma::uvec nqp(maxiter);
   arma::uvec nls(maxiter);
   
@@ -112,7 +112,6 @@ List mixSQP_rcpp_noapprox  (const arma::mat& L, const arma::vec& x0,
     y.elem(ind).fill(1/nnz[i]);
     
     // Run active set method to solve the QP subproblem.
-    j = 0;
     for (j = 0; j < maxqpiter-1; j++) {
       
       // Define the smaller QP subproblem.
@@ -162,14 +161,14 @@ List mixSQP_rcpp_noapprox  (const arma::mat& L, const arma::vec& x0,
       // Move to the new "inner loop" iterate (y) along the search direction.
       y += alpha * p;
     }
-    nqp[i]  = j+1;
+    nqp[i] = j + 1;
     
     // PERFORM LINE SEARCH
     for (j = 0; j < 9; j++){
       if (obj[i] + sum(log(L * y + eps)) > dot(x-y, g)/2 ) break;
       y = (y-x)/2 + x;
     }
-    nls[i]  = j+1;
+    nls[i] = j + 1;
     
     // UPDATE THE SOLUTION
     x = y;

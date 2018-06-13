@@ -37,7 +37,7 @@ List mixSQP_rcpp_qr   (const arma::mat& Q, const arma::mat& R, const arma::vec& 
   // Initialize storage for the outputs obj, gmin, nnz and nqp.
   arma::vec obj(maxiter);
   arma::vec gmin(maxiter);
-  arma::uvec nnz(maxiter);
+  arma::vec nnz(maxiter);
   arma::uvec nqp(maxiter);
   arma::uvec nls(maxiter);
   
