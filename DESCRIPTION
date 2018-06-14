@@ -1,7 +1,7 @@
 Encoding: UTF-8
 Package: mixSQP
 Type: Package
-Version: 0.1-1
+Version: 0.1-2
 Date: 2018-06-14
 Title: Sequential Quadratic Programming for Fast Maximum-Likelihood
     Estimation of Mixture Proportions
