@@ -6,12 +6,13 @@ Date: 2018-06-14
 Title: Sequential Quadratic Programming for Fast Maximum-Likelihood
     Estimation of Mixture Proportions
 Authors@R: c(person("Youngseok","Kim",role=c("aut","cre"),
-                    email="jnovembre@uchicago.edu"),
+                    email="youngseok@uchicago.edu"),
              person("Peter","Carbonetto",role="aut"),
              person("Mihai","Anitescu",role="aut"),
              person("Matthew","Stephens",role="aut"))
 URL: https://github.com/youngseok-kim/mixsqp
 BugReports: https://github.com/youngseok-kim/mixsqp/issues
+SystemRequirements: C++11
 Depends: R (>= 3.4.0)
 Description: The 'mixSQP' package provides algorithms based on
     sequential quadratic programming (SQP) for maximum likelihood
@@ -25,5 +26,6 @@ Imports: Rcpp (>= 0.12.15)
 LinkingTo:
     Rcpp,
     RcppArmadillo
+LazyData: true
 NeedsCompilation: yes
 RoxygenNote: 6.0.1.9000

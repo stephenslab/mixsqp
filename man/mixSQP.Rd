@@ -8,53 +8,71 @@ mixSQP(L, x0 = rep(1, dim(L)[2])/dim(L)[2], w = rep(1, dim(L)[1])/dim(L)[1],
   optmethod = "Rcpp", lowrank = "none",
   lowrankmethod = "Julia_lowrankapprox", lowranktol = 1e-10,
   convtol = 1e-08, sparsetol = 0.001, eps = 1e-06, maxiter = 50,
-  maxqpiter = 100, verbose = T)
+  maxqpiter = 100, verbose = TRUE)
 }
 \arguments{
-\item{L}{a matrix of log-likelihoods of mixture components (n by m)}
+\item{L}{A matrix of log-likelihoods of mixture components (n by m).}
 
-\item{x0}{a initial value for the optimization problem (default rep(1,m)/m).}
+\item{x0}{A initial value for the optimization problem (default rep(1,m)/m).}
 
-\item{w}{a vector of weight on each data point (default rep(1,n)/n).}
+\item{w}{A vector of weight on each data point (default rep(1,n)/n).}
 
-\item{optmethod}{a programming language used for solving the problem c("Rcpp","R")}
+\item{optmethod}{A programming language used for solving the
+problem c("Rcpp","R")}
 
-\item{lowrank}{a type of low-rank approximation c("none","qr","svd")}
+\item{lowrank}{A type of low-rank approximation c("none","qr","svd")}
 
-\item{lowrankmethod}{determines what library is used for low-rank approximation c("R_matrix","Julia_lowrankapprox")}
+\item{lowrankmethod}{determines what library is used for low-rank
+approximation c("R_matrix", "Julia_lowrankapprox")}
 
-\item{lowranktol}{a tolerance used for low-rank approximation (default 1e-5): for enough accuracy, set at most 1e-4 for "R_matrix" and 1e-10 for "Julia_lowrankapprox"}
+\item{lowranktol}{A tolerance used for low-rank approximation
+(default 1e-5): for enough accuracy, set at most 1e-4 for
+"R_matrix" and 1e-10 for "Julia_lowrankapprox"}
 
-\item{convtol}{a convergence tolerance used for algorithm's convergence criterion}
+\item{convtol}{A convergence tolerance used for algorithm's
+convergence criterion.}
 
-\item{sparsetol}{a tolerance used for determining active indices}
+\item{sparsetol}{A tolerance used for determining active indices.}
 
-\item{eps}{a small constant to safeguard from a numerical issue (default 1e-6).}
+\item{eps}{A small constant to safeguard from a numerical issue
+(default 1e-6).}
 
-\item{maxiter}{a maximum number of outer loop iterations, determining how many qp subproblems will be solved at most.}
+\item{maxiter}{A maximum number of outer loop iterations,
+determining how many qp subproblems will be solved at most.}
 
-\item{maxqpiter}{a maximum number of inner loop iterations, determining how many active-set subproblems will be solved at most.}
+\item{maxqpiter}{A maximum number of inner loop iterations,
+determining how many active-set subproblems will be solved at most.}
 
-\item{verbose}{a logical indicating if it shows progress of the algorithm at each iteration}
+\item{verbose}{A logical indicating if it shows progress of the
+algorithm at each iteration.}
 }
 \value{
-returns a solution x (in the current version).
+Returns a solution x (in the current version).
 }
 \description{
-mixSQP solves a convex optimization problem from nonparametric maximum-likelihood estimation of mixture proportions. It implements a sequential quadratic programming with active-set subproblem solvers. For gigantic data, use low-rank approximation to speed up the computation.
-When L is a (n) by (m) matrix of nonnegative entries, mixSQP maximizes
-the following objective function
-\deqn{f(x) = \sum_j w_j log (\sum_k L_jk x_k)}
-subject to the (unit) probability simplex constraint
-\deqn{\sum_k x_k = 1, x_k \ge 0}
-Without loss of generality \eqn{\sum_j w_j = 1} is required.
-The problem is originally from nonparametric empirical Bayes mixture MLE problem (NPMLE or NPEB).
+mixSQP solves a convex optimization problem from
+nonparametric maximum-likelihood estimation of mixture
+proportions. It implements a sequential quadratic programming with
+active-set subproblem solvers. For gigantic data, use low-rank
+approximation to speed up the computation.
+
+When L is a (n) by (m) matrix of nonnegative entries, mixSQP
+maximizes the following objective function \deqn{f(x) = \sum_j w_j
+log (\sum_k L_jk x_k)} subject to the (unit) probability simplex
+constraint \deqn{\sum_k x_k = 1, x_k \ge 0} Without loss of
+generality \eqn{\sum_j w_j = 1} is required.  The problem is
+originally from nonparametric empirical Bayes mixture MLE problem
+(NPMLE or NPEB).
 }
 \examples{
-n = 1e5; m = 2e1;
-L = testdata(n,m) # create some simulated data
-x0 = rep(1,m)/m; # initialization
-w = rep(1,n)/n; # weight
-optmethod = "Rcpp"; lowrank = "qr"; lowrankmethod = "R_Matrix";
-mixSQP(L, x0, optmethod, lowrank, lowrankmethod); # using default tolerances
+n  <- 1e5
+m  <- 20
+w  <- rep(1,n)/n; # weights
+L  <- testdata(n,m) # Create some simulated data
+x0 <- rep(1,m)/m # initialization
+optmethod <- "Rcpp"
+lowrank   <- "qr"
+lowrankmethod <- "R_Matrix"
+mixSQP(L,x0,w,optmethod,lowrank,lowrankmethod)
+
 }
