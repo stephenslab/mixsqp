@@ -51,10 +51,10 @@ Without loss of generality \eqn{\sum_j w_j = 1} is required.
 The problem is originally from nonparametric empirical Bayes mixture MLE problem (NPMLE or NPEB).
 }
 \examples{
-n = 1e4; m = 1e1;
+n = 1e5; m = 2e1;
 L = testdata(n,m) # create some simulated data
 x0 = rep(1,m)/m; # initialization
+w = rep(1,n)/n; # weight
 optmethod = "Rcpp"; lowrank = "qr"; lowrankmethod = "R_Matrix";
 mixSQP(L, x0, optmethod, lowrank, lowrankmethod); # using default tolerances
-## solves ASH problem \\sum_j log (\\sum_k L_jk x_k) + \\sum_k w_k log x_k
 }
