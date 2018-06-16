@@ -13,7 +13,7 @@ Authors@R: c(person("Youngseok","Kim",role=c("aut","cre"),
 URL: https://github.com/youngseok-kim/mixsqp
 BugReports: https://github.com/youngseok-kim/mixsqp/issues
 SystemRequirements: C++11
-Depends: R (>= 3.4.0)
+Depends: R (>= 3.1.0)
 Description: The 'mixSQP' package provides algorithms based on
     sequential quadratic programming (SQP) for maximum likelihood
     estimation of the mixture proportions in a finite mixture model
