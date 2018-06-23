@@ -5,29 +5,15 @@
 \title{mixSQP}
 \usage{
 mixSQP(L, x0 = rep(1, dim(L)[2])/dim(L)[2], w = rep(1, dim(L)[1])/dim(L)[1],
-  optmethod = "Rcpp", lowrank = "none",
-  lowrankmethod = "Julia_lowrankapprox", lowranktol = 1e-10,
   convtol = 1e-08, sparsetol = 0.001, eps = 1e-06, maxiter = 50,
   maxqpiter = 100, verbose = TRUE)
 }
 \arguments{
-\item{L}{A matrix of log-likelihoods of mixture components (n by m).}
+\item{L}{A matrix of nonnegative entries of size n by m}
 
 \item{x0}{A initial value for the optimization problem (default rep(1,m)/m).}
 
 \item{w}{A vector of weight on each data point (default rep(1,n)/n).}
-
-\item{optmethod}{A programming language used for solving the
-problem c("Rcpp","R")}
-
-\item{lowrank}{A type of low-rank approximation c("none","qr","svd")}
-
-\item{lowrankmethod}{determines what library is used for low-rank
-approximation c("R_matrix", "Julia_lowrankapprox")}
-
-\item{lowranktol}{A tolerance used for low-rank approximation
-(default 1e-5): for enough accuracy, set at most 1e-4 for
-"R_matrix" and 1e-10 for "Julia_lowrankapprox"}
 
 \item{convtol}{A convergence tolerance used for algorithm's
 convergence criterion.}
@@ -50,9 +36,9 @@ algorithm at each iteration.}
 Returns a solution x (in the current version).
 }
 \description{
-mixSQP solves a convex optimization problem from
-nonparametric maximum-likelihood estimation of mixture
-proportions. It implements a sequential quadratic programming with
+mixSQP solves a convex optimization problem in
+https://arxiv.org/abs/1806.01412.
+It implements a sequential quadratic programming with
 active-set subproblem solvers. For gigantic data, use low-rank
 approximation to speed up the computation.
 
@@ -60,19 +46,14 @@ When L is a (n) by (m) matrix of nonnegative entries, mixSQP
 maximizes the following objective function \deqn{f(x) = \sum_j w_j
 log (\sum_k L_jk x_k)} subject to the (unit) probability simplex
 constraint \deqn{\sum_k x_k = 1, x_k \ge 0} Without loss of
-generality \eqn{\sum_j w_j = 1} is required.  The problem is
-originally from nonparametric empirical Bayes mixture MLE problem
-(NPMLE or NPEB).
+generality \eqn{\sum_j w_j = 1} is required.
 }
 \examples{
 n  <- 1e5
 m  <- 20
 w  <- rep(1,n)/n; # weights
-L  <- testdata(n,m) # Create some simulated data
+L  <- testdata(n,m, mix_type = "mix_n") # Create some simulated data
 x0 <- rep(1,m)/m # initialization
-optmethod <- "Rcpp"
-lowrank   <- "qr"
-lowrankmethod <- "R_Matrix"
-mixSQP(L,x0,w,optmethod,lowrank,lowrankmethod)
+out <- mixSQP(L,x0,w)
 
 }

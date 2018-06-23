@@ -12,7 +12,7 @@ using namespace Rcpp;
 // the help and comments accompanying the "mixsqp" function in R.
 // 
 // [[Rcpp::export]]
-List mixSQP_rcpp_noapprox  (const arma::mat& L, const arma::vec& x0, arma::vec w,
+List mixSQP_rcpp           (const arma::mat& L, const arma::vec& x0, arma::vec w,
                            double convtol, double sparsetol, double eps,
                            int maxiter, int maxqpiter,
                            bool verbose) {
@@ -176,9 +176,6 @@ List mixSQP_rcpp_noapprox  (const arma::mat& L, const arma::vec& x0, arma::vec w
     x = y;
   }
   
-  arma::vec x_sparse = x;
-  x_sparse.elem(find(x < sparsetol)).fill(0);
   
-  return List::create(Named("x") = x/sum(x), Named("x_sparse") = x_sparse/sum(x_sparse),
-                      Named("niter") = i+1);
+  return List::create(Named("x") = x/sum(x), Named("niter") = i+1);
 }
