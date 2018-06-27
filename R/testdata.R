@@ -10,6 +10,10 @@
 #' n  <- 1e5
 #' m  <- 20
 #' L  <- testdata(n,m, mix_type = "mix_n") # Create some simulated data
+#'
+#' @importFrom stats rnorm
+#' @importFrom stats dnorm
+#' @importFrom stats rt
 #' 
 #' @export
 testdata <- function(n,m, mix_type = "mix_n"){
