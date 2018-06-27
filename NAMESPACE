@@ -3,4 +3,7 @@
 export(mixSQP)
 export(testdata)
 importFrom(Rcpp,evalCpp)
+importFrom(stats,dnorm)
+importFrom(stats,rnorm)
+importFrom(stats,rt)
 useDynLib(mixSQP)
