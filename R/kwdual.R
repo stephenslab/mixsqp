@@ -4,7 +4,9 @@
 #'   solves the dual problem formulation using the MOSEK interior-point
 #'   solver (see text from manuscript).
 #'
-#' @param L Matrix specifying the optimization problem to be solved.
+#' @param L Matrix specifying the optimization problem to be
+#'   solved. It should be a numeric matrix with positive entries, and
+#'   ideally double-precision.
 #'
 #' @param ... Additional optimization parameters passed to MOSEK. See
 #'   \code{\link[REBayes]{KWDual}} for details.
@@ -29,9 +31,14 @@ mixKWDual <- function (L, ...)  {
   # two columns, and all the entries should be positive.
   if (!is.matrix(L))
     stop("Argument \"L\" should be a matrix; see \"help(matrix)\"")
-  if (!(ncol(L) >= 2 & all(dat$L > 0)))
-    stop(paste("Input matrix \"L\" should have at least columns,",
+  if (!(ncol(L) >= 2 & is.numeric(L) & all(dat$L > 0)))
+    stop(paste("Input \"L\" should be a numeric matrix with >= 2 columns,",
                "and all its entries should be positive"))
+
+  # If necessary, coerce the likelihood matrix to be in double
+  # precision.
+  if (storage.mode(L) != "double")
+    storage.mode(L) <- "double"
 
   # Get the number of rows (n) and columns (m) of the matrix L.
   n <- nrow(L)
