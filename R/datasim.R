@@ -17,7 +17,7 @@
 #'   univariate normals with mean zero and standard deviation 1, 3 and
 #'   6. If \code{simtype = "nt"}, simulate from a mixture of three
 #'   univariate normals (with zero mean and standard deviations 1, 3 and
-#'   5), and a t-distribution with 2 degrees of freedom.}
+#'   5), and a t-distribution with 2 degrees of freedom.
 #'
 #' @param normalize.rows If \code{normalize.rows = TRUE}, normalize
 #'   the rows of the likelihood matrix so that the largest entry in each
@@ -38,8 +38,11 @@
 #'   s[j]^2}.}
 #' 
 #' @examples
-#' # To do: explain here what this does.
-#' L <- simulatemixdata(10000,20)
+#' 
+#' # Generate the likelihood matrix for a data set with 1,000 samples
+#' # and a nonparametric Empirical Bayes model with 20 mixture
+#' # components.
+#' dat <- simulatemixdata(1000,20)
 #'
 #' @importFrom stats rnorm
 #' @importFrom stats dnorm
