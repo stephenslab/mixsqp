@@ -57,10 +57,9 @@ simulatemixdata <- function (n, m, simtype = c("n","nt"),
 
   # (1) CHECK INPUTS
   # ----------------
-    
   # Input argument n should be at least 1, and m should be at least 2.
   if (!(is.numeric(n) & n >= 1  & length(n) == 1))
-    stop("Arguments \"n\" should be at least 1")
+    stop("Argument \"n\" should be at least 1")
   if (!(is.numeric(m) & m >= 2 & length(m) == 1))
     stop("Argument \"m\" should be at least 2")
   n <- round(n)
