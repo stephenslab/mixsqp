@@ -1,4 +1,26 @@
-# TO DO: Add roxygen2 docs here.
+#' @title Add title here.
+#'
+#' @description Add more detailed description here. Explain that this
+#'   solves the dual problem formulation using the MOSEK interior-point
+#'   solver (see text from manuscript).
+#'
+#' @param L Matrix specifying the optimization problem to be solved.
+#'
+#' @param ... Additional optimization parameters passed to MOSEK. See
+#'   \code{\link[REBayes]{KWDual}} for details.
+#'
+#' @return \code{mixKWDual} returns a list with two components:
+#'
+#' \item{x}{The solution to the optimization problems provided by 
+#'   MOSEK.}
+#'
+#' \item{status}{The MOSEK return status.}
+#' 
+#' @examples
+#' # Add example here.
+#'
+#' @export
+#' 
 mixKWDual <- function (L, ...)  {
 
   # CHECK INPUTS
@@ -11,16 +33,16 @@ mixKWDual <- function (L, ...)  {
     stop(paste("Input matrix \"L\" should have at least columns,",
                "and all its entries should be positive"))
 
-  # Get the number of rows (n) and columns of the matrix L.
+  # Get the number of rows (n) and columns (m) of the matrix L.
   n <- nrow(L)
   m <- ncol(L)
   
-  # SOLVE OPTIMIZATION PROBLEM
-  # --------------------------
+  # SOLVE OPTIMIZATION PROBLEM USING MOSEK
+  # --------------------------------------
   # Check that the REBayes package is available.
   if(!requireNamespace("REBayes",quietly = TRUE))
     stop("mixKWDual requires package REBayes")
-  out <- KWDual(L,rep(1,m),rep(1,n)/n,...)
+  out <- REBayes::KWDual(L,rep(1,m),rep(1,n)/n,...)
 
   # Retrieve the dual solution, which is the solution we are
   # interested in.

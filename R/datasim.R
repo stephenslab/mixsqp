@@ -25,7 +25,8 @@
 #'   should be invariant to this normalization, and can improve the
 #'   numerical stability of the optimization.
 #' 
-#' @return A list with three list elements:
+#' @return \code{simulatemixdata} returns a list with three list
+#' elements:
 #'
 #' \item{x}{The vector of simulated random numbers (it has length n).}
 #'

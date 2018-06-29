@@ -28,7 +28,8 @@ should be invariant to this normalization, and can improve the
 numerical stability of the optimization.}
 }
 \value{
-A list with three list elements:
+\code{simulatemixdata} returns a list with three list
+elements:
 
 \item{x}{The vector of simulated random numbers (it has length n).}
 
