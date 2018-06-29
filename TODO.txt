@@ -5,3 +5,5 @@ to do
   likelihood matrix is normalized vs. unnormalized.
 
 + Add test for case when m = 2.
+
++ Add help(mixsqp).
