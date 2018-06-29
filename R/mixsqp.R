@@ -1,10 +1,10 @@
 #' @title mixSQP
 #' 
 #' @description mixSQP solves a convex optimization problem in
-#' https://arxiv.org/abs/1806.01412.
-#' It implements a sequential quadratic programming with
-#' active-set subproblem solvers. For gigantic data, use low-rank
-#' approximation to speed up the computation.
+#'   https://arxiv.org/abs/1806.01412.
+#'   It implements a sequential quadratic programming with
+#'   active-set subproblem solvers. For gigantic data, use low-rank
+#'   approximation to speed up the computation.
 #' 
 #' When L is a (n) by (m) matrix of nonnegative entries, mixSQP
 #' maximizes the following objective function \deqn{f(x) = \sum_j w_j
@@ -12,8 +12,10 @@
 #' constraint \deqn{\sum_k x_k = 1, x_k \ge 0} Without loss of
 #' generality \eqn{\sum_j w_j = 1} is required.
 #' 
-#' @param L A matrix of nonnegative entries of size n by m
-#' 
+#' @param L Matrix specifying the optimization problem to be
+#'   solved. It should be a numeric matrix with positive entries, and
+#'   ideally double-precision.
+#'
 #' @param x0 A initial value for the optimization problem (default rep(1,m)/m).
 #' 
 #' @param w A vector of weight on each data point (default rep(1,n)/n).
@@ -50,10 +52,33 @@
 #' @importFrom Rcpp evalCpp
 #' 
 #' @export
-mixSQP = function(L, x0 = rep(1,dim(L)[2])/dim(L)[2],
-                  w = rep(1,dim(L)[1])/dim(L)[1],
+#' 
+mixSQP = function(L, x0 = rep(1/ncol(L),ncol(L)),
+                  w = rep(1/nrow(L),nrow(L)),
                   convtol = 1e-8, sparsetol = 1e-3, eps = 1e-6,
-                  maxiter = 50, maxqpiter = 100, verbose = TRUE){
-  out = mixSQP_rcpp(L, x0, w, convtol, sparsetol, eps, maxiter, maxqpiter, verbose)
+                  maxiter = 1000, maxqpiter = 100, verbose = TRUE){
+
+  # (1) CHECK INPUTS
+  # ----------------
+  # The likelihood matrix should be a numeric matrix with at least
+  # two columns, and all the entries should be positive.
+  if (!is.matrix(L))
+    stop("Argument \"L\" should be a matrix; see \"help(matrix)\"")
+  if (!(ncol(L) >= 2 & is.numeric(L) & all(dat$L > 0)))
+    stop(paste("Input \"L\" should be a numeric matrix with >= 2 columns,",
+               "and all its entries should be positive"))
+
+  # If necessary, coerce the likelihood matrix to be in double
+  # precision.
+  if (storage.mode(L) != "double")
+    storage.mode(L) <- "double"
+
+  # Get the number of rows (n) and columns (m) of the matrix L.
+  n <- nrow(L)
+  m <- ncol(L)
+
+  # Input x0 should be a vector of 
+    
+  out = mixSQP_rcpp(L,x0,w,convtol,sparsetol,eps, maxiter, maxqpiter, verbose)
   return(out)
 }

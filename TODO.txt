@@ -6,4 +6,6 @@ to do
 
 + Add test for case when m = 2.
 
++ Add test for case when samples have weights.
+
 + Add help(mixsqp).
