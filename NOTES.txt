@@ -1,4 +1,3 @@
-* Provide documentation for testdata funtion.
 * Add function to run REBayes::KWDual.
 * Add importFrom statements (see mashr package for example).
 * Don't include require() or library() statements inside your functions.

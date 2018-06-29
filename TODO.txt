@@ -1,0 +1,9 @@
+to do
+=====
+
++ Add a text to make sure that the solution is the same when the
+  likelihood matrix is normalized vs. unnormalized.
+
++ Add a test for simulatemixdata.
+
++ Add test for case when m = 2.
