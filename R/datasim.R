@@ -9,7 +9,8 @@
 #'   generate and, consequently, the number of rows of the likelihood
 #'   matrix L.
 #' 
-#' @param m Positiver integer specifying the number of mixture components.
+#' @param m Positive integer specifying the number of mixture
+#'   components.
 #'
 #' @param simtype The type of data to simulate. If \code{simtype =
 #'   "n"}, simulate \code{n} random numbers from a mixture of three
@@ -18,12 +19,27 @@
 #'   univariate normals (with zero mean and standard deviations 1, 3 and
 #'   5), and a t-distribution with 2 degrees of freedom.}
 #'
-#' @return 
+#' @param normalize.rows If \code{normalize.rows = TRUE}, normalize
+#'   the rows of the likelihood matrix so that the largest entry in each
+#'   row is 1. The maximum-likelihood estimate of the mixture weights
+#'   should be invariant to this normalization, and can improve the
+#'   numerical stability of the optimization.
+#' 
+#' @return A list with three list elements:
+#'
+#' \item{x}{The vector of simulated random numbers (it has length n).}
+#'
+#' \item{s}{The standard deviations of the mixture components in the
+#'   mixture-of-normals prior.}
+#'
+#' \item{L}{The n x m conditional likelihood matrix, in which
+#'   individual entries (i,j) of the likelihood matrix are given by the
+#'   normal density function with mean zero and variance \code{1 +
+#'   s[j]^2}.}
 #' 
 #' @examples
-#' n  <- 1e5
-#' m  <- 20
-#' L  <- testdata(n,m, mix_type = "mix_n") # Create some simulated data
+#' # To do: explain here what this does.
+#' L <- simulatemixdata(10000,20)
 #'
 #' @importFrom stats rnorm
 #' @importFrom stats dnorm
@@ -31,50 +47,66 @@
 #' 
 #' @export
 #' 
-simulatemixdata <- function (n, m, simtype = c("n","nt"), se = 1,
+simulatemixdata <- function (n, m, simtype = c("n","nt"), 
                              normalize.rows = TRUE) {
 
   # (1) CHECK INPUTS
   # ----------------
-  # Input arguments n and m must be positive integers.
-  if (n <= 0 | m <= 0)
-    stop("Arguments \"n\" and \"m\" must be positive integers")
+  # Input arguments n and m must be positive scalars.
+  if (!(is.numeric(n) & is.numeric(m) & n > 0 & m > 0 &
+        length(n) == 1 & length(m) == 1))
+    stop("Arguments \"n\" and \"m\" should be positive scalars")
   n <- round(n)
   m <- round(m)
 
   # Get the choice of data to simulate.
   simtype <- match.arg(simtype)
 
-  # TO DO: Check and process se.
-
-  # TO DO: Check and process normalize.rows.
+  # Input argument normalize.rows must be TRUE or FALSE.
+  if (!(is.logical(normalize.rows) & length(normalize.rows) == 1))
+    stop("Argument \"normalize.rows\" should be TRUE or FALSE")
   
   # (2) SIMULATE DATA FROM MIXTURE
   # ------------------------------
-  # 
+  # Argument "simtype" controls how the random numbers are generated.
   k <- floor(n/4)
   if (simtype == "n")
-    x = c(rnorm(n - 2*k),3*rnorm(k),6*rnorm(k))
+    x <- c(rnorm(n - 2*k),3*rnorm(k),6*rnorm(k))
   else if (simtype == "nt")
-    x = c(rnorm(n - 3*k),3*rnorm(k),5*rnorm(k),rt(k,df = 2))
+    x <- c(rnorm(n - 3*k),3*rnorm(k),5*rnorm(k),rt(k,df = 2))
 
   # (3) SELECT VARIANCES FOR MIXTURE MODEL
   # --------------------------------------
-  # TO DO: Add more details here.
-  smin = 1/10;
+  # Try to select a reasonable set of standard deviations that should
+  # be used for the mixture model based on the values of x. This is
+  # code is based on the autoselect.mixsd function from the ashr
+  # package.
+  smin <- 1/10
   if (all(x^2 < 1))
-    smax = 1
-  else{
-    smax = min(sqrt(max(x^2 - 1)), 500); 
-  }
-  
-  
-  grid = c(0,10^seq(log10(smin),log10(smax),length = m-1))
+    smax <- 1
+  else
+    smax <- 2*sqrt(max(x^2 - 1))
+  s <- c(0,logspace(smin,smax,m - 1))
+
+  # (4) CREATE LIKELIHOOD MATRIX
+  # ----------------------------
+  # Entry (i,j) of the conditional likelihood matrix is equal to
+  # N(0,se[i]^2 + s[j]^2), the normal density with zero mean and
+  # variance se[i]^2 + s[j]^2, where se[i] is the standard error 
+  # assigned to sample i. Here, all s.e.'s are assumed to be 1.
   L <- matrix(0,n,m)
-  
   for (j in 1:m)
-    L[,j] <- dnorm(x,sd = sqrt(1 + grid[j]^2))
-  
-  L = L/apply(L,1,max)
-  return(L)
+    L[,j] <- dnorm(x,sd = sqrt(1 + s[j]^2))
+
+  # (5) NORMALIZE LIKELIHOOD MATRIX
+  # -------------------------------
+  # Normalize the rows of the likelihood matrix so that the largest
+  # entry in each row is 1.
+  if (normalize.rows)
+    L <- L / apply(L,1,max)
+
+  # Return the simulated data points (x), the standard deviations
+  # specifying the mixture prior (s), and the conditional likelihood
+  # matrix (L).
+  return(list(x = x,s = s,L = L))
 }
