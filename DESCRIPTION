@@ -25,6 +25,8 @@ License: MIT + file LICENSE
 Imports:
     stats,
     Rcpp (>= 0.12.15)
+Suggests:
+    REBayes
 LinkingTo:
     Rcpp,
     RcppArmadillo
