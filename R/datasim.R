@@ -9,7 +9,7 @@
 #'   generate and, consequently, the number of rows of the likelihood
 #'   matrix L.
 #' 
-#' @param m Positive integer specifying the number of mixture
+#' @param m Integer 2 or greater specifying the number of mixture
 #'   components.
 #'
 #' @param simtype The type of data to simulate. If \code{simtype =
@@ -30,7 +30,9 @@
 #' \item{x}{The vector of simulated random numbers (it has length n).}
 #'
 #' \item{s}{The standard deviations of the mixture components in the
-#'   mixture-of-normals prior.}
+#'   mixture-of-normals prior. The rules for selecting the standard
+#'   deviations are based on the \code{autoselect.mixsd} function from
+#'   the \code{ashr} package.}
 #'
 #' \item{L}{The n x m conditional likelihood matrix, in which
 #'   individual entries (i,j) of the likelihood matrix are given by the
@@ -55,10 +57,12 @@ simulatemixdata <- function (n, m, simtype = c("n","nt"),
 
   # (1) CHECK INPUTS
   # ----------------
-  # Input arguments n and m must be positive scalars.
-  if (!(is.numeric(n) & is.numeric(m) & n > 0 & m > 0 &
-        length(n) == 1 & length(m) == 1))
-    stop("Arguments \"n\" and \"m\" should be positive scalars")
+    
+  # Input argument n should be at least 1, and m should be at least 2.
+  if (!(is.numeric(n) & n >= 1  & length(n) == 1))
+    stop("Arguments \"n\" should be at least 1")
+  if (!(is.numeric(m) & m >= 2 & length(m) == 1))
+    stop("Argument \"m\" should be at least 2")
   n <- round(n)
   m <- round(m)
 
