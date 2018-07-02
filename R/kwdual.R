@@ -6,8 +6,14 @@
 #'
 #' @param L Matrix specifying the optimization problem to be
 #'   solved. It should be a numeric matrix with positive entries, and
-#'   ideally double-precision.
+#'   ideally double-precision. 
 #'
+#' @param w A numeric vector, with one entry for each row of \code{L},
+#'   specifying the "weights" associated with the rows of matrix
+#'   \code{L}. All weights must be positive. It is assumed the weights
+#'   sum to 1; if not, they will automatically be normalized to sum to
+#'   1. By default, all rows of \code{L} are assigned the same weight.
+#' 
 #' @param ... Additional optimization parameters passed to MOSEK. See
 #'   \code{\link[REBayes]{KWDual}} for details.
 #'
@@ -23,7 +29,7 @@
 #'
 #' @export
 #' 
-mixKWDual <- function (L, ...)  {
+mixKWDual <- function (L, w = rep(1,nrow(L)), ...)  {
 
   # CHECK INPUTS
   # ------------
@@ -43,13 +49,25 @@ mixKWDual <- function (L, ...)  {
   # Get the number of rows (n) and columns (m) of the matrix L.
   n <- nrow(L)
   m <- ncol(L)
+
+  # The weights should be a numeric vector with all positive entries,
+  # in which the length is equal to the number of rows of L. Further,
+  # the weights should sum to 1.
+  if (!(is.vector(w) & is.numeric(w)))
+    stop("Argument \"w\" should be a numeric vector")
+  if (!(length(w) == n & all(w > 0)))
+    stop(paste("Input vector \"w\" should contain only positive values,",
+               "with one entry per row of L"))
+  storage.mode(w) <- "double"
+  w <- w/sum(w)
   
   # SOLVE OPTIMIZATION PROBLEM USING MOSEK
   # --------------------------------------
   # Check that the REBayes package is available.
   if(!requireNamespace("REBayes",quietly = TRUE))
     stop("mixKWDual requires package REBayes")
-  out <- REBayes::KWDual(L,rep(1,m),rep(1,n)/n,...)
+  d   <- rep(1,m)
+  out <- REBayes::KWDual(L,d,w,...)
 
   # Retrieve the dual solution, which is the solution we are
   # interested in.
