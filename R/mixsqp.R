@@ -16,9 +16,17 @@
 #'   solved. It should be a numeric matrix with positive entries, and
 #'   ideally double-precision.
 #'
-#' @param x0 A initial value for the optimization problem (default rep(1,m)/m).
+#' @param w A numeric vector, with one entry for each row of \code{L},
+#'   specifying the "weights" associated with the rows of \code{L}. All
+#'   weights must be positive. It is assumed the weights sum to 1; if
+#'   not, they will automatically be normalized to sum to 1. By default,
+#'   all rows of \code{L} are assigned the same weight.
 #' 
-#' @param w A vector of weight on each data point (default rep(1,n)/n).
+#' @param x0 An initial estimate of the solution to the optimization
+#'   problem. It should contain only non-negative values, and the
+#'   entries should sum to 1; if not, the vector is automatically
+#'   normalized to sum to 1. By default, \code{x0} is the vector with
+#'   all equal entries.
 #' 
 #' @param convtol A convergence tolerance used for algorithm's
 #'   convergence criterion.
@@ -77,14 +85,16 @@ mixSQP = function(L, x0 = rep(1,ncol(L)), w = rep(1,nrow(L)),
   # the weights should sum to 1.
   w <- verify.weights(L,w)
 
-  # Verify the initial estimate of the solution.
+  # The initial estimate of the solution should be a numeric vector
+  # with all non-negative entries, in which the length is equal to the
+  # number fo columns of L. Further, the entries should sum to 1.
   if (!(is.vector(x0) & is.numeric(x0)))
     stop("Argument \"x0\" should be a numeric vector")
-  if (!(length(x0) == m & all(x0 > 0)))
-    stop(paste("Input vector \"x0\" should contain only positive values,",
-               "with one entry per column of L"))
+  if (!(length(x0) == m & all(x0 >= 0)))
+    stop(paste("Input vector \"x0\" should contain only non-negative",
+               "values, with one entry per column of L"))
   storage.mode(x0) <- "double"
-  x <- x0/sum(x0)
+  x0 <- x0/sum(x0)
 
   # TO DO: Check remaining input arguments.
 

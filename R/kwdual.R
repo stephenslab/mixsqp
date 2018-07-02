@@ -12,7 +12,7 @@
 #'   specifying the "weights" associated with the rows of \code{L}. All
 #'   weights must be positive. It is assumed the weights sum to 1; if
 #'   not, they will automatically be normalized to sum to 1. By default,
-#'   all rows of \code{L} are assigned the same weight.x
+#'   all rows of \code{L} are assigned the same weight.
 #' 
 #' @param ... Additional optimization parameters passed to MOSEK. See
 #'   \code{\link[REBayes]{KWDual}} for details.
