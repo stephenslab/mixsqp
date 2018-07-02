@@ -61,6 +61,8 @@ mixKWDual <- function (L, w = rep(1,nrow(L)), ...)  {
   d   <- rep(1,m)
   out <- REBayes::KWDual(L,d,w,...)
 
+  # POST-PROCESSING STEPS
+  # ---------------------
   # Retrieve the dual solution (which is the solution we are
   # interested in).
   x <- out$f
