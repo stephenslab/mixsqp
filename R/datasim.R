@@ -56,8 +56,8 @@
 simulatemixdata <- function (n, m, simtype = c("n","nt"), 
                              normalize.rows = TRUE) {
 
-  # (1) CHECK INPUTS
-  # ----------------
+  # CHECK INPUTS
+  # ------------
   # Input argument n should be at least 1, and m should be at least 2.
   if (!(is.numeric(n) & n >= 1  & length(n) == 1))
     stop("Argument \"n\" should be at least 1")
@@ -73,8 +73,8 @@ simulatemixdata <- function (n, m, simtype = c("n","nt"),
   if (!(is.logical(normalize.rows) & length(normalize.rows) == 1))
     stop("Argument \"normalize.rows\" should be TRUE or FALSE")
   
-  # (2) SIMULATE DATA FROM MIXTURE
-  # ------------------------------
+  # SIMULATE DATA FROM MIXTURE
+  # --------------------------
   # Argument "simtype" controls how the random numbers are generated.
   k <- floor(n/4)
   if (simtype == "n")
@@ -82,8 +82,8 @@ simulatemixdata <- function (n, m, simtype = c("n","nt"),
   else if (simtype == "nt")
     x <- c(rnorm(n - 3*k),3*rnorm(k),5*rnorm(k),rt(k,df = 2))
 
-  # (3) SELECT VARIANCES FOR MIXTURE MODEL
-  # --------------------------------------
+  # SELECT VARIANCES FOR MIXTURE MODEL
+  # ----------------------------------
   # Try to select a reasonable set of standard deviations that should
   # be used for the mixture model based on the values of x. This is
   # code is based on the autoselect.mixsd function from the ashr
@@ -95,8 +95,8 @@ simulatemixdata <- function (n, m, simtype = c("n","nt"),
     smax <- 2*sqrt(max(x^2 - 1))
   s <- c(0,logspace(smin,smax,m - 1))
 
-  # (4) CREATE LIKELIHOOD MATRIX
-  # ----------------------------
+  # CREATE LIKELIHOOD MATRIX
+  # ------------------------
   # Entry (i,j) of the conditional likelihood matrix is equal to
   # N(0,se[i]^2 + s[j]^2), the normal density with zero mean and
   # variance se[i]^2 + s[j]^2, where se[i] is the standard error 
@@ -105,8 +105,8 @@ simulatemixdata <- function (n, m, simtype = c("n","nt"),
   for (j in 1:m)
     L[,j] <- dnorm(x,sd = sqrt(1 + s[j]^2))
 
-  # (5) NORMALIZE LIKELIHOOD MATRIX
-  # -------------------------------
+  # NORMALIZE LIKELIHOOD MATRIX
+  # ---------------------------
   # Normalize the rows of the likelihood matrix so that the largest
   # entry in each row is 1.
   if (normalize.rows)

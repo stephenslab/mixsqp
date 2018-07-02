@@ -53,13 +53,12 @@
 #' 
 #' @export
 #' 
-mixSQP = function(L, x0 = rep(1/ncol(L),ncol(L)),
-                  w = rep(1/nrow(L),nrow(L)),
+mixSQP = function(L, x0 = rep(1,ncol(L)), w = rep(1,nrow(L)),
                   convtol = 1e-8, sparsetol = 1e-3, eps = 1e-6,
                   maxiter = 1000, maxqpiter = 100, verbose = TRUE){
 
-  # (1) CHECK INPUTS
-  # ----------------
+  # CHECK INPUTS
+  # ------------
   # The likelihood matrix should be a numeric matrix with at least
   # two columns, and all the entries should be positive.
   verify.likelihood.matrix(L)
@@ -77,9 +76,25 @@ mixSQP = function(L, x0 = rep(1/ncol(L),ncol(L)),
   # in which the length is equal to the number of rows of L. Further,
   # the weights should sum to 1.
   w <- verify.weights(L,w)
+
+  # Verify the initial estimate of the solution.
+  if (!(is.vector(x0) & is.numeric(x0)))
+    stop("Argument \"x0\" should be a numeric vector")
+  if (!(length(x0) == m & all(x0 > 0)))
+    stop(paste("Input vector \"x0\" should contain only positive values,",
+               "with one entry per column of L"))
+  storage.mode(x0) <- "double"
+  x <- x0/sum(x0)
+
+  # TO DO: Check remaining input arguments.
+
+  # SOLVE OPTIMIZATION PROBLEM USING SQP METHOD
+  # -------------------------------------------
+  out = mixSQP_rcpp(L,x0,w,convtol,sparsetol,eps,maxiter,maxqpiter,verbose)
+
+  # POST-PROCESSING STEPS
+  # ---------------------
+  # TO DO.
   
-  # Input x0 should be a vector of 
-    
-  out = mixSQP_rcpp(L,x0,w,convtol,sparsetol,eps, maxiter, maxqpiter, verbose)
   return(out)
 }
