@@ -9,20 +9,22 @@
 #'   ideally double-precision. 
 #'
 #' @param w A numeric vector, with one entry for each row of \code{L},
-#'   specifying the "weights" associated with the rows of matrix
-#'   \code{L}. All weights must be positive. It is assumed the weights
-#'   sum to 1; if not, they will automatically be normalized to sum to
-#'   1. By default, all rows of \code{L} are assigned the same weight.
+#'   specifying the "weights" associated with the rows of \code{L}. All
+#'   weights must be positive. It is assumed the weights sum to 1; if
+#'   not, they will automatically be normalized to sum to 1. By default,
+#'   all rows of \code{L} are assigned the same weight.x
 #' 
 #' @param ... Additional optimization parameters passed to MOSEK. See
 #'   \code{\link[REBayes]{KWDual}} for details.
 #'
 #' @return \code{mixKWDual} returns a list with two components:
 #'
-#' \item{x}{The solution to the optimization problems provided by 
+#' \item{x}{The solution to the optimization problem, as provided by 
 #'   MOSEK.}
 #'
-#' \item{status}{The MOSEK return status.}
+#' \item{value}{The value of the objective at \code{x}.}
+#' 
+#' \item{status}{The MOSEK convergence status.}
 #' 
 #' @examples
 #' # Add example here.
@@ -37,7 +39,7 @@ mixKWDual <- function (L, w = rep(1,nrow(L)), ...)  {
   # two columns, and all the entries should be positive.
   if (!is.matrix(L))
     stop("Argument \"L\" should be a matrix; see \"help(matrix)\"")
-  if (!(ncol(L) >= 2 & is.numeric(L) & all(dat$L > 0)))
+  if (!(ncol(L) >= 2 & is.numeric(L) & all(L > 0)))
     stop(paste("Input \"L\" should be a numeric matrix with >= 2 columns,",
                "and all its entries should be positive"))
 
@@ -69,8 +71,8 @@ mixKWDual <- function (L, w = rep(1,nrow(L)), ...)  {
   d   <- rep(1,m)
   out <- REBayes::KWDual(L,d,w,...)
 
-  # Retrieve the dual solution, which is the solution we are
-  # interested in.
+  # Retrieve the dual solution (which is the solution we are
+  # interested in).
   x <- out$f
   
   # Make sure the solution is (primal) feasible.
@@ -78,6 +80,7 @@ mixKWDual <- function (L, w = rep(1,nrow(L)), ...)  {
   x        <- x/sum(x)
 
   # Return a list containing the solution to the optimization problem
-  # (x) as well as the MOSEK status (status).
-  return(list(x = x,status = out$status))
+  # (x), the value of the objective at the solution (value), and the
+  # MOSEK convergence status (status).
+  return(list(x = x,value = mixobjective(L,w,x),status = out$status))
 }
