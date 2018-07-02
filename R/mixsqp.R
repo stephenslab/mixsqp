@@ -62,11 +62,7 @@ mixSQP = function(L, x0 = rep(1/ncol(L),ncol(L)),
   # ----------------
   # The likelihood matrix should be a numeric matrix with at least
   # two columns, and all the entries should be positive.
-  if (!is.matrix(L))
-    stop("Argument \"L\" should be a matrix; see \"help(matrix)\"")
-  if (!(ncol(L) >= 2 & is.numeric(L) & all(dat$L > 0)))
-    stop(paste("Input \"L\" should be a numeric matrix with >= 2 columns,",
-               "and all its entries should be positive"))
+  verify.likelihood.matrix(L)
 
   # If necessary, coerce the likelihood matrix to be in double
   # precision.
@@ -77,6 +73,11 @@ mixSQP = function(L, x0 = rep(1/ncol(L),ncol(L)),
   n <- nrow(L)
   m <- ncol(L)
 
+  # The weights should be a numeric vector with all positive entries,
+  # in which the length is equal to the number of rows of L. Further,
+  # the weights should sum to 1.
+  w <- verify.weights(L,w)
+  
   # Input x0 should be a vector of 
     
   out = mixSQP_rcpp(L,x0,w,convtol,sparsetol,eps, maxiter, maxqpiter, verbose)

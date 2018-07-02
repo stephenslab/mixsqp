@@ -37,11 +37,7 @@ mixKWDual <- function (L, w = rep(1,nrow(L)), ...)  {
   # ------------
   # The likelihood matrix should be a numeric matrix with at least
   # two columns, and all the entries should be positive.
-  if (!is.matrix(L))
-    stop("Argument \"L\" should be a matrix; see \"help(matrix)\"")
-  if (!(ncol(L) >= 2 & is.numeric(L) & all(L > 0)))
-    stop(paste("Input \"L\" should be a numeric matrix with >= 2 columns,",
-               "and all its entries should be positive"))
+  verify.likelihood.matrix(L)
 
   # If necessary, coerce the likelihood matrix to be in double
   # precision.
@@ -55,13 +51,7 @@ mixKWDual <- function (L, w = rep(1,nrow(L)), ...)  {
   # The weights should be a numeric vector with all positive entries,
   # in which the length is equal to the number of rows of L. Further,
   # the weights should sum to 1.
-  if (!(is.vector(w) & is.numeric(w)))
-    stop("Argument \"w\" should be a numeric vector")
-  if (!(length(w) == n & all(w > 0)))
-    stop(paste("Input vector \"w\" should contain only positive values,",
-               "with one entry per row of L"))
-  storage.mode(w) <- "double"
-  w <- w/sum(w)
+  w <- verify.weights(L,w)
   
   # SOLVE OPTIMIZATION PROBLEM USING MOSEK
   # --------------------------------------
