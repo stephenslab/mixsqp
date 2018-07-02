@@ -62,7 +62,8 @@
 #' @export
 #' 
 mixSQP = function(L, x0 = rep(1,ncol(L)), w = rep(1,nrow(L)),
-                  convtol = 1e-8, sparsetol = 1e-3, eps = 1e-6,
+                  convtol = 1e-8, sparsetol = 1e-3,
+                  eps = .Machine$double.eps,
                   maxiter = 1000, maxqpiter = 100, verbose = TRUE){
 
   # CHECK INPUTS
