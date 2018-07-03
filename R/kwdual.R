@@ -74,5 +74,6 @@ mixKWDual <- function (L, w = rep(1,nrow(L)), ...)  {
   # Return a list containing the solution to the optimization problem
   # (x), the value of the objective at the solution (value), and the
   # MOSEK convergence status (status).
+  names(x) <- colnames(L)
   return(list(x = x,value = mixobjective(L,w,x),status = out$status))
 }
