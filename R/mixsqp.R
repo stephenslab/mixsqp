@@ -107,5 +107,6 @@ mixSQP = function(L, x0 = rep(1,ncol(L)), w = rep(1,nrow(L)),
   # ---------------------
   # TO DO.
   
+  # TO DO: Add named elements to solution vector x.
   return(out)
 }
