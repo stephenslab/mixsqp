@@ -26,7 +26,8 @@ Imports:
     stats,
     Rcpp (>= 0.12.15)
 Suggests:
-    REBayes
+    REBayes,
+    testthat
 LinkingTo:
     Rcpp,
     RcppArmadillo

@@ -8,9 +8,12 @@ to do
 
 + Add test for case when samples have weights.
 
++ Add test(s) for very small ("toy") data set; see REBayes package for
+  some ideas.
+
 + Add help(mixsqp).
 
-* Add Travis CI.
+* Add Travis CI and codecov.
 
 * Add AppVeyor.
 
