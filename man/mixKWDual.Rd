@@ -4,10 +4,18 @@
 \alias{mixKWDual}
 \title{Add title here.}
 \usage{
-mixKWDual(L, ...)
+mixKWDual(L, w = rep(1, nrow(L)), ...)
 }
 \arguments{
-\item{L}{Matrix specifying the optimization problem to be solved.}
+\item{L}{Matrix specifying the optimization problem to be
+solved. It should be a numeric matrix with positive entries, and
+ideally double-precision.}
+
+\item{w}{A numeric vector, with one entry for each row of \code{L},
+specifying the "weights" associated with the rows of \code{L}. All
+weights must be positive. It is assumed the weights sum to 1; if
+not, they will automatically be normalized to sum to 1. By default,
+all rows of \code{L} are assigned the same weight.}
 
 \item{...}{Additional optimization parameters passed to MOSEK. See
 \code{\link[REBayes]{KWDual}} for details.}
@@ -15,10 +23,12 @@ mixKWDual(L, ...)
 \value{
 \code{mixKWDual} returns a list with two components:
 
-\item{x}{The solution to the optimization problems provided by 
+\item{x}{The solution to the optimization problem, as provided by 
   MOSEK.}
 
-\item{status}{The MOSEK return status.}
+\item{value}{The value of the objective at \code{x}.}
+
+\item{status}{The MOSEK convergence status.}
 }
 \description{
 Add more detailed description here. Explain that this

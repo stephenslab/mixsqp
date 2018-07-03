@@ -4,16 +4,26 @@
 \alias{mixSQP}
 \title{mixSQP}
 \usage{
-mixSQP(L, x0 = rep(1, dim(L)[2])/dim(L)[2], w = rep(1, dim(L)[1])/dim(L)[1],
-  convtol = 1e-08, sparsetol = 0.001, eps = 1e-06, maxiter = 50,
+mixSQP(L, x0 = rep(1, ncol(L)), w = rep(1, nrow(L)), convtol = 1e-08,
+  sparsetol = 0.001, eps = .Machine$double.eps, maxiter = 1000,
   maxqpiter = 100, verbose = TRUE)
 }
 \arguments{
-\item{L}{A matrix of nonnegative entries of size n by m}
+\item{L}{Matrix specifying the optimization problem to be
+solved. It should be a numeric matrix with positive entries, and
+ideally double-precision.}
 
-\item{x0}{A initial value for the optimization problem (default rep(1,m)/m).}
+\item{x0}{An initial estimate of the solution to the optimization
+problem. It should contain only non-negative values, and the
+entries should sum to 1; if not, the vector is automatically
+normalized to sum to 1. By default, \code{x0} is the vector with
+all equal entries.}
 
-\item{w}{A vector of weight on each data point (default rep(1,n)/n).}
+\item{w}{A numeric vector, with one entry for each row of \code{L},
+specifying the "weights" associated with the rows of \code{L}. All
+weights must be positive. It is assumed the weights sum to 1; if
+not, they will automatically be normalized to sum to 1. By default,
+all rows of \code{L} are assigned the same weight.}
 
 \item{convtol}{A convergence tolerance used for algorithm's
 convergence criterion.}
@@ -37,10 +47,10 @@ Returns a solution x (in the current version).
 }
 \description{
 mixSQP solves a convex optimization problem in
-https://arxiv.org/abs/1806.01412.
-It implements a sequential quadratic programming with
-active-set subproblem solvers. For gigantic data, use low-rank
-approximation to speed up the computation.
+  https://arxiv.org/abs/1806.01412.
+  It implements a sequential quadratic programming with
+  active-set subproblem solvers. For gigantic data, use low-rank
+  approximation to speed up the computation.
 
 When L is a (n) by (m) matrix of nonnegative entries, mixSQP
 maximizes the following objective function \deqn{f(x) = \sum_j w_j

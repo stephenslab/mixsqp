@@ -9,3 +9,8 @@ to do
 + Add test for case when samples have weights.
 
 + Add help(mixsqp).
+
+* Add Travis CI.
+
+* Add AppVeyor.
+
