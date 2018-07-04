@@ -6,14 +6,10 @@ to do
 
 + Add test for case when m = 2.
 
-+ Add test for case when samples have weights.
+* Add Travis CI and codecov (I will need Youngseok's help with this).
+
+* Add AppVeyor (I will need Youngseok's help with this).
 
 + Add test(s) for very small ("toy") data set; see REBayes package for
   some ideas.
-
-+ Add help(mixsqp).
-
-* Add Travis CI and codecov.
-
-* Add AppVeyor.
 
