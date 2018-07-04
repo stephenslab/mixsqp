@@ -13,3 +13,7 @@ to do
 + Add test(s) for very small ("toy") data set; see REBayes package for
   some ideas.
 
++ Complete help page for mixSQP.
+
++ Complete help page for mixKWDual.
+

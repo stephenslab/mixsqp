@@ -7,21 +7,21 @@
 using namespace Rcpp;
 
 // mixSQP_rcpp
-List mixSQP_rcpp(const arma::mat& L, const arma::vec& x0, arma::vec w, double convtol, double sparsetol, double eps, int maxiter, int maxqpiter, bool verbose);
-RcppExport SEXP _mixSQP_mixSQP_rcpp(SEXP LSEXP, SEXP x0SEXP, SEXP wSEXP, SEXP convtolSEXP, SEXP sparsetolSEXP, SEXP epsSEXP, SEXP maxiterSEXP, SEXP maxqpiterSEXP, SEXP verboseSEXP) {
+List mixSQP_rcpp(const arma::mat& L, const arma::vec& w, const arma::vec& x0, double convtol, double sparsetol, double eps, int maxiter, int maxqpiter, bool verbose);
+RcppExport SEXP _mixSQP_mixSQP_rcpp(SEXP LSEXP, SEXP wSEXP, SEXP x0SEXP, SEXP convtolSEXP, SEXP sparsetolSEXP, SEXP epsSEXP, SEXP maxiterSEXP, SEXP maxqpiterSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::mat& >::type L(LSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type w(wSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type x0(x0SEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type w(wSEXP);
     Rcpp::traits::input_parameter< double >::type convtol(convtolSEXP);
     Rcpp::traits::input_parameter< double >::type sparsetol(sparsetolSEXP);
     Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
     Rcpp::traits::input_parameter< int >::type maxiter(maxiterSEXP);
     Rcpp::traits::input_parameter< int >::type maxqpiter(maxqpiterSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(mixSQP_rcpp(L, x0, w, convtol, sparsetol, eps, maxiter, maxqpiter, verbose));
+    rcpp_result_gen = Rcpp::wrap(mixSQP_rcpp(L, w, x0, convtol, sparsetol, eps, maxiter, maxqpiter, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
