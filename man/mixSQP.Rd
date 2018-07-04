@@ -4,7 +4,7 @@
 \alias{mixSQP}
 \title{mixSQP}
 \usage{
-mixSQP(L, x0 = rep(1, ncol(L)), w = rep(1, nrow(L)), convtol = 1e-08,
+mixSQP(L, w = rep(1, nrow(L)), x0 = rep(1, ncol(L)), convtol = 1e-08,
   sparsetol = 0.001, eps = .Machine$double.eps, maxiter = 1000,
   maxqpiter = 100, verbose = TRUE)
 }
@@ -13,17 +13,17 @@ mixSQP(L, x0 = rep(1, ncol(L)), w = rep(1, nrow(L)), convtol = 1e-08,
 solved. It should be a numeric matrix with positive entries, and
 ideally double-precision.}
 
-\item{x0}{An initial estimate of the solution to the optimization
-problem. It should contain only non-negative values, and the
-entries should sum to 1; if not, the vector is automatically
-normalized to sum to 1. By default, \code{x0} is the vector with
-all equal entries.}
-
 \item{w}{A numeric vector, with one entry for each row of \code{L},
 specifying the "weights" associated with the rows of \code{L}. All
 weights must be positive. It is assumed the weights sum to 1; if
 not, they will automatically be normalized to sum to 1. By default,
 all rows of \code{L} are assigned the same weight.}
+
+\item{x0}{An initial estimate of the solution to the optimization
+problem. It should contain only non-negative values, and the
+entries should sum to 1; if not, the vector is automatically
+normalized to sum to 1. By default, \code{x0} is the vector with
+all equal entries.}
 
 \item{convtol}{A convergence tolerance used for algorithm's
 convergence criterion.}

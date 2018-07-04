@@ -1,6 +1,0 @@
-* Add function to run REBayes::KWDual.
-* Add importFrom statements (see mashr package for example).
-* Don't include require() or library() statements inside your functions.
-* For handling code that calls Julia, see how ashr handles calling
-  REBayes::KWDual in the mixIP function.
-* Write dim(L)[1] as nrow(L), and dim(L)[2] as ncol(L). (More legible.)
