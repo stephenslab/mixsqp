@@ -61,7 +61,7 @@
 #' 
 #' @export
 #' 
-mixSQP = function(L, x0 = rep(1,ncol(L)), w = rep(1,nrow(L)),
+mixSQP = function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)), 
                   convtol = 1e-8, sparsetol = 1e-3,
                   eps = .Machine$double.eps,
                   maxiter = 1000, maxqpiter = 100, verbose = TRUE){
@@ -101,12 +101,13 @@ mixSQP = function(L, x0 = rep(1,ncol(L)), w = rep(1,nrow(L)),
 
   # SOLVE OPTIMIZATION PROBLEM USING SQP METHOD
   # -------------------------------------------
-  out = mixSQP_rcpp(L,x0,w,convtol,sparsetol,eps,maxiter,maxqpiter,verbose)
+  out <- mixSQP_rcpp(L,x0,w,convtol,sparsetol,eps,maxiter,maxqpiter,verbose)
 
   # POST-PROCESSING STEPS
   # ---------------------
-  # TO DO.
-  
-  # TO DO: Add named elements to solution vector x.
-  return(out)
+  x        <- out$x
+  x        <- drop(x)
+  names(x) <- colnames(L)
+
+  return(list(x = x,value = mixobjective(L,w,x)))
 }
