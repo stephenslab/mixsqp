@@ -13,29 +13,33 @@ test_that("mixSQP and KWDual return the same solution",{
   colnames(L) <- paste0("s",1:m)
   
   # Apply KWDual and mixSQP to the data set.
-  x.kwdual <- mixKWDual(L)$x
-  x.mixsqp <- mixSQP(L,verbose = FALSE)$x
-  expect_equal(x.kwdual,colnames(L))
-  expect_equal(x.mixsqp,colnames(L))
-  expect_equal(x.kwdual,x.mixsqp,tolerance = 1e-5)
+  out1 <- mixKWDual(L)
+  out2 <- mixSQP(L,verbose = FALSE)
+
+  # The outputted solutions, and the objective values at those
+  # solutions, should be nearly identical.
+  expect_equal(names(out1$x),colnames(L))
+  expect_equal(names(out2$x),colnames(L))
+  expect_equal(out1$x,out2$x,tolerance = 1e-6)
+  expect_equal(out1$value,out2$value,tolerance = 1e-8)
 })
 
 test_that(paste("mixSQP & KWDual return the same solution for data",
                 "with unequal weights"),{
 
-  # Apply KWDual and mixSQP to a 100 x 10 matrix.
+  # Simulate a 100 x 10 likelihood matrix, and different weights for
+  # the rows of this matrix.
   set.seed(1)
-  L        <- simulatemixdata(100,10)$L
-  w        <- runif(100)
-  w        <- w/sum(w) 
-  out      <- REBayes::KWDual(L,rep(1,10),w)
-  x <- out$f
+  L <- simulatemixdata(100,10)$L
+  w <- runif(100)
+  w <- w/sum(w)
+  
+  # Apply KWDual and mixSQP to the data set.
+  out1 <- mixKWDual(L,w)
+  out2 <- mixSQP(L,w,verbose = FALSE)
 
-  # Make sure the solution is (primal) feasible.
-  x[x < 0] <- 0
-  x        <- x/sum(x)
-
-  # x.kwdual <- mixKWDual(L)$x
-  x.mixsqp <- mixSQP(L,w = w,verbose = TRUE)$x
-  expect_equal(x.kwdual,x.mixsqp,tolerance = 1e-5)
+  # The outputted solutions, and the objective values at those
+  # solutions, should be nearly identical.
+  expect_equal(out1$x,out2$x,tolerance = 1e-8)
+  expect_equal(out1$value,out2$value,tolerance = 1e-8)
 })
