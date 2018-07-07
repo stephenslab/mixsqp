@@ -42,7 +42,8 @@ verify.likelihood.matrix <- function (L) {
 verify.weights <- function (L, w) {
     
   if (!(is.vector(w) & is.numeric(w)))
-    stop("Argument \"w\" should be a numeric vector")
+    stop(paste("Argument \"w\" should be a numeric vector;",
+               "for more information, see \"help(is.vector)\""))
   if (!(length(w) == nrow(L) & all(w > 0)))
     stop(paste("Input vector \"w\" should contain only positive values,",
                "with one entry per row of L"))
