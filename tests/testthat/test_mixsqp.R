@@ -1,6 +1,7 @@
 context("mixSQP")
 
-test_that("mixSQP and KWDual return the same solution",{
+test_that(paste("mixSQP and KWDual return the same solution for",
+                "1000 x 10 likelihood matrix"),{
 
   # Simulate a 1,000 x 10 likelihood matrix. Note that I add row and
   # column names to the matrix to check that the column names are
@@ -17,15 +18,16 @@ test_that("mixSQP and KWDual return the same solution",{
   out2 <- mixSQP(L,verbose = FALSE)
 
   # The outputted solutions, and the objective values at those
-  # solutions, should be nearly identical.
+  # solutions, should be nearly identical. Also check that the
+  # solution entries are labeled correctly.
   expect_equal(names(out1$x),colnames(L))
   expect_equal(names(out2$x),colnames(L))
   expect_equal(out1$x,out2$x,tolerance = 1e-6)
   expect_equal(out1$value,out2$value,tolerance = 1e-8)
 })
 
-test_that(paste("mixSQP & KWDual return the same solution for data",
-                "with unequal weights"),{
+test_that(paste("mixSQP & KWDual return the same solution for",
+                "1000 x 10 likelihood matrix with unequal row weights"),{
 
   # Simulate a 100 x 10 likelihood matrix, and different weights for
   # the rows of this matrix.

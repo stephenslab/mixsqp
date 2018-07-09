@@ -99,14 +99,18 @@ mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   storage.mode(x0) <- "double"
   x0 <- x0/sum(x0)
 
-  # TO DO: Check remaining input arguments.
-
+  # Input argument verbose should be TRUE or FALSE.
+  if (!(is.logical(verbose) & length(verbose) == 1))
+    stop("Argument \"verbose\" should be TRUE or FALSE")
+  
   # SOLVE OPTIMIZATION PROBLEM USING SQP METHOD
   # -------------------------------------------
   out <- mixSQP_rcpp(L,w,x0,convtol,sparsetol,eps,maxiter,maxqpiter,verbose)
 
   # POST-PROCESSING STEPS
   # ---------------------
+  # Label the elements of the solution (x) by the column labels of the
+  # likelihood matrix (L).
   x        <- out$x
   x        <- drop(x)
   names(x) <- colnames(L)
