@@ -60,16 +60,16 @@ simulatemixdata <- function (n, m, simtype = c("n","nt"),
   # ------------
   # Input argument n should be at least 1, and m should be at least 2.
   if (!(is.numeric(n) & n >= 1  & length(n) == 1))
-    stop("Argument \"n\" should be at least 1")
+    stop("Argument \"n\" should be positive number, 1 or greater")
   if (!(is.numeric(m) & m >= 2 & length(m) == 1))
-    stop("Argument \"m\" should be at least 2")
+    stop("Argument \"m\" should be a positive number 2 or greater")
   n <- round(n)
   m <- round(m)
 
   # Get the choice of data to simulate.
   simtype <- match.arg(simtype)
 
-  # Input argument normalize.rows must be TRUE or FALSE.
+  # Input argument normalize.rows should be TRUE or FALSE.
   if (!(is.logical(normalize.rows) & length(normalize.rows) == 1))
     stop("Argument \"normalize.rows\" should be TRUE or FALSE")
   

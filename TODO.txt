@@ -4,14 +4,14 @@ to do
 + Add a test to make sure that the solution is the same when the
   likelihood matrix is normalized vs. unnormalized.
 
-+ Add test for case when m = 2.
++ Add test for "toy" likelihood matrix (or matrices).
+  Including for case when m = 2.
+
++ Add test for data set from REBayesBmix1 demo.
 
 * Add Travis CI and codecov (I will need Youngseok's help with this).
 
 * Add AppVeyor (I will need Youngseok's help with this).
-
-+ Add test(s) for very small ("toy") data set; see REBayes package for
-  some ideas.
 
 + Complete help page for mixSQP.
 
