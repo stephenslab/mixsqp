@@ -89,9 +89,10 @@ mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # The initial estimate of the solution should be a numeric vector
   # with all non-negative entries, in which the length is equal to the
   # number fo columns of L. Further, the entries should sum to 1.
-  if (!(is.vector(x0) & is.numeric(x0)))
-    stop(paste("Argument \"x0\" should be a numeric vector;",
-               "for more information, see \"help(is.vector\""))
+  if (!(is.vector(x0) & !is.list(x0) & is.numeric(x0)))
+    stop(paste("Argument \"x0\" should be a numeric vector; for more",
+               "information, see \"help(is.vector)\" and",
+               "\"help(is.numeric)\""))
   if (!(length(x0) == m & all(x0 >= 0)))
     stop(paste("Input vector \"x0\" should contain only non-negative",
                "values, with one entry per column of L"))

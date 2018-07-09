@@ -41,9 +41,10 @@ verify.likelihood.matrix <- function (L) {
 # (coerced to double-precision) are returned.
 verify.weights <- function (L, w) {
     
-  if (!(is.vector(w) & is.numeric(w)))
-    stop(paste("Argument \"w\" should be a numeric vector;",
-               "for more information, see \"help(is.vector)\""))
+  if (!(is.vector(w) & !is.list(w) & is.numeric(w)))
+    stop(paste("Argument \"w\" should be a numeric vector; for more",
+               "information, see \"help(is.vector)\" and",
+               "\"help(is.numeric)\""))
   if (!(length(w) == nrow(L) & all(w > 0)))
     stop(paste("Input vector \"w\" should contain only positive values,",
                "with one entry per row of L"))
