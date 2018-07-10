@@ -1,5 +1,25 @@
 context("mixSQP")
 
+test_that(paste("mixSQP gives correct solutions for 2 x 2 and",
+                "2 x 3 likelihood matrices"),{
+  e <- 1e-8
+
+  # In this first example, the correct solution is (1/2,1/2).
+  L   <- rbind(c(1,e),
+               c(e,1))
+  out <- mixSQP(L,verbose = FALSE)
+  expect_equal(out$x,c(0.5,0.5),tolerance = 1e-8)
+  
+  # In this second example, any solution of the form (x1,x2,0) gives
+  # the same value for the objective.
+  L    <- rbind(c(1,1,e),
+                c(1,1,1))
+  out1 <- mixSQP(L,x0 = c(1,1,0),verbose = FALSE)
+  out2 <- mixSQP(L,x0 = c(0,1,1),verbose = FALSE)
+  expect_equal(out1$x[3],0,tolerance = 1e-8)
+  expect_equal(out2$x[3],0,tolerance = 1e-8)
+})
+
 test_that(paste("mixSQP and KWDual return the same solution for",
                 "1000 x 10 likelihood matrix"),{
 
