@@ -1,8 +1,6 @@
 to do
 =====
 
-+ Add test for data set from REBayes::Bmix1 demo.
-
 * Add Travis CI and codecov (I will need Youngseok's help with this).
 
 * Add AppVeyor (I will need Youngseok's help with this).
