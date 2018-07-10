@@ -93,3 +93,13 @@ test_that(paste("mixSQP returns the same solution regardless whether",
   expect_equal(out1$x,out2$x,tolerance = 1e-8)
 })
                     
+test_that(paste("mixSQP gives correct solution for Beckett & Diaconis",
+                "tack rolling example"),{
+  data(tacks)
+  out <- mixSQP(L,w,eps = 1e-12,verbose = FALSE)
+
+  # The mix-SQP should be very close to the REBayes solution and, more
+  # importantly, the quality of the mixSQP solution should be higher.
+  expect_equal(x,out$x,tol = 5e-4)
+  expect_lte(out$value,mixobjective(L,w,x))
+})

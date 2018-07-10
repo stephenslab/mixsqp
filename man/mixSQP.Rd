@@ -5,7 +5,7 @@
 \title{mixSQP}
 \usage{
 mixSQP(L, w = rep(1, nrow(L)), x0 = rep(1, ncol(L)), convtol = 1e-08,
-  sparsetol = 0.001, eps = .Machine$double.eps, maxiter = 1000,
+  sparsetol = 1e-08, eps = .Machine$double.eps, maxiter = 1000,
   maxqpiter = 100, verbose = TRUE)
 }
 \arguments{
