@@ -1,10 +1,7 @@
 to do
 =====
 
-+ Add test for "toy" likelihood matrix (or matrices).
-  Including for case when m = 2.
-
-+ Add test for data set from REBayesBmix1 demo.
++ Add test for data set from REBayes::Bmix1 demo.
 
 * Add Travis CI and codecov (I will need Youngseok's help with this).
 
