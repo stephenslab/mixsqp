@@ -45,3 +45,25 @@ test_that(paste("mixSQP & KWDual return the same solution for",
   expect_equal(out1$x,out2$x,tolerance = 1e-8)
   expect_equal(out1$value,out2$value,tolerance = 1e-8)
 })
+
+test_that(paste("mixSQP returns the same solution regardless whether",
+                "the likelihood matrix is normalized"),{
+  
+  # Simulate two 100 x 10 likelihood matrices---one normalized and one
+  # unnormalized---and different weights for the rows of this matrix.
+  set.seed(1)
+  L1 <- simulatemixdata(100,10,normalize.rows = TRUE)$L
+  set.seed(1)
+  L2 <- simulatemixdata(100,10,normalize.rows = FALSE)$L
+  w  <- runif(100)
+  w  <- w/sum(w)
+
+  # Apply mixSQP to normalized and unnormalized data sets.
+  out1 <- mixSQP(L1,w,verbose = FALSE)
+  out2 <- mixSQP(L2,w,verbose = FALSE)
+
+  # The outputted solutions should be nearly identical (although the
+  # values of the objectives will be different).
+  expect_equal(out1$x,out2$x,tolerance = 1e-8)
+})
+                    

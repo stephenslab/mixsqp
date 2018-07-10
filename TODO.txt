@@ -1,9 +1,6 @@
 to do
 =====
 
-+ Add a test to make sure that the solution is the same when the
-  likelihood matrix is normalized vs. unnormalized.
-
 + Add test for "toy" likelihood matrix (or matrices).
   Including for case when m = 2.
 
