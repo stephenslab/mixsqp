@@ -23,6 +23,9 @@ test_that(paste("mixSQP gives correct solutions for 2 x 2 and",
 test_that(paste("mixSQP and KWDual return the same solution for",
                 "1000 x 10 likelihood matrix"),{
 
+  # The REBayes package is required to run this test.
+  skip_if_not_installed("REBayes")
+                    
   # Simulate a 1,000 x 10 likelihood matrix. Note that I add row and
   # column names to the matrix to check that the column names are
   # retained in the solution vector.
@@ -49,6 +52,9 @@ test_that(paste("mixSQP and KWDual return the same solution for",
 test_that(paste("mixSQP & KWDual return the same solution for",
                 "1000 x 10 likelihood matrix with unequal row weights"),{
 
+  # The REBayes package is required to run this test.
+  skip_if_not_installed("REBayes")
+  
   # Simulate a 100 x 10 likelihood matrix, and different weights for
   # the rows of this matrix.
   set.seed(1)
