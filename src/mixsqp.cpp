@@ -10,14 +10,12 @@ using namespace Rcpp;
 
 // FUNCTION DECLARATIONS
 // ---------------------
-double mixobjective    (const arma::mat& L, const arma::vec& w,
-		        const arma::vec& x, double e, arma::vec& u);
-double modmixobjective (const arma::mat& L, const arma::vec& w,
-			const arma::vec& x, double e, arma::vec& u);
-void   computegrad     (const arma::mat& L, const arma::vec& w,
-			const arma::vec& x, double e, arma::vec& g,
-			arma::mat& H, arma::vec& u, arma::mat& Z,
-			arma::mat& ZW, const arma::mat& I);
+double mixobjective (const arma::mat& L, const arma::vec& w,
+		     const arma::vec& x, double e, arma::vec& u);
+void   computegrad  (const arma::mat& L, const arma::vec& w,
+		     const arma::vec& x, double e, arma::vec& g,
+		     arma::mat& H, arma::vec& u, arma::mat& Z,
+		     arma::mat& ZW, const arma::mat& I);
 
 // FUNCTION DEFINITIONS
 // --------------------
@@ -172,6 +170,8 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     
     // BACKTRACKING LINE SEARCH
     // ------------------------
+    // sum(x) = sum(y) = 1 so replacing g by g+1 in dot product of x-y
+    // and g has no effect.
     for (j = 0; j < 9; j++){
       if (obj[i] + sum(log(L * y + eps) % w) > dot(x-y, g) / (2 * n) ) 
 	break;
@@ -196,13 +196,6 @@ double mixobjective (const arma::mat& L, const arma::vec& w,
 		     const arma::vec& x, double e, arma::vec& u) {
   u = L*x + e;
   return -sum(w % log(u));
-}
-
-// Compute the value of the modified objective at x. See the
-// "mixobjective" function for a description of the input arguments.
-double modmixobjective (const arma::mat& L, const arma::vec& w,
-			const arma::vec& x, double e, arma::vec& u) {
-  return mixobjective(L,w,x,e,u) + sum(x);
 }
 
 // Compute the gradient and Hessian of the (unmodified) objective at
