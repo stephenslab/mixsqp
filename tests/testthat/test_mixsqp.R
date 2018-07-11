@@ -55,11 +55,11 @@ test_that(paste("mixSQP & KWDual return the same solution for",
   # The REBayes package is required to run this test.
   skip_if_not_installed("REBayes")
   
-  # Simulate a 100 x 10 likelihood matrix, and different weights for
+  # Simulate a 1000 x 10 likelihood matrix, and different weights for
   # the rows of this matrix.
   set.seed(1)
-  L <- simulatemixdata(100,10)$L
-  w <- runif(100)
+  L <- simulatemixdata(1000,10)$L
+  w <- runif(1000)
   w <- w/sum(w)
   
   # Apply KWDual and mixSQP to the data set.
@@ -68,8 +68,8 @@ test_that(paste("mixSQP & KWDual return the same solution for",
 
   # The outputted solutions, and the objective values at those
   # solutions, should be nearly identical.
-  expect_equal(out1$x,out2$x,tolerance = 1e-8)
-  expect_equal(out1$value,out2$value,tolerance = 1e-8)
+  expect_equal(out1$x,out2$x,tolerance = 2e-8)
+  expect_equal(out1$value,out2$value,tolerance = 2e-8)
 })
 
 test_that(paste("mixSQP returns the same solution regardless whether",
