@@ -10,8 +10,14 @@ using namespace Rcpp;
 
 // FUNCTION DECLARATIONS
 // ---------------------
-double mixobjective (const arma::mat& L, const arma::vec& w,
-		     const arma::vec& x, double e, arma::vec& u);
+double mixobjective    (const arma::mat& L, const arma::vec& w,
+		        const arma::vec& x, double e, arma::vec& u);
+double modmixobjective (const arma::mat& L, const arma::vec& w,
+			const arma::vec& x, double e, arma::vec& u);
+void   computegrad     (const arma::mat& L, const arma::vec& w,
+			const arma::vec& x, double e, arma::vec& g,
+			arma::mat& H, arma::vec& u, arma::mat& Z,
+			arma::mat& ZW, const arma::mat& I);
 
 // FUNCTION DEFINITIONS
 // --------------------
@@ -55,9 +61,9 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   arma::vec  g(m);    // Vector of length m storing the gradient.
   arma::vec  u(n);    // Vector of length n storing L*x + eps or its log.
   arma::mat  H(m,m);  // m x m matrix storing Hessian.
-  arma::mat  Z(n,m);  // n x m matrix storing  Z = diag(1/(L*x + eps))*L.
-  arma::mat  Zw(n,m); // n x m matrix storing  Z * w
-  arma::mat  I(m,m);  // m x m diagonal matrix eps*I.
+  arma::mat  Z(n,m);  // n x m matrix Z = D*L, where D = diag(1/(L*x+e)).
+  arma::mat  ZW(n,m); // n x m matrix ZW = W*Z, where W = diag(w).
+  arma::mat  I(m,m);  // m x m diagonal matrix e*I.
   arma::uvec t(m);    // Temporary unsigned int. vector result of length m.
   arma::vec  y(m);    // Vector of length m storing y
   arma::vec  p(m);    // Vector of length m storing y
@@ -83,19 +89,8 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   for (i = 0; i < maxiter; i++) {
     
     // COMPUTE GRADIENT AND HESSIAN
-    
-    // Compute Z = diag(1/(L*x + eps)) * L.
-    u = L * x + eps;
-    Z = L; 
-    Z.each_col() /= u;
-    Zw = Z; 
-    Zw.each_col() %= w;
-    
-    // Compute the gradient g = -Z'*1/n.
-    g = -arma::sum(Zw.t(),1);
-    
-    // Compute the Hessian H = Z'*Z/n + eps*I.
-    H = Z.t()*Zw + I;
+    // ----------------------------
+    computegrad(L,w,x,eps,g,H,u,Z,ZW,I);
     
     // Report on the algorithm's progress. Here we compute: the value
     // of the objective at x (obj); the smallest gradient value
@@ -189,18 +184,51 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     x = y;
   }
   
-  return List::create(Named("x") = x/sum(x), Named("niter") = i+1);
+  return List::create(Named("x") = x/sum(x), Named("niter") = i + 1);
 }
 
-// Compute the value of the objective at x, assuming x is (primal)
-// feasible; arguments L and w specify the objective, and e is an
-// additional constant that can be set to a small, positive number
-// (zero by default) to better ensure numerical stability of the
-// optimization. Input argument u is a vector of length n used to
-// store an intermediate result used in the calculation of the
-// objective.
+// Compute the value of the (unmodified) objective at x, assuming x is
+// (primal) feasible; arguments L and w specify the objective, and e
+// is an additional positive constant near zero. Input argument u is a
+// vector of length n used to store an intermediate result used in the
+// calculation of the objective.
 double mixobjective (const arma::mat& L, const arma::vec& w,
 		     const arma::vec& x, double e, arma::vec& u) {
-  u = L * x + e;
+  u = L*x + e;
   return -sum(w % log(u));
+}
+
+// Compute the value of the modified objective at x. See the
+// "mixobjective" function for a description of the input arguments.
+double modmixobjective (const arma::mat& L, const arma::vec& w,
+			const arma::vec& x, double e, arma::vec& u) {
+  return mixobjective(L,w,x,e,u) + sum(x);
+}
+
+// Compute the gradient and Hessian of the (unmodified) objective at
+// x, assuming x is (primal) feasible; arguments L and w specify the
+// objective, and e is an additional positive constant near
+// zero. Inputs g and H store the value of the gradient and Hessian (a
+// vector of length m, and an m x m matrix). Intermediate results used
+// in these calculations are stored in three variables: u, a vector of
+// length n; Z, an n x m matrix; and ZW, another n x m matrix.
+void computegrad (const arma::mat& L, const arma::vec& w, const arma::vec& x,
+		  double e, arma::vec& g, arma::mat& H, arma::vec& u,
+		  arma::mat& Z, arma::mat& ZW, const arma::mat& I) {
+   
+  // Compute Z = D*L, where D = diag(1/(L*x + e)).
+  Z = L;
+  u = L*x + e;
+  Z.each_col() /= u;
+
+  // Compute ZW = W*Z, where W = diag(w).
+  ZW = Z; 
+  ZW.each_col() %= w;
+   
+  // Compute the gradient g = -L'*W*d, where d is a vector formed by
+  // the diagonal entries of D.
+  g = -arma::sum(ZW.t(),1);
+    
+  // Compute the Hessian H = Z'*W*Z.
+  H = Z.t() * ZW + I;
 }
