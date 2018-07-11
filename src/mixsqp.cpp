@@ -8,6 +8,13 @@
 
 using namespace Rcpp;
 
+// FUNCTION DECLARATIONS
+// ---------------------
+double mixobjective (const arma::mat& L, const arma::vec& w,
+		     const arma::vec& x, double e, arma::vec& u);
+
+// FUNCTION DEFINITIONS
+// --------------------
 // SQP algorithm for optimizing mixtures. For more information, see
 // the help and comments accompanying the mixSQP function in R.
 // 
@@ -96,14 +103,14 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     // nonzeros in the solution (nnz); and the number of inner-loop
     // iterations (nqp).
     t       = (x > sparsetol);
-    obj[i]  = -sum(log(u) % w);
+    obj[i]  = mixobjective(L,w,x,eps,u);
     gmin[i] = 1 + g.min();
     nnz[i]  = sum(t);
     if (verbose) {
       if (i == 0)
-        Rprintf("%4d  %0.5e %+0.2e %4d \n",i+1,obj[i],-gmin[i],int(nnz[i]));
+        Rprintf("%4d  %0.5e %+0.2e %4d \n",i + 1,obj[i],-gmin[i],int(nnz[i]));
       else
-        Rprintf("%4d  %0.5e %+0.2e %4d %4u %4u\n",i+1,obj[i],-gmin[i],int(nnz[i]),nqp[i-1],nls[i-1]);
+        Rprintf("%4d  %0.5e %+0.2e %4d %4u %4u\n",i + 1,obj[i],-gmin[i],int(nnz[i]),nqp[i-1],nls[i-1]);
     }
     
     // Check convergence.
@@ -183,4 +190,17 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   }
   
   return List::create(Named("x") = x/sum(x), Named("niter") = i+1);
+}
+
+// Compute the value of the objective at x, assuming x is (primal)
+// feasible; arguments L and w specify the objective, and e is an
+// additional constant that can be set to a small, positive number
+// (zero by default) to better ensure numerical stability of the
+// optimization. Input argument u is a vector of length n used to
+// store an intermediate result used in the calculation of the
+// objective.
+double mixobjective (const arma::mat& L, const arma::vec& w,
+		     const arma::vec& x, double e, arma::vec& u) {
+  u = L * x + e;
+  return -sum(w % log(u));
 }
