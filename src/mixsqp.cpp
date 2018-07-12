@@ -15,7 +15,7 @@ double mixobjective (const arma::mat& L, const arma::vec& w,
 void   computegrad  (const arma::mat& L, const arma::vec& w,
 		     const arma::vec& x, double e, arma::vec& g,
 		     arma::mat& H, arma::vec& u, arma::mat& Z,
-		     arma::mat& ZW, const arma::mat& I);
+		     const arma::mat& I);
 
 // FUNCTION DEFINITIONS
 // --------------------
@@ -60,7 +60,6 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   arma::vec  u(n);    // Vector of length n storing L*x + eps or its log.
   arma::mat  H(m,m);  // m x m matrix storing Hessian.
   arma::mat  Z(n,m);  // n x m matrix Z = D*L, where D = diag(1/(L*x+e)).
-  arma::mat  ZW(n,m); // n x m matrix ZW = W*Z, where W = diag(w).
   arma::mat  I(m,m);  // m x m diagonal matrix e*I.
   arma::uvec t(m);    // Temporary unsigned int. vector result of length m.
   arma::vec  y(m);    // Vector of length m storing y
@@ -88,7 +87,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     
     // COMPUTE GRADIENT AND HESSIAN
     // ----------------------------
-    computegrad(L,w,x,eps,g,H,u,Z,ZW,I);
+    computegrad(L,w,x,eps,g,H,u,Z,I);
     
     // Report on the algorithm's progress. Here we compute: the value
     // of the objective at x (obj); the smallest gradient value
@@ -154,7 +153,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
           
           if (alp[newind] < 1) {
             
-            // Blocking constraint exists: find and delete it
+            // Blocking constraint exists; find and delete it.
             alpha          = alp[newind]; 
             t[act[newind]] = 0;
             ind            = find(t);
@@ -172,7 +171,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     // ------------------------
     // sum(x) = sum(y) = 1 so replacing g by g+1 in dot product of x-y
     // and g has no effect.
-    for (j = 0; j < 9; j++){
+    for (j = 0; j < 9; j++) {
       if (obj[i] + sum(log(L * y + eps) % w) > dot(x-y, g) / (2 * n) ) 
 	break;
       y = (y-x)/2 + x;
@@ -207,21 +206,52 @@ double mixobjective (const arma::mat& L, const arma::vec& w,
 // length n; Z, an n x m matrix; and ZW, another n x m matrix.
 void computegrad (const arma::mat& L, const arma::vec& w, const arma::vec& x,
 		  double e, arma::vec& g, arma::mat& H, arma::vec& u,
-		  arma::mat& Z, arma::mat& ZW, const arma::mat& I) {
+		  arma::mat& Z, const arma::mat& I) {
    
-  // Compute Z = D*L, where D = diag(1/(L*x + e)).
+  // Compute the gradient g = -L'*u where u = w./(L*x + e), and "./"
+  // denotes element-wise division.
+  u = L*x + e;
+  u = w / u;
+  g = -trans(L) * u;
+    
+  // Compute the Hessian H = L'*U*W*U*L, where U = diag(u) and 
+  // W = diag(w), with vector u defined as above.
   Z = L;
   u = L*x + e;
-  Z.each_col() /= u;
-
-  // Compute ZW = W*Z, where W = diag(w).
-  ZW = Z; 
-  ZW.each_col() %= w;
-   
-  // Compute the gradient g = -L'*W*d, where d is a vector formed by
-  // the diagonal entries of D.
-  g = -arma::sum(ZW.t(),1);
-    
-  // Compute the Hessian H = Z'*W*Z.
-  H = Z.t() * ZW + I;
+  u = sqrt(w) / u;
+  Z.each_col() %= u;
+  H = trans(Z) * Z + I;
 }
+
+// Find the step size.
+// double linesearch (const arma::mat& px, double stepdec, double minstepsize) {
+//   double a = 1;  // The candidate step size.
+
+//   // Repeat until the sufficient decrease condition is satisfied, or
+//   // when we reach the maximum number of backtracking iterations.
+//   while (a >= minstepsize) {
+
+//     // Compute the value of the (modified) objective at the candidate
+//     // iterate.
+    
+//     // The candidate point does not meet our criteria, so decrease
+//     // the step size.
+//     a = a * stepdec;
+//   }
+  
+//   return alpha;
+// }
+//     // Compute the value of the (modified) objective at the.
+
+//     // Compute the directional gradient with respect to the (modified)
+//     // objective.
+//       if (psinew < psi + tau*eta*alpha*dpsi) {
+//         x <- xnew
+//         break
+//       }
+
+//           for (j = 0; j < 9; j++){
+//       if (obj[i] + sum(log(L * y + eps) % w) > dot(x-y, g) / (2 * n) ) 
+// 	break;
+// 	  }
+	  
