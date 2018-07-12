@@ -7,15 +7,15 @@ test_that(paste("mixSQP gives correct solutions for 2 x 2 and",
   # In this first example, the correct solution is (1/2,1/2).
   L   <- rbind(c(1,e),
                c(e,1))
-  out <- mixSQP(L,verbose = FALSE)
+  capture.output(out <- mixSQP(L))
   expect_equal(out$x,c(0.5,0.5),tolerance = 1e-8)
   
   # In this second example, any solution of the form (x1,x2,0) gives
   # the same value for the objective.
   L    <- rbind(c(1,1,e),
                 c(1,1,1))
-  out1 <- mixSQP(L,x0 = c(1,1,0),verbose = FALSE)
-  out2 <- mixSQP(L,x0 = c(0,1,1),verbose = FALSE)
+  capture.output(out1 <- mixSQP(L,x0 = c(1,1,0)))
+  capture.output(out2 <- mixSQP(L,x0 = c(0,1,1)))
   expect_equal(out1$x[3],0,tolerance = 1e-8)
   expect_equal(out2$x[3],0,tolerance = 1e-8)
 })
@@ -38,7 +38,7 @@ test_that(paste("mixSQP and KWDual return the same solution for",
   
   # Apply KWDual and mixSQP to the data set.
   out1 <- mixKWDual(L)
-  out2 <- mixSQP(L,verbose = FALSE)
+  capture.output(out2 <- mixSQP(L))
 
   # The outputted solutions, and the objective values at those
   # solutions, should be nearly identical. Also check that the
@@ -64,7 +64,7 @@ test_that(paste("mixSQP & KWDual return the same solution for",
   
   # Apply KWDual and mixSQP to the data set.
   out1 <- mixKWDual(L,w)
-  out2 <- mixSQP(L,w,verbose = FALSE)
+  capture.output(out2 <- mixSQP(L,w))
 
   # The outputted solutions, and the objective values at those
   # solutions, should be nearly identical.
@@ -85,8 +85,8 @@ test_that(paste("mixSQP returns the same solution regardless whether",
   w  <- w/sum(w)
 
   # Apply mixSQP to normalized and unnormalized data sets.
-  out1 <- mixSQP(L1,w,verbose = FALSE)
-  out2 <- mixSQP(L2,w,verbose = FALSE)
+  capture.output(out1 <- mixSQP(L1,w))
+  capture.output(out2 <- mixSQP(L2,w))
 
   # The outputted solutions should be nearly identical (although the
   # values of the objectives will be different).
@@ -96,7 +96,7 @@ test_that(paste("mixSQP returns the same solution regardless whether",
 test_that(paste("mixSQP gives correct solution for Beckett & Diaconis",
                 "tack rolling example"),{
   data(tacks)
-  out <- mixSQP(L,w,eps = 1e-12,verbose = FALSE)
+  capture.output(out <- mixSQP(L,w,eps = 1e-12))
 
   # The mix-SQP should be very close to the REBayes solution and, more
   # importantly, the quality of the mixSQP solution should be higher.

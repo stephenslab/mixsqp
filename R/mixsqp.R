@@ -13,8 +13,8 @@
 #' generality \eqn{\sum_j w_j = 1} is required.
 #' 
 #' @param L Matrix specifying the optimization problem to be
-#'   solved. It should be a numeric matrix with positive entries, and
-#'   ideally double-precision.
+#'   solved. It should be a numeric matrix with positive entries, and,
+#'   ideally, double-precision.
 #'
 #' @param w A numeric vector, with one entry for each row of \code{L},
 #'   specifying the "weights" associated with the rows of \code{L}. All
