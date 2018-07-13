@@ -36,14 +36,15 @@
 #' @param eps A small constant to safeguard from a numerical issue
 #'   (default 1e-6).
 #' 
-#' @param maxiter A maximum number of outer loop iterations,
-#'   determining how many qp subproblems will be solved at most.
+#' @param maxitersqp Maximum number of SQP iterations; that is, the
+#'   maximum number of quadratic subproblems that will be solved by the
+#'   active-set method.
 #' 
-#' @param maxqpiter A maximum number of inner loop iterations,
-#'   determining how many active-set subproblems will be solved at most.
+#' @param maxiteractiveset Maximum number of active-set iterations
+#'   taken to solve each of the quadratic subproblems.
 #' 
-#' @param verbose A logical indicating if it shows progress of the
-#'   algorithm at each iteration.
+#' @param verbose If \code{verbose = TRUE}, print progress of algorithm
+#'   to console.
 #' 
 #' @return Returns a solution x (in the current version).
 #' 
@@ -64,7 +65,8 @@
 mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)), 
                    convtol = 1e-8, sparsetol = 1e-8,
                    eps = .Machine$double.eps,
-                   maxiter = 1000, maxqpiter = 100, verbose = TRUE){
+                   maxitersqp = 1000, maxiteractiveset = 100,
+                   verbose = TRUE){
 
   # CHECK INPUTS
   # ------------
@@ -99,13 +101,22 @@ mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   storage.mode(x0) <- "double"
   x0 <- x0/sum(x0)
 
+  # Input arguments maxitersqp and maxiteractiveset should both be
+  # positive scalars.
+  if (!(is.numeric(maxitersqp) & all(maxitersqp >= 1) &
+        length(maxitersqp) == 1 & is.numeric(maxiteractiveset) &
+        all(maxiteractiveset >= 1) & length(maxiteractiveset) == 1))
+    stop(paste("Arguments \"maxitersqp\" and \"maxiteractiveset\" should be",
+               "numbers that are 1 or greater"))
+  
   # Input argument verbose should be TRUE or FALSE.
   if (!(is.logical(verbose) & length(verbose) == 1))
     stop("Argument \"verbose\" should be TRUE or FALSE")
   
   # SOLVE OPTIMIZATION PROBLEM USING SQP METHOD
   # -------------------------------------------
-  out <- mixSQP_rcpp(L,w,x0,convtol,sparsetol,eps,maxiter,maxqpiter,verbose)
+  out <- mixSQP_rcpp(L,w,x0,convtol,sparsetol,eps,maxitersqp,
+                     maxiteractiveset,verbose)
 
   # POST-PROCESSING STEPS
   # ---------------------

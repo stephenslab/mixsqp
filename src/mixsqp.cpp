@@ -24,8 +24,8 @@ void   computegrad  (const arma::mat& L, const arma::vec& w,
 // 
 // [[Rcpp::export]]
 List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0, 
-                  double convtol, double sparsetol, double eps, int maxiter, 
-		  int maxqpiter, bool verbose) {
+                  double convtol, double sparsetol, double eps,
+		  int maxitersqp, int maxiteractiveset, bool verbose) {
   
   // Get the number of rows (n) and columns (m) of the conditional
   // likelihood matrix.
@@ -34,22 +34,21 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP algorithm with the following settings:\n");
-    Rprintf("- %d x %d data matrix\n",n,m);
-    Rprintf("- convergence tolerance      = %0.1e\n",convtol);
-    Rprintf("- zero threshold             = %0.1e\n",sparsetol);
-    Rprintf("- outer loop iteration limit = %d\n",maxiter);
-    Rprintf("- inner loop iteration limit = %d\n",maxqpiter);
+    Rprintf("Running mix-SQP 0.1-8 on %d x %d matrix\n",n,m);
+    Rprintf("convergence tolerance: %0.1e\n",convtol);
+    Rprintf("zero threshold:        %0.1e\n",sparsetol);
+    Rprintf("max. SQP iter:         %d\n",maxitersqp);
+    Rprintf("max. active-set iter:  %d\n",maxiteractiveset);
   }
   
   // PREPARE DATA STRUCTURES
   // -----------------------
   // Initialize storage for the outputs obj, gmin, nnz and nqp.
-  arma::vec  obj(maxiter);
-  arma::vec  gmin(maxiter);
-  arma::vec  nnz(maxiter);
-  arma::uvec nqp(maxiter);
-  arma::uvec nls(maxiter);
+  arma::vec  obj(maxitersqp);
+  arma::vec  gmin(maxitersqp);
+  arma::vec  nnz(maxitersqp);
+  arma::uvec nqp(maxitersqp);
+  arma::uvec nls(maxitersqp);
   
   // Initialize the solution.
   arma::vec x = x0;
@@ -83,7 +82,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   
   // Repeat until the convergence criterion is met, or until we reach
   // the maximum number of (outer loop) iterations.
-  for (i = 0; i < maxiter; i++) {
+  for (i = 0; i < maxitersqp; i++) {
     
     // COMPUTE GRADIENT AND HESSIAN
     // ----------------------------
@@ -115,7 +114,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     y.elem(ind).fill(1/nnz[i]);
     
     // Run active set method to solve the QP subproblem.
-    for (j = 0; j < maxqpiter-1; j++) {
+    for (j = 0; j < maxiteractiveset; j++) {
       
       // Define the smaller QP subproblem.
       b = H*y + 2*g + 1;
