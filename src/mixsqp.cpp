@@ -66,7 +66,8 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   arma::vec  b(m);    // Vector of length m storing H*y+2+g+1
 
   int    newind = 0;    // new index to be added or deleted
-  double alpha = 1;     // Define step size
+  double alpha  = 1;    // Define step size
+  double status = 1;    // Convergence status.
   
   // This is used in computing the Hessian matrix.
   I  = arma::eye(m,m);
@@ -132,8 +133,10 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
       if (arma::norm(p,2) < convtol) {
         
         // Compute the Lagrange multiplier.
-        if (b.min() >= -convtol)
+        if (b.min() >= -convtol) {
+	  status = 0;
           break;
+	}
         
         // Find an index with smallest multiplier, Add this to the
         // inactive set.
@@ -182,7 +185,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     x = y;
   }
   
-  return List::create(Named("x") = x/sum(x), Named("niter") = i + 1);
+  return List::create(Named("x") = x,Named("status") = status);
 }
 
 // Compute the value of the (unmodified) objective at x, assuming x is
