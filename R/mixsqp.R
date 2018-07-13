@@ -46,7 +46,8 @@
 #' @param verbose If \code{verbose = TRUE}, print progress of algorithm
 #'   to console.
 #' 
-#' @return Returns a solution x (in the current version).
+#' @return Returns a solution x (in the current version). Also returns
+#'   the algorithm convergence status.
 #' 
 #' @examples
 #' n  <- 1e5
@@ -118,6 +119,17 @@ mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   out <- mixSQP_rcpp(L,w,x0,convtol,sparsetol,eps,maxitersqp,
                      maxiteractiveset,verbose)
 
+  # Get the algorithm convergence status.
+  if (out$status == 0) {
+    status <- "converged to optimal solution"
+    if (verbose)
+      cat("Convergence criteria met; optimal solution found.\n")
+  } else if (out$status == 1) {
+    status <- "exceeded maximum number of iterations"
+    if (verbose)
+      cat(paste("Failed to converge within iterations limit.\n"))
+  } 
+  
   # POST-PROCESSING STEPS
   # ---------------------
   # Label the elements of the solution (x) by the column labels of the
@@ -126,5 +138,5 @@ mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   x        <- drop(x)
   names(x) <- colnames(L)
 
-  return(list(x = x,value = mixobjective(L,w,x)))
+  return(list(x = x,status = status,value = mixobjective(L,w,x)))
 }
