@@ -5,13 +5,13 @@
 \title{mixSQP}
 \usage{
 mixSQP(L, w = rep(1, nrow(L)), x0 = rep(1, ncol(L)), convtol = 1e-08,
-  sparsetol = 1e-08, eps = .Machine$double.eps, maxiter = 1000,
-  maxqpiter = 100, verbose = TRUE)
+  sparsetol = 1e-08, eps = .Machine$double.eps, maxitersqp = 1000,
+  maxiteractiveset = 100, verbose = TRUE)
 }
 \arguments{
 \item{L}{Matrix specifying the optimization problem to be
-solved. It should be a numeric matrix with positive entries, and
-ideally double-precision.}
+solved. It should be a numeric matrix with positive entries, and,
+ideally, double-precision.}
 
 \item{w}{A numeric vector, with one entry for each row of \code{L},
 specifying the "weights" associated with the rows of \code{L}. All
@@ -33,14 +33,15 @@ convergence criterion.}
 \item{eps}{A small constant to safeguard from a numerical issue
 (default 1e-6).}
 
-\item{maxiter}{A maximum number of outer loop iterations,
-determining how many qp subproblems will be solved at most.}
+\item{maxitersqp}{Maximum number of SQP iterations; that is, the
+maximum number of quadratic subproblems that will be solved by the
+active-set method.}
 
-\item{maxqpiter}{A maximum number of inner loop iterations,
-determining how many active-set subproblems will be solved at most.}
+\item{maxiteractiveset}{Maximum number of active-set iterations
+taken to solve each of the quadratic subproblems.}
 
-\item{verbose}{A logical indicating if it shows progress of the
-algorithm at each iteration.}
+\item{verbose}{If \code{verbose = TRUE}, print progress of algorithm
+to console.}
 }
 \value{
 Returns a solution x (in the current version).
