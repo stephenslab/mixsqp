@@ -52,8 +52,8 @@
 #' @examples
 #' n  <- 1e5
 #' m  <- 20
-#' w  <- rep(1,n)/n; # weights
-#' L  <- testdata(n,m, mix_type = "mix_n") # Create some simulated data
+#' w  <- rep(1,n)/n
+#' L  <- simulatemixdata(n,m)
 #' x0 <- rep(1,m)/m # initialization
 #' out <- mixSQP(L,x0,w)
 #' 

@@ -44,7 +44,8 @@ taken to solve each of the quadratic subproblems.}
 to console.}
 }
 \value{
-Returns a solution x (in the current version).
+Returns a solution x (in the current version). Also returns
+  the algorithm convergence status.
 }
 \description{
 mixSQP solves a convex optimization problem in
@@ -62,8 +63,8 @@ generality \eqn{\sum_j w_j = 1} is required.
 \examples{
 n  <- 1e5
 m  <- 20
-w  <- rep(1,n)/n; # weights
-L  <- testdata(n,m, mix_type = "mix_n") # Create some simulated data
+w  <- rep(1,n)/n
+L  <- simulatemixdata(n,m)
 x0 <- rep(1,m)/m # initialization
 out <- mixSQP(L,x0,w)
 
