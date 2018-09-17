@@ -61,11 +61,12 @@ constraint \deqn{\sum_k x_k = 1, x_k \ge 0} Without loss of
 generality \eqn{\sum_j w_j = 1} is required.
 }
 \examples{
+set.seed(1)
 n  <- 1e5
 m  <- 20
 w  <- rep(1,n)/n
-L  <- simulatemixdata(n,m)
+L  <- simulatemixdata(n,m)$L
 x0 <- rep(1,m)/m # initialization
-out <- mixSQP(L,x0,w)
+out <- mixSQP(L,w,x0)
 
 }

@@ -50,12 +50,13 @@
 #'   the algorithm convergence status.
 #' 
 #' @examples
+#' set.seed(1)
 #' n  <- 1e5
 #' m  <- 20
 #' w  <- rep(1,n)/n
-#' L  <- simulatemixdata(n,m)
+#' L  <- simulatemixdata(n,m)$L
 #' x0 <- rep(1,m)/m # initialization
-#' out <- mixSQP(L,x0,w)
+#' out <- mixSQP(L,w,x0)
 #' 
 #' @useDynLib mixSQP
 #' 
