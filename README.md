@@ -21,19 +21,24 @@ paper,
 If you find a bug, or you have a question or feedback on our work,
 please post an [issue][issues].
 
-## License
-
-Copyright (c) 2017-2018, Youngseok Kim.
-
-All source code and software in this repository are made available
-under the terms of the
-[MIT license](https://opensource.org/licenses/mit-license.html).
-
 ## Citing this work
 
 If you find any of the source code in this repository useful for your
 work, please cite our manuscript, Kim *et al* (2018). The full
 citation is given above.
+
+## License
+
+Copyright (c) 2017-2018, Youngseok Kim, Peter Carbonetto, Matthew
+Stephens and Mihai Anitescu.
+
+All source code and software in this repository are made available
+under the terms of the
+[MIT license](https://opensource.org/licenses/mit-license.html).
+
+## Quick Start
+
+*Add quick start instructions here.*
 
 ## Credits
 
