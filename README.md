@@ -1,5 +1,7 @@
 # mixSQP
 
+[![Appveyor Build status](https://ci.appveyor.com/api/projects/status/b7cp8eo5e7ikid0i?svg=true)](https://ci.appveyor.com/project/pcarbo/mixsqp)
+
 mix-SQP: Sequential Quadratic Programming for fast maximum-likelihood
 estimation of mixture proportions
 
