@@ -5,9 +5,9 @@
 The mixSQP R package provides algorithms based on
 [sequential quadratic programming][sqp] for maximum likelihood
 estimation of the mixture proportions in a finite mixture model where
-the component densities are known. For large data sets (large sample
-sizes), the SQP algorithm can be orders of magnitude faster than the
-state-of-the-art interior-point solver implemented in the
+the component densities are known. For large data sets, the SQP
+algorithm can be orders of magnitude faster than the state-of-the-art
+interior-point solver implemented in the
 [REBayes package][rebayes]. For more details on the mixSQP algorithm,
 please see [our paper on arXiv][arxiv-paper].
 
@@ -44,13 +44,27 @@ This command should automatically retrieve and install the ashr
 package from Github. If it does not, install ashr separately using
 devtools:
 
-library(devtools)
-install_github("stephens999/ashr")
-
-Alternatively, if you have cloned the repository locally, you can
-install the package with the `install_local` function:
+To install the latest version of the mixSQP package from GitHub,
+use [devtools](https://github.com/r-lib/devtools):
 
 ```R
+install.packages("devtools")
+library(devtools)
+install_github("youngseok-kim/mixsqp",build_vignettes = TRUE,
+               upgrade_dependencies = FALSE)
+```
+
+This command should automatically install all required packages if
+they are not installed already.
+   
+Alternatively, if you have cloned the repository locally, you can
+install the package with the `install_local` function from
+devtools. Assuming your working directory contains the mixSQP
+repository, run this code to install the package:
+
+```R
+list.files(pattern = "mixSQP") # Should return "mixSQP".
+devtools::install_local("mixSQP",upgrade_dependencies = FALSE)
 ```
 
 ## Developer notes
@@ -69,10 +83,17 @@ R CMD check --as-cran mixSQP_0.1-11.tar.gz
 Note that these commands require that the dependencies have already
 been installed. See the [DESCRIPTION](DESCRIPTION) file for details.
 
-### Updating the pkgdown site.
+### Updating the C++ source and documentation
+
+When any changes are made to `roxygen2` markup or to the C++ code in
+the `src` directory, simply run `devtools::document()` to update the
+[RcppExports.cpp](src/RcppExports.cpp), the `NAMESPACE` file, and the
+package documentation files (in the `man` directory),
+
+### Updating the pkgdown site
 
 Run this line of R code to build the website (make sure you have an
-Internet connection while running these commands):
+Internet connection while running the code):
 
 ```R
 pkgdown::build_site(mathjax = FALSE)
