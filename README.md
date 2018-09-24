@@ -53,11 +53,6 @@ install_github("youngseok-kim/mixsqp",build_vignettes = TRUE,
 This command should automatically install all required packages if
 they are not installed already.
 
-**Note:** Compiling the mixSQP package from source will require a C++
-compiler setup that is appropriate for your R installation. For
-details, refer to the [CRAN documentation][cran]. For Mac
-specifically, see also [these notes][compiling-macos].
-
 Alternatively, if you have cloned the repository locally, you can
 install the package with the `install_local` function from
 devtools. Assuming your working directory contains the mixSQP
@@ -67,6 +62,12 @@ repository, run this code to install the package:
 list.files(pattern = "mixSQP") # Should return "mixSQP".
 devtools::install_local("mixSQP",upgrade_dependencies = FALSE)
 ```
+
+**Important note:** Compiling the mixSQP package from source will
+require a C++ compiler setup that is appropriate for the the R
+installed on your computer. For details, refer to the
+[CRAN documentation][cran]. For Mac computers, see
+[these notes][compiling-macos].
 
 ## Developer notes
 
