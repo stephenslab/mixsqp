@@ -31,7 +31,7 @@ Stephens and Mihai Anitescu.
 
 All source code and software in this repository are made available
 under the terms of the
-[MIT license](https://opensource.org/licenses/mit-license.html). See
+[MIT license][mit-license]. See
 file [LICENSE](LICENSE) for the full text of the license.
 
 ## Setup
@@ -45,7 +45,7 @@ package from Github. If it does not, install ashr separately using
 devtools:
 
 To install the latest version of the mixSQP package from GitHub,
-use [devtools](https://github.com/r-lib/devtools):
+use [devtools][devtools]:
 
 ```R
 install.packages("devtools")
@@ -85,10 +85,10 @@ been installed. See the [DESCRIPTION](DESCRIPTION) file for details.
 
 ### Updating the C++ source and documentation
 
-When any changes are made to `roxygen2` markup or to the C++ code in
-the `src` directory, simply run `devtools::document()` to update the
-[RcppExports.cpp](src/RcppExports.cpp), the `NAMESPACE` file, and the
-package documentation files (in the `man` directory),
+When any changes are made to [roxygen2][roxygen2] markup or to the C++
+code in the "src" directory, simply run `devtools::document()` to
+update the [RcppExports.cpp](src/RcppExports.cpp), the NAMESPACE file,
+and the package documentation files (in the "man" directory),
 
 ### Updating the pkgdown site
 
@@ -115,3 +115,6 @@ This project was developed by [Youngseok Kim][youngseok] at the
 [peter]: https://pcarbo.github.io
 [matthew]: http://stephenslab.uchicago.edu
 [mihai]: http://www.mcs.anl.gov/~anitescu
+[mit-license]: https://opensource.org/licenses/mit-license.html
+[devtools]: https://github.com/r-lib/devtools
+[roxygen2]: https://cran.r-project.org/package=roxygen2
