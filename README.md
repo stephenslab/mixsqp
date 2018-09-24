@@ -55,7 +55,9 @@ install the package with the `install_local` function:
 
 ## Developer notes
 
-+ To install and test the mixSQP R package, run the following commands
+### Testing the package
+
+To install and test the mixSQP R package, run the following commands
 in the shell:
 
 ```bash
@@ -66,6 +68,15 @@ R CMD check --as-cran mixSQP_0.1-11.tar.gz
 
 Note that these commands require that the dependencies have already
 been installed. See the [DESCRIPTION](DESCRIPTION) file for details.
+
+### Updating the pkgdown site.
+
+Run this line of R code to build the website (make sure you have an
+Internet connection while running these commands):
+
+```R
+pkgdown::build_site(mathjax = FALSE)
+```
 
 ## Credits
 
