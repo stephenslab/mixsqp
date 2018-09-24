@@ -59,7 +59,7 @@ devtools. Assuming your working directory contains the mixSQP
 repository, run this code to install the package:
 
 ```R
-list.files(pattern = "mixSQP") # Should return "mixSQP".
+list.files(pattern = "mixSQP") # Should give "mixSQP".
 devtools::install_local("mixSQP",upgrade_dependencies = FALSE)
 ```
 

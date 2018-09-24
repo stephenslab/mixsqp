@@ -1,15 +1,13 @@
 to do
 =====
 
-+ Fill out README.
-
 + Activate GitHub Pages (to show pkgdown site).
-
-+ Write setup instructions in README.
 
 + Edit description at top of GitHub page.
 
 * Add Travis CI and codecov (I will need Youngseok's help with this).
+
++ Fix appveyor settings so that a commit triggers a build.
 
 + Complete help page for mixSQP.
 
@@ -17,5 +15,5 @@ to do
 
 + Add CITATION.
 
-+ Create a simple vignette comparing performance of mixSQP against
-REBayes on a large-ish data set.
++ Create a short vignette comparing performance of mixSQP against
+  REBayes on a large-ish data set.
