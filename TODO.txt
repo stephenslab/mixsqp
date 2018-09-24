@@ -1,6 +1,14 @@
 to do
 =====
 
++ Fill out README.
+
++ Write setup instructions in README.
+
++ Edit description at top of GitHub page.
+
++ Create pkgdown site.
+
 * Add Travis CI and codecov (I will need Youngseok's help with this).
 
 + Complete help page for mixSQP.
