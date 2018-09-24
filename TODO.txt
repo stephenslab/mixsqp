@@ -3,10 +3,11 @@ to do
 
 * Add Travis CI and codecov (I will need Youngseok's help with this).
 
-* Add AppVeyor (I will need Youngseok's help with this).
-
 + Complete help page for mixSQP.
 
 + Complete help page for mixKWDual.
 
 + Add CITATION.
+
++ Create a simple vignette comparing performance of mixSQP against
+REBayes on a large-ish data set.

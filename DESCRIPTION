@@ -18,7 +18,7 @@ Description: The 'mixSQP' package provides algorithms based on
     sequential quadratic programming (SQP) for maximum likelihood
     estimation of the mixture proportions in a finite mixture model
     where the component densities are known. For large data sets
-    (large sample size), the SQP algorithm can be orders of magnitude
+    (large sample sizes), the SQP algorithm can be orders of magnitude
     faster than a state-of-the-art interior-point solver implemented
     by function 'KWDual' in the 'REBayes' package.
 License: MIT + file LICENSE
