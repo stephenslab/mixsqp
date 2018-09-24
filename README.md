@@ -36,10 +36,6 @@ file [LICENSE](LICENSE) for the full text of the license.
 
 ## Setup
 
-*Add setup instructions here.*
-
-NOTE: Proper C++ compiler setup is required.
-
 This command should automatically retrieve and install the ashr
 package from Github. If it does not, install ashr separately using
 devtools:
@@ -56,7 +52,12 @@ install_github("youngseok-kim/mixsqp",build_vignettes = TRUE,
 
 This command should automatically install all required packages if
 they are not installed already.
-   
+
+**Note:** Compiling the mixSQP package from source will require a C++
+compiler setup that is appropriate for your R installation. For
+details, refer to the [CRAN documentation][cran]. For Mac
+specifically, see also [these notes][compiling-macos].
+
 Alternatively, if you have cloned the repository locally, you can
 install the package with the `install_local` function from
 devtools. Assuming your working directory contains the mixSQP
@@ -118,3 +119,5 @@ This project was developed by [Youngseok Kim][youngseok] at the
 [mit-license]: https://opensource.org/licenses/mit-license.html
 [devtools]: https://github.com/r-lib/devtools
 [roxygen2]: https://cran.r-project.org/package=roxygen2
+[cran]: https://cran.r-project.org
+[compiling-macos]: https://pcarbo.github.io/pcarbo/r-macos.html
