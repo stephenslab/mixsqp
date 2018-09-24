@@ -13,7 +13,5 @@ to do
 
 + Complete help page for mixKWDual.
 
-+ Add CITATION.
-
 + Create a short vignette comparing performance of mixSQP against
   REBayes on a large-ish data set.
