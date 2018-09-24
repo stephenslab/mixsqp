@@ -15,7 +15,7 @@ environment:
   global:
     _R_CHECK_FORCE_SUGGESTS_: false
     USE_RTOOLS: yes
-    WARNINGS_ARE_ERRORS: false
+    WARNINGS_ARE_ERRORS:
     R_VERSION: release
     R_ARCH: x64
     R_CHECK_ARGS: --no-examples --no-manual --as-cran
