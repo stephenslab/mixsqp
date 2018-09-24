@@ -1,8 +1,8 @@
 Encoding: UTF-8
 Type: Package
 Package: mixSQP
-Version: 0.1-11
-Date: 2018-09-07
+Version: 0.1-12
+Date: 2018-09-24
 Title: Sequential Quadratic Programming for Fast Maximum-Likelihood
     Estimation of Mixture Proportions
 Authors@R: c(person("Youngseok","Kim",role=c("aut","cre"),
@@ -27,7 +27,9 @@ Imports:
     Rcpp (>= 0.12.15)
 Suggests:
     REBayes,
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
 LinkingTo:
     Rcpp,
     RcppArmadillo
