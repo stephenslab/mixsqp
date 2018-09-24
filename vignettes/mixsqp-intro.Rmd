@@ -1,0 +1,42 @@
+---
+title: "Illustration of mix-SQP solver applied to a small data set, and a large one"
+author: "Youngseok Kim and Peter Carbonetto"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{mixSQP-intro}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE,comment = "#",fig.width = 5,
+                      fig.height = 3,fig.align = "center",
+                      fig.cap = "&nbsp;",dpi = 120)
+```
+
+This vignette illustrates mix-SQP, a fast algorithm for
+maximum-likelihood estimation of mixture proportions, and compares its
+performance against an interior-point method.
+
+## Environment set-up
+
+We begin by loading the mixSQP package.
+
+```{r load-pkgs}
+library("mixSQP")
+```
+
+Next, initialize the sequence of pseudorandom numbers.
+
+```{r set-seed}
+set.seed(1)
+```
+
+## Generate a small, simulated data set
+
+Let's begin with a smaller example with 50,000 samples.
+
+```{r sim-data-small}
+sim <- simulatemixdata(5e4,20)
+```
