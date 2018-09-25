@@ -16,6 +16,4 @@ to do
 + Create a short vignette comparing performance of mixSQP against
   REBayes on a large-ish data set.
 
-+ Export and document mixobjective function.
-
-+ Improve argument checking for all exported functions.
++ Improve argument checking for mixSQP and mixKWDual.

@@ -42,27 +42,26 @@ verify.weights <- function (L, w) {
   return(w/sum(w))
 }
 
-# Verify that the initial estimate of the solution to the optimization
-# problem is valid, then normalize this estimate if necessary. It is
-# assumed that the initial estimate argument is named "x0". Argument
-# x0 should be a numeric vector with non-negative entries, in which
-# the length is equal to the number of columns of L.
+# Verify that the estimate of the solution to the optimization problem
+# is valid, then normalize this estimate if necessary. Argument x
+# should be a numeric vector with non-negative entries, in which the
+# length is equal to the number of columns of L.
 #
 # Input L should be the provided likelihood matrix. 
 #
-# If x0 is not valid, an error is reported; otherwise, the normalized
+# If x is not valid, an error is reported; otherwise, the normalized
 # initial estimate (coerced to double-precision) is returned.
-verify.initial.estimate <- function (x0, L) {
-  msg <- paste("Argument \"x0\" should be a numeric vector with only",
+verify.estimate <- function (x, L, arg.name = "x") {
+  msg <- paste("Argument",arg.name,"should be a numeric vector with only",
                "non-negative, finite and non-missing entries, with one",
                "entry per column of L")
-  if (!(is.atomic(x0) & is.numeric(x0)))
+  if (!(is.atomic(x) & is.numeric(x)))
     stop(msg)
-  if (!(all(x0 >= 0) & all(is.finite(x0)) & !any(missing(x0)) &
-        length(x0) == ncol(L)))
+  if (!(all(x >= 0) & all(is.finite(x)) & !any(missing(x)) &
+        length(x) == ncol(L)))
     stop(msg)
-  storage.mode(x0) <- "double"
-  return(x0/sum(x0))
+  storage.mode(x) <- "double"
+  return(x/sum(x))
 }
 
 # Generates a vector of n points that are equally spaced on the

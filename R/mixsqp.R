@@ -87,7 +87,7 @@ mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   w <- verify.weights(L,w)
 
   # Check and process the initial estimate of the solution.
-  x0 <- verify.initial.estimate(x0,L)
+  x0 <- verify.estimate(x0,L,"x0")
   
   # Input arguments maxitersqp and maxiteractiveset should both be
   # positive scalars.
