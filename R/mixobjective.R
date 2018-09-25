@@ -1,7 +1,7 @@
 #' @rdname mixSQP
 #' @name mixSQP
 #' @export
-mixobjective <- function (L, x, w = rep(1,nrow(L)), e = 0) {
+mixobjective <- function (L, x, w = rep(1,nrow(L))) {
 
   # CHECK & PROCESS INPUTS
   # ----------------------
@@ -11,13 +11,15 @@ mixobjective <- function (L, x, w = rep(1,nrow(L)), e = 0) {
   if (storage.mode(L) != "double")
     storage.mode(L) <- "double"
   
-  # Get the number of rows (n) and columns (m) of the matrix L.
-  n <- nrow(L)
-  m <- ncol(L)
-
-  # COMPUTE OBJECTIVE
-  # -----------------
-  return(mixobj(L,w,x,e))
+  # Check and process the estimate of the solution.
+  x <- verify.estimate(x,L)
+  
+  # Check and process the weights.
+  w <- verify.weights(L,w)
+  
+  # COMPUTE OBJECTIVE VALUE
+  # -----------------------
+  return(mixobj(L,w,x))
 }
 
 # Compute the value of the objective at x; arguments L and w specify
