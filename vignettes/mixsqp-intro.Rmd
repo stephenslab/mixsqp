@@ -14,20 +14,22 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(collapse = TRUE,comment = "#",fig.width = 5,
-                      fig.height = 3,fig.align = "center",
+knitr::opts_chunk$set(collapse = TRUE,results = "hold",comment = "#",
+                      fig.width = 5,fig.height = 3,fig.align = "center",
                       fig.cap = "&nbsp;",dpi = 120)
 ```
 
-This vignette illustrates mix-SQP, a fast algorithm for
-maximum-likelihood estimation of mixture proportions, and compares its
-performance against an interior-point method.
+In this vignette, we compare the runtime and accuracy of the mix-SQP
+algorithm against an interior-point (IP) solver implemented by the
+[MOSEK][mosek] commercial software (and called via the "KWDual"
+function in the [REBayes package][rebayes]).
 
 ## Environment set-up
 
-We begin by loading the mixSQP package.
+We begin by loading the Rmosek and mixSQP packages.
 
 ```{r load-pkgs}
+library("Rmosek")
 library("mixSQP")
 ```
 
@@ -37,16 +39,65 @@ Next, initialize the sequence of pseudorandom numbers.
 set.seed(1)
 ```
 
-## Generate a small, simulated data set
+## Generate a small data set
 
 Let's begin with a smaller example with $n = 50,000$ samples.
 
 ```{r sim-data-small}
-sim <- simulatemixdata(5e4,20)
-dim(sim$L)
+L <- simulatemixdata(5e4,10)$L
+dim(L)
 ```
 
-This call to `simulatemixdata` created an $n \times k$ likelihood
-matrix $L$ for a mixture of zero-centered normals, with $k = 20$. Note
-that the rows of the likelihood matrix are normalized by default so
-that the maximum entry in each row is 1.
+This call to `simulatemixdata` created an $n \times k$ conditional
+likelihood matrix for a mixture of zero-centered normals, with $k =
+20$. Note that the rows of the likelihood matrix are normalized by
+default so that the maximum entry in each row is 1.
+
+[mosek]: https://www.mosek.com
+[rebayes]: https://cran.r-project.org/package=REBayes
+
+## Fit mixture model
+
+First, we fit the mixture model using the mix-SQP solver.
+
+```{r fit-model-mixsqp-small}
+timing.sqp <- system.time(fit.sqp <- mixSQP(L))
+cat(sprintf("Computation took %0.2f seconds.\n",timing.sqp["elapsed"]))
+```
+
+Next, we fit the same mixture model using the IP solver.
+
+```{r fit-model-kwdual-small}
+timing.ip <- system.time(fit.ip <- mixKWDual(L))
+cat(sprintf("Computation took %0.2f seconds.\n",timing.ip["elapsed"]))
+```
+
+The runtime of the mix-SQP algorithm is about the same as the IP
+method, and the quality of the IP and SQP solutions is very similar.
+
+```{r compare-solutions-small}
+cat(sprintf("Objective at SQP solution: %0.16f\n",fit.sqp$value,digits = 16))
+cat(sprintf("Objective at IP solution:  %0.16f\n",fit.ip$value,digits = 16))
+cat(sprintf("Difference in objectives:  %0.4e\n",fit.sqp$value - fit.ip$value))
+```
+
+## Comparison using a large data set
+
+*Fill out code and text for this section.*
+
+## Session information
+
+This next code chunk gives information about the computing environment
+used to generate the results contained in this vignette, including the
+version of R and the packages used.
+
+```{r session-info}
+sessionInfo()
+```
+
+Since we used Rmosek, it is also helpful to record the version of
+MOSEK that was used.
+
+```{r mosek-info}
+mosek_version()
+```
