@@ -67,8 +67,8 @@ simulatemixdata <- function (n, m, simtype = c("n","nt"),
     stop("Argument \"m\" should be a positive integer greater than 1")
 
   # Get the choice of data to simulate.
-  if (!(is.character(simtype) & length(simtype) == 1))
-    stop("Argument \"simtype\" should be a character vector of length 1")
+  if (!is.character(simtype))
+    stop("Argument \"simtype\" should be a character vector")
   simtype <- match.arg(simtype)
 
   # Input argument normalize.rows should be TRUE or FALSE.

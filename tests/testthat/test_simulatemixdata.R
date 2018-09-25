@@ -1,4 +1,4 @@
-context("mixSQP")
+context("simulatemixdata")
 
 test_that("simulatemixdata generates matrix with the correct dimensions",{
   dat <- simulatemixdata(1000,20)
