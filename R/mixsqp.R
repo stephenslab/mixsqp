@@ -11,20 +11,21 @@
 #' constraint \deqn{\sum_k x_k = 1, x_k \ge 0} Without loss of
 #' generality \eqn{\sum_j w_j = 1} is required.
 #' 
-#' @param L Matrix specifying the optimization problem to be
-#'   solved. It should be a numeric matrix with positive entries, and,
-#'   ideally, double-precision.
+#' @param L Matrix specifying the optimization problem to be solved.
+#'   It should be a numeric matrix with at least two columns, with
+#'   finite and positive entries, and, ideally, stored in
+#'   double-precision.
 #'
 #' @param w A numeric vector, with one entry for each row of \code{L},
 #'   specifying the "weights" associated with the rows of \code{L}. All
-#'   weights must be positive. The weights should sum to 1; if not, they
-#'   will automatically be normalized to sum to 1. By default, all
-#'   weights are set to 1, in which case all rows of \code{L} are
-#'   assigned the same weight.
+#'   weights must be finite and positive. The weights should sum to 1;
+#'   if not, they will automatically be normalized to sum to 1. By
+#'   default, all weights are set to 1, in which case all rows of
+#'   \code{L} are assigned the same weight.
 #' 
 #' @param x0 An initial estimate of the solution to the optimization
-#'   problem. It should contain only non-negative values, and the
-#'   entries should sum to 1; if not, the vector is automatically
+#'   problem. It should contain only finite, non-negative values, and
+#'   the entries should sum to 1; if not, the vector is automatically
 #'   normalized to sum to 1. By default, \code{x0} is the vector with
 #'   all equal entries.
 #' 
@@ -72,8 +73,8 @@ mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 
   # CHECK & PROCESS INPUTS
   # ----------------------
-  # Check input L and, if necessary, coerce the likelihood matrix to
-  # be in double precision.
+  # Check the likelihood matrix and, if necessary, coerce the
+  # likelihood matrix to be in double-precision.
   verify.likelihood.matrix(L)
   if (storage.mode(L) != "double")
     storage.mode(L) <- "double"
@@ -82,24 +83,12 @@ mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   n <- nrow(L)
   m <- ncol(L)
 
-  # The weights should be a numeric vector with all positive entries,
-  # in which the length is equal to the number of rows of L. Further,
-  # the weights should sum to 1.
+  # Check and process the weights.
   w <- verify.weights(L,w)
 
-  # The initial estimate of the solution should be a numeric vector
-  # with all non-negative entries, in which the length is equal to the
-  # number fo columns of L. Further, the entries should sum to 1.
-  if (!(is.vector(x0) & !is.list(x0) & is.numeric(x0)))
-    stop(paste("Argument \"x0\" should be a numeric vector; for more",
-               "information, see \"help(is.vector)\" and",
-               "\"help(is.numeric)\""))
-  if (!(length(x0) == m & all(x0 >= 0)))
-    stop(paste("Input vector \"x0\" should contain only non-negative",
-               "values, with one entry per column of L"))
-  storage.mode(x0) <- "double"
-  x0 <- x0/sum(x0)
-
+  # Check and process the initial estimate of the solution.
+  x0 <- verify.initial.estimate(x0,L)
+  
   # Input arguments maxitersqp and maxiteractiveset should both be
   # positive scalars.
   if (!(is.numeric(maxitersqp) & all(maxitersqp >= 1) &
