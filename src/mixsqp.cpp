@@ -34,7 +34,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP 0.1-13 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP 0.1-16 on %d x %d matrix\n",n,m);
     Rprintf("convergence tolerance: %0.1e\n",convtol);
     Rprintf("zero threshold:        %0.1e\n",sparsetol);
     Rprintf("max. SQP iter:         %d\n",maxitersqp);
