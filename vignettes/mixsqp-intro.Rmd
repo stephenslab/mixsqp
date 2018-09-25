@@ -2,7 +2,11 @@
 title: "Illustration of mix-SQP solver applied to a small data set, and a large one"
 author: "Youngseok Kim and Peter Carbonetto"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_document:
+    theme: readable
+    before_body: header.html
+    after_body: footer.html
 vignette: >
   %\VignetteIndexEntry{mixSQP-intro}
   %\VignetteEngine{knitr::rmarkdown}
@@ -35,8 +39,14 @@ set.seed(1)
 
 ## Generate a small, simulated data set
 
-Let's begin with a smaller example with 50,000 samples.
+Let's begin with a smaller example with $n = 50,000$ samples.
 
 ```{r sim-data-small}
 sim <- simulatemixdata(5e4,20)
+dim(sim$L)
 ```
+
+This call to `simulatemixdata` created an $n \times k$ likelihood
+matrix $L$ for a mixture of zero-centered normals, with $k = 20$. Note
+that the rows of the likelihood matrix are normalized by default so
+that the maximum entry in each row is 1.

@@ -60,7 +60,8 @@ repository, run this code to install the package:
 
 ```R
 list.files(pattern = "mixSQP") # Should give "mixSQP".
-devtools::install_local("mixSQP",upgrade_dependencies = FALSE)
+devtools::install_local("mixSQP",build_vignettes = TRUE,
+                        upgrade_dependencies = FALSE)
 ```
 
 **Important note:** Compiling the mixSQP package from source will
