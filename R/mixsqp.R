@@ -1,5 +1,5 @@
 #' @title mixSQP
-#' 
+#'
 #' @description mixSQP solves a convex optimization problem in
 #'   https://arxiv.org/abs/1806.01412.
 #'   It implements a sequential quadratic programming with

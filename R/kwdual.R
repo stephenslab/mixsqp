@@ -1,46 +1,13 @@
-#' @title Add title here.
-#'
-#' @description Add more detailed description here. Explain that this
-#'   solves the dual problem formulation using the MOSEK interior-point
-#'   solver (see text from manuscript).
-#'
-#' @param L Matrix specifying the optimization problem to be
-#'   solved. It should be a numeric matrix with positive entries, and
-#'   ideally double-precision. 
-#'
-#' @param w A numeric vector, with one entry for each row of \code{L},
-#'   specifying the "weights" associated with the rows of \code{L}. All
-#'   weights must be positive. It is assumed the weights sum to 1; if
-#'   not, they will automatically be normalized to sum to 1. By default,
-#'   all rows of \code{L} are assigned the same weight.
-#' 
-#' @param ... Additional optimization parameters passed to MOSEK. See
-#'   \code{\link[REBayes]{KWDual}} for details.
-#'
-#' @return \code{mixKWDual} returns a list with two components:
-#'
-#' \item{x}{The solution to the optimization problem, as provided by 
-#'   MOSEK.}
-#'
-#' \item{value}{The value of the objective at \code{x}.}
-#' 
-#' \item{status}{The MOSEK convergence status.}
-#' 
-#' @examples
-#' # Add example here.
-#'
+#' @rdname mixSQP 
+#' @name mixSQP
 #' @export
-#' 
 mixKWDual <- function (L, w = rep(1,nrow(L)), ...)  {
 
-  # CHECK INPUTS
-  # ------------
-  # The likelihood matrix should be a numeric matrix with at least
-  # two columns, and all the entries should be positive.
+  # CHECK & PROCESS INPUTS
+  # ----------------------
+  # Check input L and, if necessary, coerce the likelihood matrix to
+  # be in double precision.
   verify.likelihood.matrix(L)
-
-  # If necessary, coerce the likelihood matrix to be in double
-  # precision.
   if (storage.mode(L) != "double")
     storage.mode(L) <- "double"
 

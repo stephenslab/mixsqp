@@ -1,4 +1,6 @@
-#' @rdname mixSQP 
+#' @rdname mixSQP
+#' @name mixSQP
+#' @export
 mixobjective <- function (L, x, w = rep(1,nrow(L)), e = 0) {
 
   # CHECK & PROCESS INPUTS
@@ -8,9 +10,11 @@ mixobjective <- function (L, x, w = rep(1,nrow(L)), e = 0) {
   verify.likelihood.matrix(L)
   if (storage.mode(L) != "double")
     storage.mode(L) <- "double"
+  
+  # Get the number of rows (n) and columns (m) of the matrix L.
+  n <- nrow(L)
+  m <- ncol(L)
 
-  
-  
   # COMPUTE OBJECTIVE AT x
   # ----------------------
   return(mixobj(L,w,x,e))
