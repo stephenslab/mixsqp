@@ -15,8 +15,8 @@ mixobjective <- function (L, x, w = rep(1,nrow(L)), e = 0) {
   n <- nrow(L)
   m <- ncol(L)
 
-  # COMPUTE OBJECTIVE AT x
-  # ----------------------
+  # COMPUTE OBJECTIVE
+  # -----------------
   return(mixobj(L,w,x,e))
 }
 

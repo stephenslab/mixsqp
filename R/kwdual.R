@@ -15,11 +15,9 @@ mixKWDual <- function (L, w = rep(1,nrow(L)), ...)  {
   n <- nrow(L)
   m <- ncol(L)
 
-  # The weights should be a numeric vector with all positive entries,
-  # in which the length is equal to the number of rows of L. Further,
-  # the weights should sum to 1.
+  # Check and process the weights.
   w <- verify.weights(L,w)
-  
+
   # SOLVE OPTIMIZATION PROBLEM USING MOSEK
   # --------------------------------------
   # Check that the REBayes package is available.
