@@ -2,6 +2,7 @@
 
 export(mixKWDual)
 export(mixSQP)
+export(mixobjective)
 export(simulatemixdata)
 importFrom(Rcpp,evalCpp)
 importFrom(stats,dnorm)
