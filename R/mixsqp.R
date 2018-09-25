@@ -56,8 +56,10 @@
 #' m  <- 10
 #' w  <- rep(1,n)/n
 #' L  <- simulatemixdata(n,m)$L
-#' x0 <- rep(1,m)/m # initialization
-#' out <- mixSQP(L,w,x0)
+#' out.mixsqp <- mixSQP(L,w)
+#' out.kwdual <- mixKWDual(L,w)
+#' print(mixobjective(L,out.mixsqp$x,w),digits = 16)
+#' print(mixobjective(L,out.kwdual$x,w),digits = 16)
 #' 
 #' @useDynLib mixSQP
 #' 

@@ -17,3 +17,5 @@ to do
   REBayes on a large-ish data set.
 
 + Improve argument checking for mixSQP and mixKWDual.
+
++ Add verbose = TRUE option to KWDual.

@@ -20,10 +20,11 @@ verify.likelihood.matrix <- function (L) {
 
 # Verify that the vector weights specifying the optimization problem
 # is valid, then return the normalized weights in double-precision. It
-# is assumed that the weights argument is named "w". The weights
-# should be a numeric vector with all positive entries, in which the
-# length is equal to the number of rows of L. Furthermore, the weights
-# should sum to 1; if not, the weights must be normalized to sum to 1.
+# is assumed that the weights argument is named "w", and that the
+# likelihood matrix argument is named "L". The weights should be a
+# numeric vector with all positive entries, in which the length is
+# equal to the number of rows of L. Furthermore, the weights should
+# sum to 1; if not, the weights must be normalized to sum to 1.
 #
 # Input L should be the provided likelihood matrix.
 # 
@@ -47,11 +48,13 @@ verify.weights <- function (L, w) {
 # should be a numeric vector with non-negative entries, in which the
 # length is equal to the number of columns of L.
 #
-# Input L should be the provided likelihood matrix. 
+# Input L should be the provided likelihood matrix. It is assumed that
+# the argument providing L is named "L".
 #
 # If x is not valid, an error is reported; otherwise, the normalized
 # initial estimate (coerced to double-precision) is returned.
 verify.estimate <- function (x, L, arg.name = "x") {
+  arg.name <- sprintf("\"%s\"",arg.name)
   msg <- paste("Argument",arg.name,"should be a numeric vector with only",
                "non-negative, finite and non-missing entries, with one",
                "entry per column of L")
