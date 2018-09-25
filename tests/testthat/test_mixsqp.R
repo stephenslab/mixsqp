@@ -101,5 +101,5 @@ test_that(paste("mixSQP gives correct solution for Beckett & Diaconis",
   # The mix-SQP should be very close to the REBayes solution and, more
   # importantly, the quality of the mixSQP solution should be higher.
   expect_equal(x,out$x,tol = 5e-4)
-  expect_lte(out$value,mixobjective(L,w,x))
+  expect_lte(out$value,mixobjective(L,x,w))
 })
