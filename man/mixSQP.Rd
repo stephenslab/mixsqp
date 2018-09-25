@@ -8,7 +8,7 @@
 \usage{
 mixKWDual(L, w = rep(1, nrow(L)), ...)
 
-mixobjective(L, x, w = rep(1, nrow(L)), e = 0)
+mixobjective(L, x, w = rep(1, nrow(L)))
 
 mixSQP(L, w = rep(1, nrow(L)), x0 = rep(1, ncol(L)), convtol = 1e-08,
   sparsetol = 1e-08, eps = .Machine$double.eps, maxitersqp = 1000,
@@ -26,6 +26,8 @@ weights must be finite and positive. The weights should sum to 1;
 if not, they will automatically be normalized to sum to 1. By
 default, all weights are set to 1, in which case all rows of
 \code{L} are assigned the same weight.}
+
+\item{...}{Additional arguments passed to \code{\link[REBayes]{KWDual}}.}
 
 \item{x0}{An initial estimate of the solution to the optimization
 problem. It should contain only finite, non-negative values, and
@@ -73,7 +75,9 @@ n  <- 1e5
 m  <- 10
 w  <- rep(1,n)/n
 L  <- simulatemixdata(n,m)$L
-x0 <- rep(1,m)/m # initialization
-out <- mixSQP(L,w,x0)
+out.mixsqp <- mixSQP(L,w)
+out.kwdual <- mixKWDual(L,w)
+print(mixobjective(L,out.mixsqp$x,w),digits = 16)
+print(mixobjective(L,out.kwdual$x,w),digits = 16)
 
 }
