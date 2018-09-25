@@ -3,5 +3,5 @@
 ^\.Rproj\.user$
 ^\.travis\.yml$
 ^appveyor\.yml$
-^_pkgdown\.yaml$
+^_pkgdown\.yml$
 ^docs$

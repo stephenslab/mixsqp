@@ -56,7 +56,7 @@ mixSQP solves a convex optimization problem in
 
 When L is a (n) by (m) matrix of nonnegative entries, mixSQP
 maximizes the following objective function \deqn{f(x) = \sum_j w_j
-log (\sum_k L_jk x_k)} subject to the (unit) probability simplex
+\log (\sum_k L_jk x_k)} subject to the (unit) probability simplex
 constraint \deqn{\sum_k x_k = 1, x_k \ge 0} Without loss of
 generality \eqn{\sum_j w_j = 1} is required.
 }

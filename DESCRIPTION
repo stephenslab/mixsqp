@@ -26,6 +26,7 @@ Imports:
     stats,
     Rcpp (>= 0.12.15)
 Suggests:
+    Rmosek,
     REBayes,
     testthat,
     knitr,
@@ -35,4 +36,5 @@ LinkingTo:
     RcppArmadillo
 LazyData: true
 NeedsCompilation: yes
+VignetteBuilder: knitr
 RoxygenNote: 6.1.0.9000
