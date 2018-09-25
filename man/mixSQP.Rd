@@ -15,20 +15,21 @@ mixSQP(L, w = rep(1, nrow(L)), x0 = rep(1, ncol(L)), convtol = 1e-08,
   maxiteractiveset = 100, verbose = TRUE)
 }
 \arguments{
-\item{L}{Matrix specifying the optimization problem to be
-solved. It should be a numeric matrix with positive entries, and,
-ideally, double-precision.}
+\item{L}{Matrix specifying the optimization problem to be solved.
+It should be a numeric matrix with at least two columns, with
+finite and positive entries, and, ideally, stored in
+double-precision.}
 
 \item{w}{A numeric vector, with one entry for each row of \code{L},
 specifying the "weights" associated with the rows of \code{L}. All
-weights must be positive. The weights should sum to 1; if not, they
-will automatically be normalized to sum to 1. By default, all
-weights are set to 1, in which case all rows of \code{L} are
-assigned the same weight.}
+weights must be finite and positive. The weights should sum to 1;
+if not, they will automatically be normalized to sum to 1. By
+default, all weights are set to 1, in which case all rows of
+\code{L} are assigned the same weight.}
 
 \item{x0}{An initial estimate of the solution to the optimization
-problem. It should contain only non-negative values, and the
-entries should sum to 1; if not, the vector is automatically
+problem. It should contain only finite, non-negative values, and
+the entries should sum to 1; if not, the vector is automatically
 normalized to sum to 1. By default, \code{x0} is the vector with
 all equal entries.}
 
@@ -69,7 +70,7 @@ generality \eqn{\sum_j w_j = 1} is required.
 \examples{
 set.seed(1)
 n  <- 1e5
-m  <- 20
+m  <- 10
 w  <- rep(1,n)/n
 L  <- simulatemixdata(n,m)$L
 x0 <- rep(1,m)/m # initialization
