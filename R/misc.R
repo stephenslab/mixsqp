@@ -5,17 +5,18 @@ logspace <- function (x, y, n)
 
 # Verify that the likelihood matrix specifying the optimization
 # problem is valid. The likelihood matrix should be a numeric matrix
-# with at least two columns, and all the entries should be
-# positive.
+# with at least two columns, and all the entries should be positive.
+# It is assumed that the input argument is named "L".
 #
 # If the matrix is not valid, an error is reported; otherwise, TRUE is
 # returned.
 verify.likelihood.matrix <- function (L) {
   if (!is.matrix(L))
     stop("Argument \"L\" should be a matrix; see \"help(matrix)\"")
-  if (!(ncol(L) >= 2 & is.numeric(L) & all(L > 0)))
+  if (!(ncol(L) >= 2 & is.numeric(L) & all(L > 0) & all(is.finite(L)) &
+        !any(missing(L))))
     stop(paste("Input \"L\" should be a numeric matrix with >= 2 columns,",
-               "and all its entries should be positive"))
+               "and all its entries should be positive, finite and not NA"))
   return(TRUE)
 }
 
@@ -23,7 +24,7 @@ verify.likelihood.matrix <- function (L) {
 # is valid, then return the normalized weights. The weights should be
 # a numeric vector with all positive entries, in which the length is
 # equal to the number of rows of L. Further, the weights should sum to
-# 1;  if not, the weights are normalized to sum to 1.
+# 1; if not, the weights are normalized to sum to 1.
 #
 # Input L should be the provided likelihood matrix. If the weights are
 # not valid, an error is reported; otherwise, the normalized weights

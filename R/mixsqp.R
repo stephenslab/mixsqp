@@ -3,8 +3,7 @@
 #' @description mixSQP solves a convex optimization problem in
 #'   https://arxiv.org/abs/1806.01412.
 #'   It implements a sequential quadratic programming with
-#'   active-set subproblem solvers. For gigantic data, use low-rank
-#'   approximation to speed up the computation.
+#'   active-set subproblem solvers.
 #' 
 #' When L is a (n) by (m) matrix of nonnegative entries, mixSQP
 #' maximizes the following objective function \deqn{f(x) = \sum_j w_j
@@ -18,9 +17,10 @@
 #'
 #' @param w A numeric vector, with one entry for each row of \code{L},
 #'   specifying the "weights" associated with the rows of \code{L}. All
-#'   weights must be positive. It is assumed the weights sum to 1; if
-#'   not, they will automatically be normalized to sum to 1. By default,
-#'   all rows of \code{L} are assigned the same weight.
+#'   weights must be positive. The weights should sum to 1; if not, they
+#'   will automatically be normalized to sum to 1. By default, all
+#'   weights are set to 1, in which case all rows of \code{L} are
+#'   assigned the same weight.
 #' 
 #' @param x0 An initial estimate of the solution to the optimization
 #'   problem. It should contain only non-negative values, and the
@@ -70,14 +70,11 @@ mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
                    maxitersqp = 1000, maxiteractiveset = 100,
                    verbose = TRUE){
 
-  # CHECK INPUTS
-  # ------------
-  # The likelihood matrix should be a numeric matrix with at least
-  # two columns, and all the entries should be positive.
+  # CHECK & PROCESS INPUTS
+  # ----------------------
+  # Check input L and, if necessary, coerce the likelihood matrix to
+  # be in double precision.
   verify.likelihood.matrix(L)
-
-  # If necessary, coerce the likelihood matrix to be in double
-  # precision.
   if (storage.mode(L) != "double")
     storage.mode(L) <- "double"
 
@@ -139,5 +136,5 @@ mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   x        <- drop(x)
   names(x) <- colnames(L)
 
-  return(list(x = x,status = status,value = mixobjective(L,w,x)))
+  return(list(x = x,status = status,value = mixobj(L,w,x)))
 }
