@@ -110,11 +110,11 @@ mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   out <- mixSQP_rcpp(L,w,x0,convtol.sqp,zero.threshold,eps,maxiter.sqp,
                      maxiter.activeset,verbose)
 
-  # Get the algorithm convergence status.
+  # Get the algorithm convergence status. Currently, 
   if (out$status == 0) {
     status <- "converged to optimal solution"
     if (verbose)
-      cat("Convergence criteria met; optimal solution found.\n")
+      cat("Convergence criteria met---optimal solution found.\n")
   } else if (out$status == 1) {
     status <- "exceeded maximum number of iterations"
     if (verbose)
