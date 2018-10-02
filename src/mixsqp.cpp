@@ -71,7 +71,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   
   // This is used in computing the Hessian matrix.
   I  = arma::eye(m,m);
-  I *= eps;
+  I *= 1e-6;
   
   // Initialize some loop variables used in the loops below.
   int i = 0; 
