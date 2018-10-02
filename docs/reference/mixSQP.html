@@ -32,11 +32,10 @@
 <meta property="og:description" content="mixSQP solves a convex optimization problem in
   https://arxiv.org/abs/1806.01412.
   It implements a sequential quadratic programming with
-  active-set subproblem solvers. For gigantic data, use low-rank
-  approximation to speed up the computation.
+  active-set subproblem solvers.
 When L is a (n) by (m) matrix of nonnegative entries, mixSQP
 maximizes the following objective function $$f(x) = \sum_j w_j
-log (\sum_k L_jk x_k)$$ subject to the (unit) probability simplex
+\log (\sum_k L_jk x_k)$$ subject to the (unit) probability simplex
 constraint $$\sum_k x_k = 1, x_k \ge 0$$ Without loss of
 generality \(\sum_j w_j = 1\) is required." />
 <meta name="twitter:card" content="summary" />
@@ -70,6 +69,9 @@ generality \(\sum_j w_j = 1\) is required." />
   <a href="../index.html">Home</a>
 </li>
 <li>
+  <a href="../articles/index.html">Vignettes</a>
+</li>
+<li>
   <a href="../reference/index.html">Functions</a>
 </li>
       </ul>
@@ -96,66 +98,75 @@ generality \(\sum_j w_j = 1\) is required." />
     <p>mixSQP solves a convex optimization problem in
   https://arxiv.org/abs/1806.01412.
   It implements a sequential quadratic programming with
-  active-set subproblem solvers. For gigantic data, use low-rank
-  approximation to speed up the computation.</p>
+  active-set subproblem solvers.</p>
 <p>When L is a (n) by (m) matrix of nonnegative entries, mixSQP
 maximizes the following objective function $$f(x) = \sum_j w_j
-log (\sum_k L_jk x_k)$$ subject to the (unit) probability simplex
+\log (\sum_k L_jk x_k)$$ subject to the (unit) probability simplex
 constraint $$\sum_k x_k = 1, x_k \ge 0$$ Without loss of
 generality \(\sum_j w_j = 1\) is required.</p>
     
 
-    <pre class="usage"><span class='fu'>mixSQP</span>(<span class='no'>L</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)), <span class='kw'>x0</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>ncol</span>(<span class='no'>L</span>)), <span class='kw'>convtol</span> <span class='kw'>=</span> <span class='fl'>1e-08</span>,
-  <span class='kw'>sparsetol</span> <span class='kw'>=</span> <span class='fl'>1e-08</span>, <span class='kw'>eps</span> <span class='kw'>=</span> <span class='no'>.Machine</span>$<span class='no'>double.eps</span>, <span class='kw'>maxitersqp</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
-  <span class='kw'>maxiteractiveset</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>mixKWDual</span>(<span class='no'>L</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)), <span class='no'>...</span>)
+
+<span class='fu'>mixobjective</span>(<span class='no'>L</span>, <span class='no'>x</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)))
+
+<span class='fu'>mixSQP</span>(<span class='no'>L</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)), <span class='kw'>x0</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>ncol</span>(<span class='no'>L</span>)),
+  <span class='kw'>convtol.sqp</span> <span class='kw'>=</span> <span class='fl'>1e-08</span>, <span class='kw'>zero.threshold</span> <span class='kw'>=</span> <span class='fl'>1e-08</span>,
+  <span class='kw'>eps</span> <span class='kw'>=</span> <span class='no'>.Machine</span>$<span class='no'>double.eps</span>, <span class='kw'>maxiter.sqp</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
+  <span class='kw'>maxiter.activeset</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>L</th>
-      <td><p>Matrix specifying the optimization problem to be
-solved. It should be a numeric matrix with positive entries, and,
-ideally, double-precision.</p></td>
+      <td><p>Matrix specifying the optimization problem to be solved.
+It should be a numeric matrix with at least two columns, with
+finite and positive entries, and, ideally, stored in
+double-precision.</p></td>
     </tr>
     <tr>
       <th>w</th>
       <td><p>A numeric vector, with one entry for each row of <code>L</code>,
 specifying the "weights" associated with the rows of <code>L</code>. All
-weights must be positive. It is assumed the weights sum to 1; if
-not, they will automatically be normalized to sum to 1. By default,
-all rows of <code>L</code> are assigned the same weight.</p></td>
+weights must be finite and positive. The weights should sum to 1;
+if not, they will automatically be normalized to sum to 1. By
+default, all weights are set to 1, in which case all rows of
+<code>L</code> are assigned the same weight.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Additional arguments passed to <code><a href='http://www.rdocumentation.org/packages/REBayes/topics/KWDual'>KWDual</a></code>.</p></td>
     </tr>
     <tr>
       <th>x0</th>
       <td><p>An initial estimate of the solution to the optimization
-problem. It should contain only non-negative values, and the
-entries should sum to 1; if not, the vector is automatically
+problem. It should contain only finite, non-negative values, and
+the entries should sum to 1; if not, the vector is automatically
 normalized to sum to 1. By default, <code>x0</code> is the vector with
 all equal entries.</p></td>
     </tr>
     <tr>
-      <th>convtol</th>
+      <th>convtol.sqp</th>
       <td><p>A convergence tolerance used for algorithm's
 convergence criterion.</p></td>
     </tr>
     <tr>
-      <th>sparsetol</th>
+      <th>zero.threshold</th>
       <td><p>A tolerance used for determining active indices.</p></td>
     </tr>
     <tr>
       <th>eps</th>
-      <td><p>A small constant to safeguard from a numerical issue
-(default 1e-6).</p></td>
+      <td><p>A small constant to safeguard from a numerical issue.</p></td>
     </tr>
     <tr>
-      <th>maxitersqp</th>
+      <th>maxiter.sqp</th>
       <td><p>Maximum number of SQP iterations; that is, the
 maximum number of quadratic subproblems that will be solved by the
 active-set method.</p></td>
     </tr>
     <tr>
-      <th>maxiteractiveset</th>
+      <th>maxiter.activeset</th>
       <td><p>Maximum number of active-set iterations
 taken to solve each of the quadratic subproblems.</p></td>
     </tr>
@@ -175,17 +186,28 @@ to console.</p></td>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>set.seed</span>(<span class='fl'>1</span>)
 <span class='no'>n</span>  <span class='kw'>&lt;-</span> <span class='fl'>1e5</span>
-<span class='no'>m</span>  <span class='kw'>&lt;-</span> <span class='fl'>20</span>
+<span class='no'>m</span>  <span class='kw'>&lt;-</span> <span class='fl'>10</span>
 <span class='no'>w</span>  <span class='kw'>&lt;-</span> <span class='fu'>rep</span>(<span class='fl'>1</span>,<span class='no'>n</span>)/<span class='no'>n</span>
 <span class='no'>L</span>  <span class='kw'>&lt;-</span> <span class='fu'><a href='simulatemixdata.html'>simulatemixdata</a></span>(<span class='no'>n</span>,<span class='no'>m</span>)$<span class='no'>L</span>
-<span class='no'>x0</span> <span class='kw'>&lt;-</span> <span class='fu'>rep</span>(<span class='fl'>1</span>,<span class='no'>m</span>)/<span class='no'>m</span> <span class='co'># initialization</span>
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>mixSQP</span>(<span class='no'>L</span>,<span class='no'>w</span>,<span class='no'>x0</span>)</div><div class='output co'>#&gt; Running mix-SQP 0.1-8 on 100000 x 20 matrix
-#&gt; convergence tolerance: 1.0e-08
-#&gt; zero threshold:        1.0e-08
-#&gt; max. SQP iter:         1000
-#&gt; max. active-set iter:  100
+<span class='no'>out.mixsqp</span> <span class='kw'>&lt;-</span> <span class='fu'>mixSQP</span>(<span class='no'>L</span>,<span class='no'>w</span>)</div><div class='output co'>#&gt; Running mix-SQP 0.1-20 on 100000 x 10 matrix
+#&gt; convergence tol. (SQP): 1.0e-08
+#&gt; max. iter (SQP):        1000
+#&gt; max. iter (active-set): 100
+#&gt; zero threshold:         1.0e-08
 #&gt; iter  objective   -min(g+1) #nnz #nqp #nls
-#&gt;    1  7.78710e-01 +2.48e-01   20 </div><div class='output co'>#&gt; <span class='error'>Error in mixSQP_rcpp(L, w, x0, convtol, sparsetol, eps, maxitersqp, maxiteractiveset,     verbose): inv_sympd(): matrix is singular or not positive definite</span></div><div class='input'>
+#&gt;    1  7.72664e-01 +2.76e-01   10 
+#&gt;    2  6.53047e-01 +4.75e+00    5   13    1
+#&gt;    3  6.04839e-01 +2.16e+00    5    8    1
+#&gt;    4  5.99876e-01 +9.17e-01    5    2    1
+#&gt;    5  5.99756e-01 +2.98e-01    5    2    1
+#&gt;    6  5.99697e-01 +1.65e-01    5    2    1
+#&gt;    7  5.99516e-01 +7.18e-02    5    2    1
+#&gt;    8  5.99192e-01 +1.96e-02    5    2    1
+#&gt;    9  5.98988e-01 +1.97e-03    5    2    1
+#&gt;   10  5.98959e-01 +2.23e-05    5    2    1
+#&gt;   11  5.98959e-01 +2.89e-09    5    2    1
+#&gt; Convergence criteria met; optimal solution found.</div><div class='input'><span class='no'>out.kwdual</span> <span class='kw'>&lt;-</span> <span class='fu'>mixKWDual</span>(<span class='no'>L</span>,<span class='no'>w</span>)
+<span class='fu'>print</span>(<span class='fu'>mixobjective</span>(<span class='no'>L</span>,<span class='no'>out.mixsqp</span>$<span class='no'>x</span>,<span class='no'>w</span>),<span class='kw'>digits</span> <span class='kw'>=</span> <span class='fl'>16</span>)</div><div class='output co'>#&gt; [1] 0.5989590363728408</div><div class='input'><span class='fu'>print</span>(<span class='fu'>mixobjective</span>(<span class='no'>L</span>,<span class='no'>out.kwdual</span>$<span class='no'>x</span>,<span class='no'>w</span>),<span class='kw'>digits</span> <span class='kw'>=</span> <span class='fl'>16</span>)</div><div class='output co'>#&gt; [1] 0.5989590363746571</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
