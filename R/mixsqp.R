@@ -105,8 +105,8 @@ mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # Input argument "verbose" should be TRUE or FALSE.
   verify.logical.arg(verbose)
   
-  # SOLVE OPTIMIZATION PROBLEM USING SQP METHOD
-  # -------------------------------------------
+  # SOLVE OPTIMIZATION PROBLEM USING mix-SQP
+  # ----------------------------------------
   out <- mixSQP_rcpp(L,w,x0,convtol.sqp,zero.threshold,eps,maxiter.sqp,
                      maxiter.activeset,verbose)
 
