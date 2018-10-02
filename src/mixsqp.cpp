@@ -25,7 +25,7 @@ void   computegrad  (const arma::mat& L, const arma::vec& w,
 // [[Rcpp::export]]
 List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0, 
                   double convtolsqp, double zerothreshold, double eps,
-		              int maxitersqp, int maxiteractiveset, bool verbose) {
+		  int maxitersqp, int maxiteractiveset, bool verbose) {
   
   // Get the number of rows (n) and columns (m) of the conditional
   // likelihood matrix.
@@ -115,9 +115,11 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     // NOTE: We should only be checking this condition for the nonzero
     // co-ordinates of x.
     //
-    if (gmin[i] >= -convtolsqp)
+    if (gmin[i] >= -convtolsqp) {
+      status = 0;
       break;
-    
+    }
+
     // Initialize the solution to the QP subproblem (y).
     arma::uvec ind = find(t);
     y.fill(0);
@@ -143,9 +145,8 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
         
         // Compute the Lagrange multiplier.
         if (b.min() >= -convtolsqp) {
-	        status = 0;
           break;
-	      }
+	}
         
         // Find an index with smallest multiplier, Add this to the
         // inactive set.
