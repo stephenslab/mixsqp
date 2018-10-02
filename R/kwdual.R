@@ -36,7 +36,9 @@ mixKWDual <- function (L, w = rep(1,nrow(L)), ...)  {
   # interested in).
   x <- out$f
   
-  # Make sure the solution is (primal) feasible.
+  # Make sure the solution is (primal) feasible. Sometimes the
+  # solution contains small negative values, or is not exactly
+  # normalized.
   x[x < 0] <- 0
   x        <- x/sum(x)
 

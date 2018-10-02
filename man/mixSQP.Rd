@@ -10,9 +10,10 @@ mixKWDual(L, w = rep(1, nrow(L)), ...)
 
 mixobjective(L, x, w = rep(1, nrow(L)))
 
-mixSQP(L, w = rep(1, nrow(L)), x0 = rep(1, ncol(L)), convtol = 1e-08,
-  sparsetol = 1e-08, eps = .Machine$double.eps, maxitersqp = 1000,
-  maxiteractiveset = 100, verbose = TRUE)
+mixSQP(L, w = rep(1, nrow(L)), x0 = rep(1, ncol(L)),
+  convtol.sqp = 1e-08, zero.threshold = 1e-08,
+  eps = .Machine$double.eps, maxiter.sqp = 1000,
+  maxiter.activeset = 100, verbose = TRUE)
 }
 \arguments{
 \item{L}{Matrix specifying the optimization problem to be solved.
@@ -35,19 +36,18 @@ the entries should sum to 1; if not, the vector is automatically
 normalized to sum to 1. By default, \code{x0} is the vector with
 all equal entries.}
 
-\item{convtol}{A convergence tolerance used for algorithm's
+\item{convtol.sqp}{A convergence tolerance used for algorithm's
 convergence criterion.}
 
-\item{sparsetol}{A tolerance used for determining active indices.}
+\item{zero.threshold}{A tolerance used for determining active indices.}
 
-\item{eps}{A small constant to safeguard from a numerical issue
-(default 1e-6).}
+\item{eps}{A small constant to safeguard from a numerical issue.}
 
-\item{maxitersqp}{Maximum number of SQP iterations; that is, the
+\item{maxiter.sqp}{Maximum number of SQP iterations; that is, the
 maximum number of quadratic subproblems that will be solved by the
 active-set method.}
 
-\item{maxiteractiveset}{Maximum number of active-set iterations
+\item{maxiter.activeset}{Maximum number of active-set iterations
 taken to solve each of the quadratic subproblems.}
 
 \item{verbose}{If \code{verbose = TRUE}, print progress of algorithm

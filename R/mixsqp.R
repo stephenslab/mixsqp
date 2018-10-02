@@ -29,19 +29,18 @@
 #'   normalized to sum to 1. By default, \code{x0} is the vector with
 #'   all equal entries.
 #' 
-#' @param convtol A convergence tolerance used for algorithm's
+#' @param convtol.sqp A convergence tolerance used for algorithm's
 #'   convergence criterion.
 #' 
-#' @param sparsetol A tolerance used for determining active indices.
+#' @param zero.threshold A tolerance used for determining active indices.
 #' 
-#' @param eps A small constant to safeguard from a numerical issue
-#'   (default 1e-6).
+#' @param eps A small constant to safeguard from a numerical issue.
 #' 
-#' @param maxitersqp Maximum number of SQP iterations; that is, the
+#' @param maxiter.sqp Maximum number of SQP iterations; that is, the
 #'   maximum number of quadratic subproblems that will be solved by the
 #'   active-set method.
 #' 
-#' @param maxiteractiveset Maximum number of active-set iterations
+#' @param maxiter.activeset Maximum number of active-set iterations
 #'   taken to solve each of the quadratic subproblems.
 #' 
 #' @param verbose If \code{verbose = TRUE}, print progress of algorithm
@@ -68,10 +67,9 @@
 #' @export
 #' 
 mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)), 
-                   convtol = 1e-8, sparsetol = 1e-8,
-                   eps = .Machine$double.eps,
-                   maxitersqp = 1000, maxiteractiveset = 100,
-                   verbose = TRUE){
+                   convtol.sqp = 1e-8, zero.threshold = 1e-8,
+                   eps = .Machine$double.eps, maxiter.sqp = 1000,
+                   maxiter.activeset = 100, verbose = TRUE){
 
   # CHECK & PROCESS INPUTS
   # ----------------------
@@ -89,24 +87,28 @@ mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   w <- verify.weights(L,w)
 
   # Check and process the initial estimate of the solution.
-  x0 <- verify.estimate(x0,L,"x0")
+  x0 <- verify.estimate(x0,L)
   
-  # Input arguments maxitersqp and maxiteractiveset should both be
-  # positive scalars.
-  if (!(is.numeric(maxitersqp) & all(maxitersqp >= 1) &
-        length(maxitersqp) == 1 & is.numeric(maxiteractiveset) &
-        all(maxiteractiveset >= 1) & length(maxiteractiveset) == 1))
-    stop(paste("Arguments \"maxitersqp\" and \"maxiteractiveset\" should be",
-               "numbers that are 1 or greater"))
+  # Input arguments "maxiter.sqp" and "maxiter.activeset" should be
+  # scalars that are integers greater than zero.
+  verify.maxiter.arg(maxiter.sqp)
+  verify.maxiter.arg(maxiter.activeset)
+  maxiter.sqp       <- as.double(maxiter.sqp)
+  maxiter.activeset <- as.double(maxiter.activeset)
+
+  # Input arguments "convtol.sqp", "zero.threshold" and "eps" should be
+  # non-negative scalars.
+  verify.nonneg.scalar.arg(convtol.sqp)
+  verify.nonneg.scalar.arg(zero.threshold)
+  verify.nonneg.scalar.arg(eps)
   
-  # Input argument verbose should be TRUE or FALSE.
-  if (!(is.logical(verbose) & length(verbose) == 1))
-    stop("Argument \"verbose\" should be TRUE or FALSE")
+  # Input argument "verbose" should be TRUE or FALSE.
+  verify.logical.arg(verbose)
   
   # SOLVE OPTIMIZATION PROBLEM USING SQP METHOD
   # -------------------------------------------
-  out <- mixSQP_rcpp(L,w,x0,convtol,sparsetol,eps,maxitersqp,
-                     maxiteractiveset,verbose)
+  out <- mixSQP_rcpp(L,w,x0,convtol.sqp,zero.threshold,eps,maxiter.sqp,
+                     maxiter.activeset,verbose)
 
   # Get the algorithm convergence status.
   if (out$status == 0) {
@@ -117,10 +119,10 @@ mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
     status <- "exceeded maximum number of iterations"
     if (verbose)
       cat(paste("Failed to converge within iterations limit.\n"))
-  } 
+  }
   
-  # POST-PROCESSING STEPS
-  # ---------------------
+  # POST-PROCESS RESULT
+  # -------------------
   # Label the elements of the solution (x) by the column labels of the
   # likelihood matrix (L).
   x        <- out$x
