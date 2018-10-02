@@ -124,7 +124,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
       
       // Solve the smaller problem.
       p.fill(0.0);
-      p.elem(ind) = -inv_sympd(Hs) * bs;
+      p.elem(ind) = -solve(Hs,bs);
       
       // Reset step size
       alpha = 1;
