@@ -108,6 +108,13 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     }
     
     // Check convergence.
+    //
+    // NOTE: abs(gmin) is the max residual ("rdual" on p. 609 of Boyd &
+    // Vandenberghe).
+    //
+    // NOTE: We should only be checking this condition for the nonzero
+    // co-ordinates of x.
+    //
     if (gmin[i] >= -convtolsqp)
       break;
     
