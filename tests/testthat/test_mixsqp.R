@@ -100,6 +100,38 @@ test_that(paste("mixSQP gives correct solution for Beckett & Diaconis",
 
   # The mix-SQP should be very close to the REBayes solution and, more
   # importantly, the quality of the mixSQP solution should be higher.
-  expect_equal(x,out$x,tol = 5e-4)
+  expect_equal(x,out$x,tolerance = 5e-4)
   expect_lte(out$value,mixobjective(L,x,w))
+})
+
+context("issue #3")
+
+test_that(paste("mixSQP gives correct solution for issue #3"),{
+  set.seed(1)
+  L_fat_and_short <- matrix(rgamma(1000,1,1),nrow=10)
+  x_fat_and_short <- mixKWDual(L_fat_and_short)$x
+  capture.output(out <- mixSQP(L_fat_and_short))
+                  
+  # The mix-SQP should be very close to the REBayes solution and, more
+  # importantly, the quality of the mixSQP solution should be higher.
+  expect_equal(x_fat_and_short,out$x,tolerance = 1e-8)
+  expect_equal(out$value,mixobjective(L_fat_and_short,x_fat_and_short),tolerance = 1e-8)
+})
+
+context("issue #5")
+
+test_that(paste("mixSQP gives correct solution for issue #5"),{
+  set.seed(1)
+  n  <- 1e5
+  m  <- 12
+  w  <- rep(1,n)/n
+  L_thin_and_tall  <- simulatemixdata(n,m)$L
+  x_thin_and_tall  <- mixKWDual(L_thin_and_tall)$x
+  
+  capture.output(out <- mixSQP(L_thin_and_tall,w))
+  
+  # The mix-SQP should be very close to the REBayes solution and, more
+  # importantly, the quality of the mixSQP solution should be higher.
+  expect_equal(x_thin_and_tall,out$x,tolerance = 5e-8)
+  expect_equal(out$value,mixobjective(L_thin_and_tall,x_thin_and_tall),tolerance = 1e-8)
 })
