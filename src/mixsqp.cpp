@@ -25,7 +25,7 @@ void   computegrad  (const arma::mat& L, const arma::vec& w,
 // [[Rcpp::export]]
 List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0, 
                   double convtolsqp, double zerothreshold, double eps,
-		  int maxitersqp, int maxiteractiveset, bool verbose) {
+		              int maxitersqp, int maxiteractiveset, bool verbose) {
   
   // Get the number of rows (n) and columns (m) of the conditional
   // likelihood matrix.
@@ -71,7 +71,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   
   // This is used in computing the Hessian matrix.
   I  = arma::eye(m,m);
-  I *= 1e-6;
+  I *= convtolsqp * 1e-2;
   
   // Initialize some loop variables used in the loops below.
   int i = 0; 
@@ -106,7 +106,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     }
     
     // Check convergence.
-    if (gmin[i] >= 0)
+    if (gmin[i] >= -convtolsqp)
       break;
     
     // Initialize the solution to the QP subproblem (y).
@@ -134,9 +134,9 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
         
         // Compute the Lagrange multiplier.
         if (b.min() >= -convtolsqp) {
-	  status = 0;
+	        status = 0;
           break;
-	}
+	      }
         
         // Find an index with smallest multiplier, Add this to the
         // inactive set.
