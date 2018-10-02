@@ -96,6 +96,8 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     // iterations (nqp).
     t       = (x > zerothreshold);
     obj[i]  = mixobjective(L,w,x,eps,u);
+
+    // Should be minimum of the nonzero x's only.
     gmin[i] = 1 + g.min();
     nnz[i]  = sum(t);
     if (verbose) {
