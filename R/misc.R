@@ -1,3 +1,46 @@
+# Verify that a logical argument is either TRUE or FALSE.
+verify.logical.arg <- function (x, arg.name = deparse(substitute(x))) {
+  arg.name <- sprintf("\"%s\"",arg.name)
+  if (!(is.atomic(x) &
+        is.logical(x) &
+        length(x) == 1 &
+        all(!missing(x)) &
+        all(is.finite(x)) &
+        all(x == TRUE | x == FALSE)))
+    stop("Argument",arg.name,"should be TRUE or FALSE")
+  return(TRUE)
+}
+
+# Verify that a non-negative scalar argument is satisfactory.
+verify.nonneg.scalar.arg <- function (x, arg.name = deparse(substitute(x))) {
+  arg.name <- sprintf("\"%s\"",arg.name)
+  if (!(is.atomic(x) &
+        is.numeric(x) &
+        length(x) == 1 &
+        all(!missing(x)) &
+        all(is.finite(x)) &
+        all(x >= 0)))
+    stop("Argument",arg.name,"should be a non-negative number")
+  return(TRUE)
+}
+
+# Verify that a "maxiter" argument---that is, an argument giving the
+# maximum number of iterations---is valid. It should be a positive,
+# finite, non-missing integer.
+verify.maxiter.arg <- function (x, arg.name = deparse(substitute(x))) {
+  arg.name <- sprintf("\"%s\"",arg.name)
+  if (!(is.atomic(x) &
+        is.numeric(x) &
+        length(x) == 1 &
+        all(!missing(x)) &
+        all(is.finite(x)) &
+        all(x > 0) &
+        all(round(x) == x)))
+    stop(paste("Argument",arg.name,"should be an integer value",
+               "greater than zero"))
+  return(TRUE)
+}
+
 # Verify that the likelihood matrix specifying the optimization
 # problem is valid. The likelihood matrix should be a numeric matrix
 # with at least two columns, and all the entries should be positive.
@@ -11,9 +54,12 @@ verify.likelihood.matrix <- function (L) {
                "not NA")
   if (!is.matrix(L))
     stop(msg)
-  else if (!(ncol(L) >= 2 & is.numeric(L)))
+  else if (!(ncol(L) >= 2 &
+             is.numeric(L)))
     stop(msg)
-  else if (!(all(L > 0) & all(is.finite(L)) & !any(missing(L))))
+  else if (!(all(L > 0) &
+             all(is.finite(L)) &
+             !any(missing(L))))
     stop(msg)
   return(TRUE)
 }
@@ -34,9 +80,12 @@ verify.weights <- function (L, w) {
   msg <- paste("Input argument \"w\" should be a numeric vector with",
                "positive, finite and non-missing entries, and with one",
                "entry per row of L")
-  if (!(is.atomic(w) & is.numeric(w)))
+  if (!(is.atomic(w) &
+        is.numeric(w)))
     stop(msg)
-  else if (!(all(w > 0) & all(is.finite(w)) & !any(missing(w)) &
+  else if (!(all(w > 0) &
+             all(is.finite(w)) &
+             !any(missing(w)) &
              length(w) == nrow(L)))
     stop(msg)
   storage.mode(w) <- "double"
@@ -53,14 +102,17 @@ verify.weights <- function (L, w) {
 #
 # If x is not valid, an error is reported; otherwise, the normalized
 # initial estimate (coerced to double-precision) is returned.
-verify.estimate <- function (x, L, arg.name = "x") {
+verify.estimate <- function (x, L, arg.name = deparse(substitute(x))) {
   arg.name <- sprintf("\"%s\"",arg.name)
   msg <- paste("Argument",arg.name,"should be a numeric vector with only",
                "non-negative, finite and non-missing entries, with one",
                "entry per column of L")
-  if (!(is.atomic(x) & is.numeric(x)))
+  if (!(is.atomic(x) &
+        is.numeric(x)))
     stop(msg)
-  if (!(all(x >= 0) & all(is.finite(x)) & !any(missing(x)) &
+  if (!(all(x >= 0) &
+        all(is.finite(x)) &
+        !any(missing(x)) &
         length(x) == ncol(L)))
     stop(msg)
   storage.mode(x) <- "double"

@@ -14,10 +14,6 @@ to do
 + Complete help page for mixKWDual.
 
 + Create a short vignette comparing performance of mixSQP against
-  REBayes on a large-ish data set.
-
-+ Improve argument checking for mixSQP and mixKWDual.
-
-+ Add verbose = TRUE option to KWDual.
+  REBayes on a large-ish data set (working on this).
 
 + Test multithreaded matrix computations for large matrices on midway2.
