@@ -24,7 +24,7 @@ void   computegrad  (const arma::mat& L, const arma::vec& w,
 // 
 // [[Rcpp::export]]
 List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0, 
-                  double convtol, double sparsetol, double eps,
+                  double convtolsqp, double zerothreshold, double eps,
 		  int maxitersqp, int maxiteractiveset, bool verbose) {
   
   // Get the number of rows (n) and columns (m) of the conditional
@@ -34,11 +34,11 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP 0.1-16 on %d x %d matrix\n",n,m);
-    Rprintf("convergence tolerance: %0.1e\n",convtol);
-    Rprintf("zero threshold:        %0.1e\n",sparsetol);
-    Rprintf("max. SQP iter:         %d\n",maxitersqp);
-    Rprintf("max. active-set iter:  %d\n",maxiteractiveset);
+    Rprintf("Running mix-SQP 0.1-20 on %d x %d matrix\n",n,m);
+    Rprintf("convergence tol. (SQP): %0.1e\n",convtolsqp);
+    Rprintf("max. iter (SQP):        %d\n",maxitersqp);
+    Rprintf("max. iter (active-set): %d\n",maxiteractiveset);
+    Rprintf("zero threshold:         %0.1e\n",zerothreshold);
   }
   
   // PREPARE DATA STRUCTURES
@@ -94,7 +94,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     // (gmin), which is used as a convergence criterion; the number of
     // nonzeros in the solution (nnz); and the number of inner-loop
     // iterations (nqp).
-    t       = (x > sparsetol);
+    t       = (x > zerothreshold);
     obj[i]  = mixobjective(L,w,x,eps,u);
     gmin[i] = 1 + g.min();
     nnz[i]  = sum(t);
@@ -119,8 +119,8 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
       
       // Define the smaller QP subproblem.
       b = H*y + 2*g + 1;
-      arma::vec bs  = b.elem(ind);
-      arma::mat Hs  = H.elem(ind,ind);
+      arma::vec bs = b.elem(ind);
+      arma::mat Hs = H.elem(ind,ind);
       
       // Solve the smaller problem.
       p.fill(0.0);
@@ -130,10 +130,10 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
       alpha = 1;
       
       // Check convergence.
-      if (arma::norm(p,2) < convtol) {
+      if (arma::norm(p,2) < convtolsqp) {
         
         // Compute the Lagrange multiplier.
-        if (b.min() >= -convtol) {
+        if (b.min() >= -convtolsqp) {
 	  status = 0;
           break;
 	}
