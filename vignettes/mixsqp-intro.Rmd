@@ -26,11 +26,13 @@ function in the [REBayes package][rebayes]).
 
 ## Environment set-up
 
-We begin by loading the Rmosek and mixSQP packages.
+We begin by loading the mixSQP and Rmosek packages. (The Rmosek
+package is only needed to check the version of MOSEK interior-point
+solver being used.)
 
 ```{r load-pkgs, message=FALSE}
-library("Rmosek")
-library("mixSQP")
+library(mixSQP)
+library(Rmosek)
 ```
 
 Next, initialize the sequence of pseudorandom numbers.
