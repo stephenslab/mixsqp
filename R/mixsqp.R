@@ -42,9 +42,10 @@
 #'
 #' @param w An optional numeric vector, with one entry for each row of
 #'   \code{L}, specifying the "weights" associated with the rows of
-#'   \code{L}. All weights must be finite, positive and not missing. The
-#'   weights should sum to 1; if they are not, they will automatically
-#'    be normalized to sum to 1. By default, all weights are the same.
+#'   \code{L}. All weights must be finite, non-negative and not
+#'   missing. The weights should sum to 1; if they are not, they will
+#'   automatically be normalized to sum to 1. By default, all weights
+#'   are the same.
 #' 
 #' @param x0 An optional numeric vector providing an initial estimate
 #'   of the solution to the optimization problem. It should contain only
@@ -52,8 +53,17 @@
 #'   sum to 1; if it is not, the vector is automatically normalized to
 #'   sum to 1. By default, \code{x0} is the vector with all equal values.
 #' 
-#' @param convtol.sqp A convergence tolerance used for algorithm's
-#'   convergence criterion. ADD MORE INFO HERE.
+#' @param convtol.sqp A small, non-negative number specifying the
+#'   convergence tolerance for SQP algorithm; convergence is reached
+#'   when the maximum dual residual in the Karush-Kuhn-Tucker optimality
+#'   conditions is less than or equal to \code{convtol.sqp}. Smaller
+#'   values will result in more stringent convergence criteria and more
+#'   accurate solutions, at the expense of greater computation time.
+#'
+#' @param convtol.activeset Small, non-negative number specifying the
+#'   convergence tolerance for the active-set step. Smaller values will
+#'   result in higher quality search directions for the SQP algorithm
+#'   but possibly a greater per-iteration computational cost.
 #' 
 #' @param zero.threshold A small, non-negative number used to
 #'   determine the "active set"; that is, it determines which entries of
@@ -63,13 +73,13 @@
 #'   for matrices with many columns, at the (slight) risk of prematurely
 #'   zeroing some co-ordinates.
 #' 
-#' @param eps A small positive number added to the terms inside the
+#' @param eps A small, non-negative number added to the terms inside the
 #'   logarithms to sidestep computing logarithms of zero. This prevents
 #'   numerical problems at the cost of introducing a small inaccuracy in
 #'   the solution. Increasing this number may lead to faster convergence
 #'   but possibly a less accurate solution.
 #'
-#' @param delta A small positive number added to the diagonal of the
+#' @param delta A small, non-negative number added to the diagonal of the
 #'   Hessian to improve numerical stability (and possibly the speed)
 #'   when computing the search directions in the active-set step. 
 #'  
@@ -145,11 +155,11 @@
 #' 
 #' @export
 #' 
-mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)), 
-                   convtol.sqp = 1e-8, zero.threshold = 1e-6,
-                   eps = .Machine$double.eps, delta = 1e-10,
-                   maxiter.sqp = 1000, maxiter.activeset = 100,
-                   verbose = TRUE){
+mixSQP <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)), 
+                    convtol.sqp = 1e-8, convtol.activeset = 1e-10,
+                    zero.threshold = 1e-6, eps = .Machine$double.eps,
+                    delta = 1e-10, maxiter.sqp = 1000,
+                    maxiter.activeset = 100, verbose = TRUE) {
 
   # CHECK & PROCESS INPUTS
   # ----------------------
@@ -176,10 +186,11 @@ mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   maxiter.sqp       <- as.double(maxiter.sqp)
   maxiter.activeset <- as.double(maxiter.activeset)
 
-  # Input arguments "convtol.sqp", "zero.threshold" and "eps" should
-  # be non-negative scalars. Additionally, "zero.threshold" should be
-  # less than 1/m.
+  # Input arguments "convtol.sqp", "convtol.activeset",
+  # "zero.threshold" and "eps" should be non-negative scalars.
+  # Additionally, "zero.threshold" should be less than 1/m.
   verify.nonneg.scalar.arg(convtol.sqp)
+  verify.nonneg.scalar.arg(convtol.activeset)
   verify.nonneg.scalar.arg(zero.threshold)
   verify.nonneg.scalar.arg(eps)
   if (zero.threshold >= 1/m)
@@ -191,8 +202,8 @@ mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # SOLVE OPTIMIZATION PROBLEM USING mix-SQP
   # ----------------------------------------
-  out <- mixSQP_rcpp(L,w,x0,convtol.sqp,zero.threshold,eps,delta,
-                     maxiter.sqp,maxiter.activeset,verbose)
+  out <- mixSQP_rcpp(L,w,x0,convtol.sqp,convtol.activeset,zero.threshold,
+                     eps,delta,maxiter.sqp,maxiter.activeset,verbose)
 
   # Get the algorithm convergence status. The convention is that
   # status = 0 means that the algorithm has successfully converged to
