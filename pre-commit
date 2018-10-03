@@ -4,7 +4,8 @@
 # will report an error if the package version has not changed.
 #
 # To use this script, copy it to the .git/hooks directory of your
-# local repository.
+# local repository. Also make sure that this file has executable
+# permissions.
 #
 if git diff --staged DESCRIPTION | grep -q "Version:"; then
   exit 0
