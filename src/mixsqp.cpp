@@ -29,9 +29,9 @@ void   computegrad  (const arma::mat& L, const arma::vec& w,
 // 
 // [[Rcpp::export]]
 List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0, 
-                  double convtolsqp, double zerothreshold, double eps,
-		  double delta, int maxitersqp, int maxiteractiveset, 
-		  bool verbose) {
+                  double convtolsqp, double convtolactiveset,
+		  double zerothreshold, double eps, double delta,
+		  int maxitersqp, int maxiteractiveset, bool verbose) {
   
   // Get the number of rows (n) and columns (m) of the conditional
   // likelihood matrix.
@@ -41,10 +41,11 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
     Rprintf("Running mix-SQP 0.1-29 on %d x %d matrix\n",n,m);
-    Rprintf("convergence tol. (SQP): %0.1e\n",convtolsqp);
-    Rprintf("max. iter (SQP):        %d\n",maxitersqp);
-    Rprintf("max. iter (active-set): %d\n",maxiteractiveset);
-    Rprintf("zero threshold:         %0.1e\n",zerothreshold);
+    Rprintf("convergence tol. (SQP):  %0.1e\n",convtolsqp);
+    Rprintf("conv. tol. (active-set): %0.1e\n",convtolactiveset);
+    Rprintf("max. iter (SQP):         %d\n",maxitersqp);
+    Rprintf("max. iter (active-set):  %d\n",maxiteractiveset);
+    Rprintf("zero threshold:          %0.1e\n",zerothreshold);
   }
   
   // PREPARE DATA STRUCTURES
@@ -153,10 +154,10 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
       alpha = 1;
       
       // Check convergence.
-      if (arma::norm(p,2) < convtolsqp) {
+      if (arma::norm(p,2) <= convtolactiveset) {
         
         // Compute the Lagrange multiplier.
-        if (b.min() >= -convtolsqp)
+        if (b.min() >= -convtolactiveset)
           break;
         
         // Find an index with smallest multiplier, Add this to the

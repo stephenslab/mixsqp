@@ -9,9 +9,9 @@
 mixKWDual(L, w = rep(1, nrow(L)), ...)
 
 mixSQP(L, w = rep(1, nrow(L)), x0 = rep(1, ncol(L)),
-  convtol.sqp = 1e-08, zero.threshold = 1e-06,
-  eps = .Machine$double.eps, delta = 1e-10, maxiter.sqp = 1000,
-  maxiter.activeset = 100, verbose = TRUE)
+  convtol.sqp = 1e-08, convtol.activeset = 1e-10,
+  zero.threshold = 1e-06, eps = .Machine$double.eps, delta = 1e-10,
+  maxiter.sqp = 1000, maxiter.activeset = 100, verbose = TRUE)
 
 mixobjective(L, x, w = rep(1, nrow(L)))
 }
@@ -26,9 +26,10 @@ stored in double-precision; see \code{\link{storage.mode}}.}
 
 \item{w}{An optional numeric vector, with one entry for each row of
 \code{L}, specifying the "weights" associated with the rows of
-\code{L}. All weights must be finite, positive and not missing. The
-weights should sum to 1; if they are not, they will automatically
- be normalized to sum to 1. By default, all weights are the same.}
+\code{L}. All weights must be finite, non-negative and not
+missing. The weights should sum to 1; if they are not, they will
+automatically be normalized to sum to 1. By default, all weights
+are the same.}
 
 \item{...}{Additional arguments passed to \code{\link[REBayes]{KWDual}}.}
 
@@ -38,8 +39,17 @@ finite, non-missing, non-negative values, and the entries should
 sum to 1; if it is not, the vector is automatically normalized to
 sum to 1. By default, \code{x0} is the vector with all equal values.}
 
-\item{convtol.sqp}{A convergence tolerance used for algorithm's
-convergence criterion. ADD MORE INFO HERE.}
+\item{convtol.sqp}{A small, non-negative number specifying the
+convergence tolerance for SQP algorithm; convergence is reached
+when the maximum dual residual in the Karush-Kuhn-Tucker optimality
+conditions is less than or equal to \code{convtol.sqp}. Smaller
+values will result in more stringent convergence criteria and more
+accurate solutions, at the expense of greater computation time.}
+
+\item{convtol.activeset}{Small, non-negative number specifying the
+convergence tolerance for the active-set step. Smaller values will
+result in higher quality search directions for the SQP algorithm
+but possibly a greater per-iteration computational cost.}
 
 \item{zero.threshold}{A small, non-negative number used to
 determine the "active set"; that is, it determines which entries of
@@ -49,13 +59,13 @@ zero. Larger values of \code{zero.threshold} may lead to speedups
 for matrices with many columns, at the (slight) risk of prematurely
 zeroing some co-ordinates.}
 
-\item{eps}{A small positive number added to the terms inside the
+\item{eps}{A small, non-negative number added to the terms inside the
 logarithms to sidestep computing logarithms of zero. This prevents
 numerical problems at the cost of introducing a small inaccuracy in
 the solution. Increasing this number may lead to faster convergence
 but possibly a less accurate solution.}
 
-\item{delta}{A small positive number added to the diagonal of the
+\item{delta}{A small, non-negative number added to the diagonal of the
 Hessian to improve numerical stability (and possibly the speed)
 when computing the search directions in the active-set step.}
 

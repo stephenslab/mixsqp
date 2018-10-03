@@ -68,7 +68,7 @@ verify.likelihood.matrix <- function (L) {
 # is valid, then return the normalized weights in double-precision. It
 # is assumed that the weights argument is named "w", and that the
 # likelihood matrix argument is named "L". The weights should be a
-# numeric vector with all positive entries, in which the length is
+# numeric vector with all non-negative entries, in which the length is
 # equal to the number of rows of L. Furthermore, the weights should
 # sum to 1; if not, the weights must be normalized to sum to 1.
 #
@@ -78,12 +78,12 @@ verify.likelihood.matrix <- function (L) {
 # normalized weights (coerced to double-precision) are returned.
 verify.weights <- function (L, w) {
   msg <- paste("Input argument \"w\" should be a numeric vector with",
-               "positive, finite and non-missing entries, and with one",
-               "entry per row of L")
+               "non-negative, finite and non-missing entries, and with",
+               "one entry per row of L")
   if (!(is.atomic(w) &
         is.numeric(w)))
     stop(msg)
-  else if (!(all(w > 0) &
+  else if (!(all(w >= 0) &
              all(is.finite(w)) &
              !any(missing(w)) &
              length(w) == nrow(L)))
