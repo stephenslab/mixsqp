@@ -12,23 +12,24 @@
 #' Without loss of generality \eqn{\sum_j w_j = 1} is required.
 #' 
 #' @param L Matrix specifying the optimization problem to be solved.
-#'   It should be a numeric matrix with at least two columns, in which
-#'   all its entries are positive finite (and not missing). For large
-#'   matrices, it is preferrable that the matrix is stored in
-#'   double-precision; see \code{\link{storage.mode}}.
+#'   In the context of mixture-model fitting, \code{L[j,k]} should be
+#'   the response of the kth mixture component density at the jth data
+#'   point. \code{L} should be a numeric matrix with at least two
+#'   columns, in which all its entries are positive finite (and not
+#'   missing). For large matrices, it is preferrable that the matrix is
+#'   stored in double-precision; see \code{\link{storage.mode}}.
 #'
-#' @param w A numeric vector, with one entry for each row of \code{L},
-#'   specifying the "weights" associated with the rows of \code{L}. All
-#'   weights must be finite and positive. The weights should sum to 1;
-#'   if not, they will automatically be normalized to sum to 1. By
-#'   default, all weights are set to 1, in which case all rows of
-#'   \code{L} are assigned the same weight.
+#' @param w An optional numeric vector, with one entry for each row of
+#'   \code{L}, specifying the "weights" associated with the rows of
+#'   \code{L}. All weights must be finite, positive and not missing. The
+#'   weights should sum to 1; if they are not, they will automatically
+#'    be normalized to sum to 1. By default, all weights are the same.
 #' 
-#' @param x0 An initial estimate of the solution to the optimization
-#'   problem. It should contain only finite, non-negative values, and
-#'   the entries should sum to 1; if not, the vector is automatically
-#'   normalized to sum to 1. By default, \code{x0} is the vector with
-#'   all equal entries.
+#' @param x0 An optional numeric vector providing an initial estimate
+#'   of the solution to the optimization problem. It should contain only
+#'   finite, non-missing, non-negative values, and the entries should
+#'   sum to 1; if it is not, the vector is automatically normalized to
+#'   sum to 1. By default, \code{x0} is the vector with all equal values.
 #' 
 #' @param convtol.sqp A convergence tolerance used for algorithm's
 #'   convergence criterion.
