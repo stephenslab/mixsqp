@@ -64,11 +64,14 @@
 #'   zeroing some co-ordinates.
 #' 
 #' @param eps A small positive number added to the terms inside the
-#'   logarithms to sidestep computing logarithms of zero.
+#'   logarithms to sidestep computing logarithms of zero. This prevents
+#'   numerical problems at the cost of introducing a small inaccuracy in
+#'   the solution. Increasing this number may lead to faster convergence
+#'   but possibly a less accurate solution.
 #'
 #' @param delta A small positive number added to the diagonal of the
 #'   Hessian to improve numerical stability (and possibly the speed)
-#'   when computing the search directions in the active-set step.
+#'   when computing the search directions in the active-set step. 
 #'  
 #' @param maxiter.sqp Maximum number of SQP iterations to run before
 #' reporting a convergence failure; that is, the maximum number of

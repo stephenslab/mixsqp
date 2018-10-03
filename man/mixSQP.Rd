@@ -50,7 +50,10 @@ for matrices with many columns, at the (slight) risk of prematurely
 zeroing some co-ordinates.}
 
 \item{eps}{A small positive number added to the terms inside the
-logarithms to sidestep computing logarithms of zero.}
+logarithms to sidestep computing logarithms of zero. This prevents
+numerical problems at the cost of introducing a small inaccuracy in
+the solution. Increasing this number may lead to faster convergence
+but possibly a less accurate solution.}
 
 \item{delta}{A small positive number added to the diagonal of the
 Hessian to improve numerical stability (and possibly the speed)
