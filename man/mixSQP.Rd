@@ -64,17 +64,18 @@ taken to solve each of the quadratic subproblems.}
 
 \item{verbose}{If \code{verbose = TRUE}, the algorithm's progress
 and a summary of the optimization settings are printed to the
-console. The algorithm's progress is displayed in a table with the
-following columns: "iter", the (outer loop) SQP iteration;
-"objective", the value of the (unmodified) objective function at
-the current estimate of the solution; "max(rdual)", the maximum
-"dual residual" in the Karush-Kuhn-Tucker (KKT) conditions, which
-is used to monitor convergence (see \code{convtol.sqp}); "nnz", the
-number of non-zero co-ordinates in the current estimate, as
-determined by \code{zero.threshold}, "nqp", the number of (inner
-loop) active-set iterations taken to solve the quadratic
-subproblem; "nls", the number of iterations in the backtracking
-line search.}
+console. The algorithm's progress is displayed in a table with one
+row per SQP (outer loop) iteration, and with the following columns:
+"iter", the (outer loop) SQP iteration; "objective", the value of
+the (unmodified) objective function at the current estimate of the
+solution; "max.diff", the maximum difference in the estimates
+between two successive iterations; "max(rdual)", the maximum "dual
+residual" in the Karush-Kuhn-Tucker (KKT) conditions, which is used
+to monitor convergence (see \code{convtol.sqp}); "nnz", the number
+of non-zero co-ordinates in the current estimate, as determined by
+\code{zero.threshold}, "nqp", the number of (inner loop) active-set
+iterations taken to solve the quadratic subproblem; "nls", the
+number of iterations in the backtracking line search.}
 }
 \value{
 Returns a solution x (in the current version). Also returns
