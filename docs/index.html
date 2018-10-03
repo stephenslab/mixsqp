@@ -68,7 +68,7 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#mixsqp-r-package-for-fast-maximum-likelihood-estimation-of-mixture-proportions-using-sequential-quadratic-programming" class="anchor"></a>mixSQP: R package for fast maximum-likelihood estimation of mixture proportions using sequential quadratic programming</h1></div>
 
-<p>The mixSQP R package provides algorithms based on <a href="https://neos-guide.org/content/sequential-quadratic-programming">sequential quadratic programming</a> for maximum likelihood estimation of the mixture proportions in a finite mixture model where the component densities are known. For large data sets, the SQP algorithm can be orders of magnitude faster than the state-of-the-art interior-point solver implemented in the <a href="https://cran.r-project.org/package=REBayes">REBayes package</a>. For more details on the mixSQP algorithm, please see <a href="https://arxiv.org/abs/1806.01412">our paper on arXiv</a>.</p>
+<p>The mixSQP R package provides algorithms based on <a href="https://neos-guide.org/content/sequential-quadratic-programming">sequential quadratic programming</a> for maximum likelihood estimation of the mixture proportions in a finite mixture model where the component densities are known. The SQP algorithm is expected to obtain solutions that are at least as accurate as the state-of-the-art interior-point solver implemented in the <a href="https://cran.r-project.org/package=REBayes">REBayes package</a>, and converge to these solutions much more quickly in large data sets. For more details on the mixSQP algorithm, please see <a href="https://arxiv.org/abs/1806.01412">our paper on arXiv</a>.</p>
 <p>If you find a bug, or you have a question or feedback on our work, please post an <a href="https://github.com/youngseok-kim/mixsqp/issues">issue</a>.</p>
 <div id="citing-this-work" class="section level2">
 <h2 class="hasAnchor">
@@ -95,9 +95,9 @@
                <span class="dt">upgrade_dependencies =</span> <span class="ot">FALSE</span>)</code></pre></div>
 <p>This command should automatically install all required packages if they are not installed already.</p>
 <p>Alternatively, if you have cloned the repository locally, you can install the package with the <code>install_local</code> function from devtools. Assuming your working directory contains the mixSQP repository, run this code to install the package:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">list.files</span>(<span class="dt">pattern =</span> <span class="st">"mixSQP"</span>) <span class="co"># Should give "mixSQP".</span>
-devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_local">install_local</a></span>(<span class="st">"mixSQP"</span>,<span class="dt">build_vignettes =</span> <span class="ot">TRUE</span>,
-                        <span class="dt">upgrade_dependencies =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(devtools)
+<span class="kw">list.files</span>(<span class="dt">pattern =</span> <span class="st">"mixSQP"</span>) <span class="co"># Should output "mixSQP".</span>
+<span class="kw">nstall_local</span>(<span class="st">"mixSQP"</span>,<span class="dt">build_vignettes =</span> <span class="ot">TRUE</span>,<span class="dt">upgrade_dependencies =</span> <span class="ot">FALSE</span>)</code></pre></div>
 <p><strong>Important note:</strong> Compiling the mixSQP package from source will require a C++ compiler setup that is appropriate for the the R installed on your computer. For details, refer to the <a href="https://cran.r-project.org">CRAN documentation</a>. For Mac computers, see <a href="https://pcarbo.github.io/pcarbo/r-macos.html">these notes</a>.</p>
 </div>
 <div id="developer-notes" class="section level2">
@@ -108,14 +108,14 @@ devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocument
 <a href="#testing-the-package" class="anchor"></a>Testing the package</h3>
 <p>To install and test the mixSQP R package, run the following commands in the shell:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">R</span> CMD build mixSQP
-<span class="ex">R</span> CMD INSTALL mixSQP_0.1-16.tar.gz
-<span class="ex">R</span> CMD check --as-cran mixSQP_0.1-16.tar.gz</code></pre></div>
+<span class="ex">R</span> CMD INSTALL mixSQP_0.1-21.tar.gz
+<span class="ex">R</span> CMD check --as-cran mixSQP_0.1-21.tar.gz</code></pre></div>
 <p>Note that these commands require that the dependencies have already been installed. See the <a href="DESCRIPTION" class="uri">DESCRIPTION</a> file for details.</p>
 </div>
 <div id="updating-the-c-source-and-documentation" class="section level3">
 <h3 class="hasAnchor">
 <a href="#updating-the-c-source-and-documentation" class="anchor"></a>Updating the C++ source and documentation</h3>
-<p>When any changes are made to <a href="https://cran.r-project.org/package=roxygen2">roxygen2</a> markup or to the C++ code in the “src” directory, simply run <code><a href="http://www.rdocumentation.org/packages/devtools/topics/document">devtools::document()</a></code> to update the <a href="src/RcppExports.cpp">RcppExports.cpp</a>, the NAMESPACE file, and the package documentation files (in the “man” directory),</p>
+<p>When any changes are made to <a href="https://cran.r-project.org/package=roxygen2">roxygen2</a> markup or to the C++ code in the src directory, simply run <code><a href="http://www.rdocumentation.org/packages/devtools/topics/document">devtools::document()</a></code> to update the <a href="src/RcppExports.cpp">RcppExports.cpp</a>, the NAMESPACE file, and the package documentation files in the man directory.</p>
 </div>
 <div id="updating-the-pkgdown-site" class="section level3">
 <h3 class="hasAnchor">

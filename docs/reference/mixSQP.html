@@ -111,9 +111,9 @@ generality \(\sum_j w_j = 1\) is required.</p>
 <span class='fu'>mixobjective</span>(<span class='no'>L</span>, <span class='no'>x</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)))
 
 <span class='fu'>mixSQP</span>(<span class='no'>L</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)), <span class='kw'>x0</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>ncol</span>(<span class='no'>L</span>)),
-  <span class='kw'>convtol.sqp</span> <span class='kw'>=</span> <span class='fl'>1e-08</span>, <span class='kw'>zero.threshold</span> <span class='kw'>=</span> <span class='fl'>1e-08</span>,
-  <span class='kw'>eps</span> <span class='kw'>=</span> <span class='no'>.Machine</span>$<span class='no'>double.eps</span>, <span class='kw'>maxiter.sqp</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
-  <span class='kw'>maxiter.activeset</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+  <span class='kw'>convtol.sqp</span> <span class='kw'>=</span> <span class='fl'>1e-08</span>, <span class='kw'>zero.threshold</span> <span class='kw'>=</span> <span class='fl'>1e-06</span>,
+  <span class='kw'>eps</span> <span class='kw'>=</span> <span class='no'>.Machine</span>$<span class='no'>double.eps</span>, <span class='kw'>delta</span> <span class='kw'>=</span> <span class='fl'>0.01</span> * <span class='no'>convtol.sqp</span>,
+  <span class='kw'>maxiter.sqp</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>maxiter.activeset</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -160,6 +160,12 @@ convergence criterion.</p></td>
       <td><p>A small constant to safeguard from a numerical issue.</p></td>
     </tr>
     <tr>
+      <th>delta</th>
+      <td><p>A small constant added to diagonal of Hessian to
+improve numerical stability of search directions in active-set
+method.</p></td>
+    </tr>
+    <tr>
       <th>maxiter.sqp</th>
       <td><p>Maximum number of SQP iterations; that is, the
 maximum number of quadratic subproblems that will be solved by the
@@ -189,11 +195,11 @@ to console.</p></td>
 <span class='no'>m</span>  <span class='kw'>&lt;-</span> <span class='fl'>10</span>
 <span class='no'>w</span>  <span class='kw'>&lt;-</span> <span class='fu'>rep</span>(<span class='fl'>1</span>,<span class='no'>n</span>)/<span class='no'>n</span>
 <span class='no'>L</span>  <span class='kw'>&lt;-</span> <span class='fu'><a href='simulatemixdata.html'>simulatemixdata</a></span>(<span class='no'>n</span>,<span class='no'>m</span>)$<span class='no'>L</span>
-<span class='no'>out.mixsqp</span> <span class='kw'>&lt;-</span> <span class='fu'>mixSQP</span>(<span class='no'>L</span>,<span class='no'>w</span>)</div><div class='output co'>#&gt; Running mix-SQP 0.1-20 on 100000 x 10 matrix
+<span class='no'>out.mixsqp</span> <span class='kw'>&lt;-</span> <span class='fu'>mixSQP</span>(<span class='no'>L</span>,<span class='no'>w</span>)</div><div class='output co'>#&gt; Running mix-SQP 0.1-22 on 100000 x 10 matrix
 #&gt; convergence tol. (SQP): 1.0e-08
 #&gt; max. iter (SQP):        1000
 #&gt; max. iter (active-set): 100
-#&gt; zero threshold:         1.0e-08
+#&gt; zero threshold:         1.0e-06
 #&gt; iter  objective   -min(g+1) #nnz #nqp #nls
 #&gt;    1  7.72664e-01 +2.76e-01   10 
 #&gt;    2  6.53047e-01 +4.75e+00    5   13    1
@@ -206,7 +212,7 @@ to console.</p></td>
 #&gt;    9  5.98988e-01 +1.97e-03    5    2    1
 #&gt;   10  5.98959e-01 +2.23e-05    5    2    1
 #&gt;   11  5.98959e-01 +2.89e-09    5    2    1
-#&gt; Convergence criteria met; optimal solution found.</div><div class='input'><span class='no'>out.kwdual</span> <span class='kw'>&lt;-</span> <span class='fu'>mixKWDual</span>(<span class='no'>L</span>,<span class='no'>w</span>)
+#&gt; Convergence criteria met---optimal solution found.</div><div class='input'><span class='no'>out.kwdual</span> <span class='kw'>&lt;-</span> <span class='fu'>mixKWDual</span>(<span class='no'>L</span>,<span class='no'>w</span>)
 <span class='fu'>print</span>(<span class='fu'>mixobjective</span>(<span class='no'>L</span>,<span class='no'>out.mixsqp</span>$<span class='no'>x</span>,<span class='no'>w</span>),<span class='kw'>digits</span> <span class='kw'>=</span> <span class='fl'>16</span>)</div><div class='output co'>#&gt; [1] 0.5989590363728408</div><div class='input'><span class='fu'>print</span>(<span class='fu'>mixobjective</span>(<span class='no'>L</span>,<span class='no'>out.kwdual</span>$<span class='no'>x</span>,<span class='no'>w</span>),<span class='kw'>digits</span> <span class='kw'>=</span> <span class='fl'>16</span>)</div><div class='output co'>#&gt; [1] 0.5989590363746571</div><div class='input'>
 </div></pre>
   </div>
