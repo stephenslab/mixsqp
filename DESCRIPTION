@@ -10,8 +10,8 @@ Authors@R: c(person("Youngseok","Kim",role="aut"),
              person("Peter","Carbonetto",role=c("aut","cre")),
              person("Mihai","Anitescu",role="aut"),
              person("Matthew","Stephens",role="aut"))
-URL: https://github.com/youngseok-kim/mixsqp
-BugReports: https://github.com/youngseok-kim/mixsqp/issues
+URL: https://github.com/youngseok-kim/mixSQP
+BugReports: https://github.com/youngseok-kim/mixSQP/issues
 SystemRequirements: C++11
 Depends: R (>= 3.3.0)
 Description: Provides algorithms based on sequential quadratic
