@@ -98,8 +98,9 @@ test_that(paste("mixSQP gives correct solution for Beckett & Diaconis",
   data(tacks)
   capture.output(out <- mixSQP(L,w,eps = 1e-12))
 
-  # The mix-SQP should be very close to the REBayes solution and, more
-  # importantly, the quality of the mixSQP solution should be higher.
+  # The mixSQP solution should be very close to the REBayes solution
+  # and, more importantly, the quality of the mixSQP solution should
+  # be higher.
   expect_equal(x,out$x,tolerance = 5e-4)
   expect_lte(out$value,mixobjective(L,x,w))
 })
@@ -114,28 +115,41 @@ test_that(paste("mixSQP gives correct solution for \"short and fat\" matrix,",
   capture.output(out2 <- mixSQP(L))
   capture.output(out3 <- mixSQP(L,delta = 0))
   
-  # The mix-SQP should be very close to the REBayes solution and, more
-  # importantly, the quality of the mixSQP solution should be very
-  # similar, even when the Newton search direction in the active-set
-  # method is not necessarily unique (i.e., the Hessian is not s.p.d.).
+  # The mixSQP solution should be very close to the REBayes solution
+  # and, more importantly, the quality of the mixSQP solution should
+  # be very similar, even when the Newton search direction in the
+  # active-set method is not necessarily unique (i.e., the Hessian is
+  # not s.p.d.).
   expect_equal(out1$x,out2$x,tolerance = 1e-8)
   expect_equal(out1$x,out3$x,tolerance = 1e-8)
   expect_equal(out1$value,out2$value,tolerance = 1e-8)
   expect_equal(out1$value,out3$value,tolerance = 1e-8)
 })
 
-test_that(paste("mixSQP gives correct solution for issue #5"),{
+# This test comes from Issue #5.
+test_that(paste("mixSQP converges, and outputs correct solution, for example",
+                "in which the \"dual residual\" never reaches exactly zero"),{
+
+  # Generate the data set for testing.
   set.seed(1)
-  n  <- 1e5
-  m  <- 12
-  w  <- rep(1,n)/n
-  L_thin_and_tall  <- simulatemixdata(n,m)$L
-  x_thin_and_tall  <- mixKWDual(L_thin_and_tall)$x
+  n    <- 1e5
+  m    <- 12
+  L    <- simulatemixdata(n,m)$L
+
+  # Here we also check convergence for the case when no numerical
+  # stability measure is used for the active-set linear systems (i.e.,
+  # delta = 0).
+  out1 <- mixKWDual(L)
+  capture.output(out2 <- mixSQP(L,convtol.sqp = 0,maxiter.sqp = 50))
+  capture.output(out3 <- mixSQP(L))
+  capture.output(out4 <- mixSQP(L,delta = 0))
   
-  capture.output(out <- mixSQP(L_thin_and_tall,w))
-  
-  # The mix-SQP should be very close to the REBayes solution and, more
-  # importantly, the quality of the mixSQP solution should be higher.
-  expect_equal(x_thin_and_tall,out$x,tolerance = 5e-8)
-  expect_equal(out$value,mixobjective(L_thin_and_tall,x_thin_and_tall),tolerance = 1e-8)
+  # When the mixSQP iterates converge, they should be very close to
+  # the REBayes solution, and when convtol.sqp = 0, the mixSQP
+  # algorithm should report that it failed to converge in this
+  # example.
+  expect_equal(out2$status,"exceeded maximum number of iterations")
+  expect_equal(out1$x,out3$x,tolerance = 1e-7)
+  expect_equal(out1$x,out4$x,tolerance = 1e-7)
+  expect_equal(out1$value,out3$value,tolerance = 1e-8)
 })
