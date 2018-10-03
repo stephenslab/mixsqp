@@ -5,9 +5,9 @@ Version: 0.1-23
 Date: 2018-10-03
 Title: Sequential Quadratic Programming for Fast Maximum-Likelihood
     Estimation of Mixture Proportions
-Authors@R: c(person("Youngseok","Kim",role=c("aut","cre"),
+Authors@R: c(person("Youngseok","Kim",role="aut"),
                     email="youngseok@uchicago.edu"),
-             person("Peter","Carbonetto",role="aut"),
+             person("Peter","Carbonetto",role=c("aut","cre")),
              person("Mihai","Anitescu",role="aut"),
              person("Matthew","Stephens",role="aut"))
 URL: https://github.com/youngseok-kim/mixsqp
