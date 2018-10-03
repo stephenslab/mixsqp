@@ -16,6 +16,7 @@ to do
 + Create a short vignette comparing performance of mixSQP against
   REBayes on a large-ish data set (working on this).
 
-+ Test multithreaded matrix computations for large matrices on midway2.
++ Add note to "mixsqp" documentation about multithreaded matrix
+  computations for large matrices.
 
-+ Add test for mixSQP with and without adding "eps" to diagonal of Hessian.
+
