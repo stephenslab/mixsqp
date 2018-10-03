@@ -71,7 +71,7 @@
 #' @export
 #' 
 mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)), 
-                   convtol.sqp = 1e-8, zero.threshold = 1e-8,
+                   convtol.sqp = 1e-8, zero.threshold = 1e-6,
                    eps = .Machine$double.eps, delta = 0.01 * convtol.sqp,
                    maxiter.sqp = 1000, maxiter.activeset = 100,
                    verbose = TRUE){
