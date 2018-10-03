@@ -1,4 +1,4 @@
-#' @title mixSQP
+#' @title Solution to "Mixture Optimization" Problem using SQP
 #'
 #' @description mixSQP solves a convex optimization problem in
 #'   https://arxiv.org/abs/1806.01412.
@@ -32,7 +32,7 @@
 #'   sum to 1. By default, \code{x0} is the vector with all equal values.
 #' 
 #' @param convtol.sqp A convergence tolerance used for algorithm's
-#'   convergence criterion.
+#'   convergence criterion. ADD MORE INFO HERE.
 #' 
 #' @param zero.threshold A small, non-negative number used to
 #'   determine the "active set"; that is, it determines which entries of
@@ -42,15 +42,16 @@
 #'   for matrices with many columns, at the (slight) risk of prematurely
 #'   zeroing some co-ordinates.
 #' 
-#' @param eps A small constant to safeguard from a numerical issue.
+#' @param eps A small positive number added to the terms inside the
+#'   logarithms to sidestep computing logarithms of zero.
 #'
-#' @param delta A small constant added to diagonal of Hessian to
-#'   improve numerical stability of search directions in active-set
-#'   method.
+#' @param delta A small positive number added to the diagonal of the
+#'   Hessian to improve numerical stability (and possibly the speed)
+#'   when computing the search directions in the active-set step.
 #'  
-#' @param maxiter.sqp Maximum number of SQP iterations; that is, the
-#'   maximum number of quadratic subproblems that will be solved by the
-#'   active-set method.
+#' @param maxiter.sqp Maximum number of SQP iterations to run before
+#' reporting a convergence failure; that is, the maximum number of
+#' quadratic subproblems that will be solved by the active-set method.
 #' 
 #' @param maxiter.activeset Maximum number of active-set iterations
 #'   taken to solve each of the quadratic subproblems.
@@ -69,6 +70,8 @@
 #'   \code{zero.threshold}, "nqp", the number of (inner loop) active-set
 #'   iterations taken to solve the quadratic subproblem; "nls", the
 #'   number of iterations in the backtracking line search.
+#' 
+#' @param ... Additional arguments passed to \code{\link[REBayes]{KWDual}}.
 #' 
 #' @return Returns a solution x (in the current version). Also returns
 #'   the algorithm convergence status.
@@ -92,7 +95,7 @@
 #' 
 mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)), 
                    convtol.sqp = 1e-8, zero.threshold = 1e-6,
-                   eps = .Machine$double.eps, delta = 0.01 * convtol.sqp,
+                   eps = .Machine$double.eps, delta = 1e-10,
                    maxiter.sqp = 1000, maxiter.activeset = 100,
                    verbose = TRUE){
 
