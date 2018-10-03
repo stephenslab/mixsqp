@@ -3,6 +3,7 @@
 #' @name mixSQP
 #'
 #' @export
+#' 
 mixKWDual <- function (L, w = rep(1,nrow(L)), ...)  {
 
   # CHECK & PROCESS INPUTS

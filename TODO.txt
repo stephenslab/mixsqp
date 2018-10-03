@@ -1,20 +1,11 @@
 to do
 =====
 
-+ Activate GitHub Pages (to show pkgdown site).
-
-+ Edit description at top of GitHub page.
-
 * Add Travis CI and codecov (I will need Youngseok's help with this).
 
 + Fix appveyor settings so that a commit triggers a build.
 
 + Complete help page for mixSQP.
-
-+ Complete help page for mixKWDual.
-
-+ Create a short vignette comparing performance of mixSQP against
-  REBayes on a large-ish data set (working on this).
 
 + Add note to "mixsqp" documentation about multithreaded matrix
   computations for large matrices.
@@ -22,3 +13,8 @@ to do
 * Improve console output for mixsqp when verbose = TRUE. In
   particular, print out the maximum difference between two successive
   iterations of the outer loop.
+
++ Add a separate mixSQP convergence tolerance for the active-set method.
+
++ Improve post-processing of mixSQP output.
+
