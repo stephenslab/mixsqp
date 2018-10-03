@@ -103,6 +103,11 @@ Internet connection while running the code):
 pkgdown::build_site(mathjax = FALSE)
 ```
 
+### Other developer notes
+
++ Add file `pre-commit` to `.git/hooks` in the git repository to
+  prevent commits that don't include a change to the package version.
+
 ## Credits
 
 This project was developed by [Youngseok Kim][youngseok] at the
