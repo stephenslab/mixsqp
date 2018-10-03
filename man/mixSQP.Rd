@@ -12,8 +12,8 @@ mixobjective(L, x, w = rep(1, nrow(L)))
 
 mixSQP(L, w = rep(1, nrow(L)), x0 = rep(1, ncol(L)),
   convtol.sqp = 1e-08, zero.threshold = 1e-08,
-  eps = .Machine$double.eps, maxiter.sqp = 1000,
-  maxiter.activeset = 100, verbose = TRUE)
+  eps = .Machine$double.eps, delta = 0.01 * convtol.sqp,
+  maxiter.sqp = 1000, maxiter.activeset = 100, verbose = TRUE)
 }
 \arguments{
 \item{L}{Matrix specifying the optimization problem to be solved.
@@ -42,6 +42,10 @@ convergence criterion.}
 \item{zero.threshold}{A tolerance used for determining active indices.}
 
 \item{eps}{A small constant to safeguard from a numerical issue.}
+
+\item{delta}{A small constant added to diagonal of Hessian to
+improve numerical stability of search directions in active-set
+method.}
 
 \item{maxiter.sqp}{Maximum number of SQP iterations; that is, the
 maximum number of quadratic subproblems that will be solved by the

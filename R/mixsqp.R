@@ -35,7 +35,11 @@
 #' @param zero.threshold A tolerance used for determining active indices.
 #' 
 #' @param eps A small constant to safeguard from a numerical issue.
-#' 
+#'
+#' @param delta A small constant added to diagonal of Hessian to
+#'   improve numerical stability of search directions in active-set
+#'   method.
+#'  
 #' @param maxiter.sqp Maximum number of SQP iterations; that is, the
 #'   maximum number of quadratic subproblems that will be solved by the
 #'   active-set method.
@@ -68,8 +72,9 @@
 #' 
 mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)), 
                    convtol.sqp = 1e-8, zero.threshold = 1e-8,
-                   eps = .Machine$double.eps, maxiter.sqp = 1000,
-                   maxiter.activeset = 100, verbose = TRUE){
+                   eps = .Machine$double.eps, delta = 0.01 * convtol.sqp,
+                   maxiter.sqp = 1000, maxiter.activeset = 100,
+                   verbose = TRUE){
 
   # CHECK & PROCESS INPUTS
   # ----------------------
@@ -96,29 +101,38 @@ mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   maxiter.sqp       <- as.double(maxiter.sqp)
   maxiter.activeset <- as.double(maxiter.activeset)
 
-  # Input arguments "convtol.sqp", "zero.threshold" and "eps" should be
-  # non-negative scalars.
+  # Input arguments "convtol.sqp", "zero.threshold" and "eps" should
+  # be non-negative scalars. Additionally, "zero.threshold" should be
+  # less than 1/m.
   verify.nonneg.scalar.arg(convtol.sqp)
   verify.nonneg.scalar.arg(zero.threshold)
   verify.nonneg.scalar.arg(eps)
+  if (zero.threshold >= 1/m)
+    stop(paste("Behavior of algorithm will be unpredictable if",
+               "zero.threshold > 1/m, where m = ncol(X)"))
   
   # Input argument "verbose" should be TRUE or FALSE.
   verify.logical.arg(verbose)
   
   # SOLVE OPTIMIZATION PROBLEM USING mix-SQP
   # ----------------------------------------
-  out <- mixSQP_rcpp(L,w,x0,convtol.sqp,zero.threshold,eps,maxiter.sqp,
-                     maxiter.activeset,verbose)
+  out <- mixSQP_rcpp(L,w,x0,convtol.sqp,zero.threshold,eps,delta,
+                     maxiter.sqp,maxiter.activeset,verbose)
 
-  # Get the algorithm convergence status. Currently, 
-  if (out$status == 0) {
+  # Get the algorithm convergence status. The convention is that
+  # status = 0 means that the algorithm has successfully converged to
+  # the optimal solution, and a status = 1 means that the algorithm
+  # reached the maximum number of iterations before converging to a
+  # solution.
+  if (out$status == 0)
     status <- "converged to optimal solution"
-    if (verbose)
-      cat("Convergence criteria met---optimal solution found.\n")
-  } else if (out$status == 1) {
+  else
     status <- "exceeded maximum number of iterations"
-    if (verbose)
-      cat(paste("Failed to converge within iterations limit.\n"))
+  if (verbose) {
+    if (out$status == 0)
+      cat("Convergence criteria met---optimal solution found.\n")
+    else 
+      cat("Failed to converge within iterations limit.\n")
   }
   
   # POST-PROCESS RESULT

@@ -104,21 +104,25 @@ test_that(paste("mixSQP gives correct solution for Beckett & Diaconis",
   expect_lte(out$value,mixobjective(L,x,w))
 })
 
-context("issue #3")
-
-test_that(paste("mixSQP gives correct solution for issue #3"),{
+# This test comes from Issue #3.
+test_that(paste("mixSQP gives correct solution for \"short and fat\" matrix,",
+                "even when linear systems in active-set method are not",
+                "necessarily s.p.d."),{
   set.seed(1)
-  L_fat_and_short <- matrix(rgamma(1000,1,1),nrow=10)
-  x_fat_and_short <- mixKWDual(L_fat_and_short)$x
-  capture.output(out <- mixSQP(L_fat_and_short))
-                  
+  L    <- matrix(rgamma(1000,1,1),nrow = 10)
+  out1 <- mixKWDual(L)
+  capture.output(out2 <- mixSQP(L))
+  capture.output(out3 <- mixSQP(L,delta = 0))
+  
   # The mix-SQP should be very close to the REBayes solution and, more
-  # importantly, the quality of the mixSQP solution should be higher.
-  expect_equal(x_fat_and_short,out$x,tolerance = 1e-8)
-  expect_equal(out$value,mixobjective(L_fat_and_short,x_fat_and_short),tolerance = 1e-8)
+  # importantly, the quality of the mixSQP solution should be very
+  # similar, even when the Newton search direction in the active-set
+  # method is not necessarily unique (i.e., the Hessian is not s.p.d.).
+  expect_equal(out1$x,out2$x,tolerance = 1e-8)
+  expect_equal(out1$x,out3$x,tolerance = 1e-8)
+  expect_equal(out1$value,out2$value,tolerance = 1e-8)
+  expect_equal(out1$value,out3$value,tolerance = 1e-8)
 })
-
-context("issue #5")
 
 test_that(paste("mixSQP gives correct solution for issue #5"),{
   set.seed(1)
