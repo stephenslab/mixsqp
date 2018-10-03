@@ -5,16 +5,17 @@
 #'   It implements a sequential quadratic programming with
 #'   active-set subproblem solvers.
 #' 
-#' When L is a (n) by (m) matrix of nonnegative entries, mixSQP
-#' maximizes the following objective function \deqn{f(x) = \sum_j w_j
-#' \log (\sum_k L_jk x_k)} subject to the (unit) probability simplex
-#' constraint \deqn{\sum_k x_k = 1, x_k \ge 0} Without loss of
-#' generality \eqn{\sum_j w_j = 1} is required.
+#' @details When L is a (n) by (m) matrix of nonnegative entries,
+#' mixSQP maximizes the following objective function \deqn{f(x) =
+#' \sum_j w_j \log (\sum_k L_jk x_k)} subject to the (unit)
+#' probability simplex constraint \deqn{\sum_k x_k = 1, x_k \ge 0}
+#' Without loss of generality \eqn{\sum_j w_j = 1} is required.
 #' 
 #' @param L Matrix specifying the optimization problem to be solved.
-#'   It should be a numeric matrix with at least two columns, with
-#'   finite and positive entries, and, ideally, stored in
-#'   double-precision.
+#'   It should be a numeric matrix with at least two columns, in which
+#'   all its entries are positive finite (and not missing). For large
+#'   matrices, it is preferrable that the matrix is stored in
+#'   double-precision; see \code{\link{storage.mode}}.
 #'
 #' @param w A numeric vector, with one entry for each row of \code{L},
 #'   specifying the "weights" associated with the rows of \code{L}. All
