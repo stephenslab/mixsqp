@@ -5,3 +5,4 @@
 ^appveyor\.yml$
 ^_pkgdown\.yml$
 ^docs$
+^pre-commit$
