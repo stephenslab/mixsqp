@@ -22,13 +22,14 @@
 #'   -1/n \sum_{j=1}^n w_j log (\sum_{k=1}^m L_{jk} x_k),} subject to
 #'   the constraint that \eqn{x} lie within the simplex; that is, all
 #'   entries of \eqn{x} are non-negative, and the sum of these entries
-#'   is equal to 1.  It is well-established that the Expectation
-#'   Maximization (EM) algorithm can be used to solve this optimization
-#'   problem, but it is intolerably slow in many interesting cases.
+#'   is equal to 1. The Expectation Maximization (EM) algorithm can be
+#'   used to solve this optimization problem, but it is intolerably slow
+#'   in many interesting cases.
 #'
 #'   \code{mixSQP} is implemented using the Armadillo C++ linear
 #'   algebra library, which can automatically take advantage of
-#'   multithreaded matrix computations when R has been configured with a
+#'   multithreaded matrix computations to speed up \code{mixSQP} for
+#'   large \code{L} matrices, but only when R has been configured with a
 #'   multithreaded BLAS/LAPACK library (e.g., OpenBLAS).
 #'
 #' @param L Matrix specifying the optimization problem to be solved.
@@ -93,8 +94,28 @@
 #' 
 #' @param ... Additional arguments passed to \code{\link[REBayes]{KWDual}}.
 #' 
-#' @return Returns a solution x (in the current version). Also returns
-#'   the algorithm convergence status.
+#' @return \code{mixobjective} returns the value of the (unmodified)
+#' objective at \code{x}.
+#'
+#' \code{mixKWDual} returns a list object with the following
+#' list elements:
+#'
+#' \item{x}{The estimated solution to the convex optimization problem.}
+#'
+#' \item{value}{The value of the (unmodified) objective function at
+#'   \code{x}.}
+#'
+#' \item{status}{The return status from MOSEK.}
+#'
+#' \code{mixSQP} returns a list object with the following list elements:
+#'
+#' \item{x}{The estimated solution to the convex optimization problem.}
+#'
+#' \item{value}{The value of the (unmodified) objective function at
+#'   \code{x}.}
+#'
+#' \item{status}{A character string giving the status of the algorithm
+#'   upon termination.}
 #'
 #' @references
 #'   Y. Kim, P. Carbonetto, M. Stephens and M. Anitescu (2018). A fast
