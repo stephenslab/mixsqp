@@ -6,10 +6,11 @@ The mixSQP R package provides algorithms based on
 [sequential quadratic programming][sqp] for maximum likelihood
 estimation of the mixture proportions in a finite mixture model where
 the component densities are known. For large data sets, the SQP
-algorithm can be orders of magnitude faster than the state-of-the-art
-interior-point solver implemented in the
-[REBayes package][rebayes]. For more details on the mixSQP algorithm,
-please see [our paper on arXiv][arxiv-paper].
+algorithm is expected to obtain solutions that are at least as
+accurate as the state-of-the-art interior-point solver implemented in
+the [REBayes package][rebayes], and converge to these solutions much
+more quickly. For more details on the mixSQP algorithm, please see
+[our paper on arXiv][arxiv-paper].
 
 If you find a bug, or you have a question or feedback on our work,
 please post an [issue][issues].
