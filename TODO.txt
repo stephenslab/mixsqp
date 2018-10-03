@@ -19,4 +19,6 @@ to do
 + Add note to "mixsqp" documentation about multithreaded matrix
   computations for large matrices.
 
-
+* Improve console output for mixsqp when verbose = TRUE. In
+  particular, print out the maximum difference between two successive
+  iterations of the outer loop.

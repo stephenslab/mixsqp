@@ -49,12 +49,13 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   
   // PREPARE DATA STRUCTURES
   // -----------------------
-  // Initialize storage for the outputs obj, gmin, nnz and nqp.
-  arma::vec  obj(maxitersqp);
-  arma::vec  gmin(maxitersqp);
-  arma::vec  nnz(maxitersqp);
-  arma::uvec nqp(maxitersqp);
-  arma::uvec nls(maxitersqp);
+  // Initialize storage for the outputs obj, gmin, nnz, nqp and dmax.
+  arma::vec obj(maxitersqp);
+  arma::vec gmin(maxitersqp);
+  arma::vec nnz(maxitersqp);
+  arma::vec nqp(maxitersqp);
+  arma::vec nls(maxitersqp);
+  arma::vec dmax(maxitersqp);
   
   // Initialize the solution.
   arma::vec x = x0;
@@ -70,7 +71,10 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   arma::vec  y(m);    // Vector of length m storing y
   arma::vec  p(m);    // Vector of length m storing y
   arma::vec  b(m);    // Vector of length m storing H*y+2+g+1
-
+  arma::vec  d(m);    // Vector of length m storing absolute
+		      // differences between between two solution
+		      // estimates.
+  
   int    newind;        // New index to be added or deleted.
   double alpha  = 1;    // Define step size
   double status = 1;    // Convergence status.
@@ -85,7 +89,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   
   // Print the column labels for reporting the algorithm's progress.
   if (verbose)
-    Rprintf("iter  objective   -min(g+1) #nnz #nqp #nls\n");
+    Rprintf("iter    objective max.diff max(rdual) nnz nqp nls\n");
   
   // Repeat until the convergence criterion is met, or until we reach
   // the maximum number of (outer loop) iterations.
@@ -100,7 +104,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     // (gmin), which is used as a convergence criterion; the number of
     // nonzeros in the solution (nnz); and the number of inner-loop
     // iterations (nqp).
-    t      = (x > zerothreshold);
+    t      = (x >= zerothreshold);
     obj[i] = mixobjective(L,w,x,eps,u);
 
     // Should be minimum of the nonzero x's only.
@@ -108,16 +112,17 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     nnz[i]  = sum(t);
     if (verbose) {
       if (i == 0)
-        Rprintf("%4d  %0.5e %+0.2e %4d \n",i + 1,obj[i],-gmin[i],int(nnz[i]));
+        Rprintf("%4d %+0.5e         NA %+0.3e%4d  NA  NA\n",
+		i + 1,obj[i],-gmin[i],int(nnz[i]));
       else
-        Rprintf("%4d  %0.5e %+0.2e %4d %4u %4u\n",i + 1,obj[i],-gmin[i],
-		int(nnz[i]),nqp[i-1],nls[i-1]);
+        Rprintf("%4d %+0.5e %0.2e %+0.3e%4d %3d %3d\n",i + 1,obj[i],
+		dmax[i-1],-gmin[i],int(nnz[i]),int(nqp[i-1]),int(nls[i-1]));
     }
     
     // Check convergence.
     //
-    // NOTE: abs(gmin) is the max residual ("rdual" on p. 609 of Boyd &
-    // Vandenberghe).
+    // NOTE: I believe -gmin is the max residual ("rdual" on
+    // p. 609 of Boyd & Vandenberghe).
     //
     // NOTE: We should only be checking this condition for the nonzero
     // co-ordinates of x.
@@ -198,6 +203,8 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     
     // UPDATE THE SOLUTION
     // -------------------
+    d       = abs(x - y);
+    dmax[i] = d.max();
     x = y;
   }
   

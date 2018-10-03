@@ -34,7 +34,13 @@
 #' @param convtol.sqp A convergence tolerance used for algorithm's
 #'   convergence criterion.
 #' 
-#' @param zero.threshold A tolerance used for determining active indices.
+#' @param zero.threshold A small, non-negative number used to
+#'   determine the "active set"; that is, it determines which entries of
+#'   the solution are exactly zero. Any entries that are less than or
+#'   equal to \code{zero.threshold} are considered to be exactly
+#'   zero. Larger values of \code{zero.threshold} may lead to speedups
+#'   for matrices with many columns, at the (slight) risk of prematurely
+#'   zeroing some co-ordinates.
 #' 
 #' @param eps A small constant to safeguard from a numerical issue.
 #'
@@ -49,8 +55,19 @@
 #' @param maxiter.activeset Maximum number of active-set iterations
 #'   taken to solve each of the quadratic subproblems.
 #' 
-#' @param verbose If \code{verbose = TRUE}, print progress of algorithm
-#'   to console.
+#' @param verbose If \code{verbose = TRUE}, the algorithm's progress
+#' and a summary of the optimization settings are printed to the
+#' console. The algorithm's progress is displayed in a table with the
+#' following columns: "iter", the (outer loop) SQP iteration;
+#' "objective", the value of the (unmodified) objective function at
+#' the current estimate of the solution; "max(rdual)", the maximum
+#' "dual residual" in the Karush-Kuhn-Tucker (KKT) conditions, which
+#' is used to monitor convergence (see \code{convtol.sqp}); "nnz", the
+#' number of non-zero co-ordinates in the current estimate, as
+#' determined by \code{zero.threshold}, "nqp", the number of (inner
+#' loop) active-set iterations taken to solve the quadratic
+#' subproblem; "nls", the number of iterations in the backtracking
+#' line search.
 #' 
 #' @return Returns a solution x (in the current version). Also returns
 #'   the algorithm convergence status.
