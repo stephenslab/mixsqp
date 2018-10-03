@@ -1,16 +1,36 @@
-#' @title Solution to "Mixture Optimization" Problem using SQP
+#' @title Solution to "Mixture Optimization" Problem
 #'
-#' @description mixSQP solves a convex optimization problem in
-#'   https://arxiv.org/abs/1806.01412.
-#'   It implements a sequential quadratic programming with
-#'   active-set subproblem solvers.
-#' 
-#' @details When L is a (n) by (m) matrix of nonnegative entries,
-#' mixSQP maximizes the following objective function \deqn{f(x) =
-#' \sum_j w_j \log (\sum_k L_jk x_k)} subject to the (unit)
-#' probability simplex constraint \deqn{\sum_k x_k = 1, x_k \ge 0}
-#' Without loss of generality \eqn{\sum_j w_j = 1} is required.
-#' 
+#' @description \code{mixSQP} and \code{mixKWDual} can be used to
+#'   compute maximum-likelihood estimates of mixture proportions in a
+#'   (finite) mixture model, or it can be used more generally to solve
+#'   the a constrained, convex optimization problem of the form given
+#'   below (see "Details"). \code{mixSQP} uses a Sequential Quadatric
+#'   Programming (SQP) approach to solve a slightly modified primal
+#'   formulation of the convex optimization problem. See "References"
+#'   for more details about the SQP algorithm and the motivation behind
+#'   it. \code{mixKWDual} uses the MOSEK interior-point (IP) algorithm
+#'   to solve a dual formulation of the original problem; see
+#'   \code{\link[REBayes]{KWDual}} for details.
+#'
+#' @details Here is a mathematical description of the constrained,
+#'   convex optimization problem solved by \code{mixSQP} and
+#'   \code{mixKWDual}. Let \eqn{L} be a matrix with \eqn{n} rows and
+#'   \eqn{m} rows containing only non-negative entries, and let \eqn{w =
+#'   (w_1, \ldots, w_n)} be a matrix of non-negative "weights" that sum
+#'   to 1. mixSQP computes the value of vector \eqn{x = (x_1, \ldots,
+#'   x_m)} minimizing the following objective function, \deqn{f(x) =
+#'   -1/n \sum_{j=1}^n w_j log (\sum_{k=1}^m L_{jk} x_k),} subject to
+#'   the constraint that \eqn{x} lie within the simplex; that is, all
+#'   entries of \eqn{x} are non-negative, and the sum of these entries
+#'   is equal to 1.  It is well-established that the Expectation
+#'   Maximization (EM) algorithm can be used to solve this optimization
+#'   problem, but it is intolerably slow in many interesting cases.
+#'
+#'   \code{mixSQP} is implemented using the Armadillo C++ linear
+#'   algebra library, which can automatically take advantage of
+#'   multithreaded matrix computations when R has been configured with a
+#'   multithreaded BLAS/LAPACK library (e.g., OpenBLAS).
+#'
 #' @param L Matrix specifying the optimization problem to be solved.
 #'   In the context of mixture-model fitting, \code{L[j,k]} should be
 #'   the response of the kth mixture component density at the jth data
@@ -75,6 +95,14 @@
 #' 
 #' @return Returns a solution x (in the current version). Also returns
 #'   the algorithm convergence status.
+#'
+#' @references
+#'   Y. Kim, P. Carbonetto, M. Stephens and M. Anitescu (2018). A fast
+#'   algorithm for maximum likelihood estimation of mixture proportions
+#'   using sequential quadratic programming. arXiv:1806.01412
+#'   \url{https://arxiv.org/abs/1806.01412}.
+#'
+#' @seealso \code{\link[REBayes]{KWDual}}
 #' 
 #' @examples
 #' set.seed(1)
@@ -166,5 +194,7 @@ mixSQP <- function(L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   x        <- drop(x)
   names(x) <- colnames(L)
 
-  return(list(x = x,status = status,value = mixobj(L,w,x)))
+  return(list(x      = x,
+              status = status,
+              value  = mixobj(L,w,x)))
 }
