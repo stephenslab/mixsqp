@@ -112,7 +112,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     nnz[i]  = sum(t);
     if (verbose) {
       if (i == 0)
-        Rprintf("%4d %+0.5e         NA %+0.3e%4d  NA  NA\n",
+        Rprintf("%4d %+0.5e       NA %+0.3e%4d  NA  NA\n",
 		i + 1,obj[i],-gmin[i],int(nnz[i]));
       else
         Rprintf("%4d %+0.5e %0.2e %+0.3e%4d %3d %3d\n",i + 1,obj[i],
