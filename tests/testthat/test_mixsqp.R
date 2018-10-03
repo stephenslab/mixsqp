@@ -1,5 +1,12 @@
 context("mixSQP")
 
+test_that("mixSQP version number is correct",{
+  data(tacks)
+  out <- capture.output(mixSQP(L,w))
+  x   <- unlist(strsplit(capture.output(out <- mixSQP(L,w))[1]," "))[[3]]
+  expect_equal(packageDescription("mixSQP")$Version,x)
+})
+
 test_that(paste("mixSQP gives correct solutions for 2 x 2 and",
                 "2 x 3 likelihood matrices"),{
   e <- 1e-8
@@ -96,7 +103,7 @@ test_that(paste("mixSQP returns the same solution regardless whether",
 test_that(paste("mixSQP gives correct solution for Beckett & Diaconis",
                 "tack rolling example"),{
   data(tacks)
-  capture.output(out <- mixSQP(L,w,eps = 1e-12))
+  capture.output(out <- mixSQP(L,w))
 
   # The mixSQP solution should be very close to the REBayes solution
   # and, more importantly, the quality of the mixSQP solution should
