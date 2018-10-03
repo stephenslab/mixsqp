@@ -90,9 +90,9 @@ been installed. See the [DESCRIPTION](DESCRIPTION) file for details.
 ### Updating the C++ source and documentation
 
 When any changes are made to [roxygen2][roxygen2] markup or to the C++
-code in the "src" directory, simply run `devtools::document()` to
+code in the src directory, simply run `devtools::document()` to
 update the [RcppExports.cpp](src/RcppExports.cpp), the NAMESPACE file,
-and the package documentation files (in the "man" directory),
+and the package documentation files in the man directory.
 
 ### Updating the pkgdown site
 
