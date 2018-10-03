@@ -59,9 +59,9 @@ devtools. Assuming your working directory contains the mixSQP
 repository, run this code to install the package:
 
 ```R
-list.files(pattern = "mixSQP") # Should give "mixSQP".
-devtools::install_local("mixSQP",build_vignettes = TRUE,
-                        upgrade_dependencies = FALSE)
+library(devtools)
+list.files(pattern = "mixSQP") # Should output "mixSQP".
+nstall_local("mixSQP",build_vignettes = TRUE,upgrade_dependencies = FALSE)
 ```
 
 **Important note:** Compiling the mixSQP package from source will
@@ -79,8 +79,8 @@ in the shell:
 
 ```bash
 R CMD build mixSQP
-R CMD INSTALL mixSQP_0.1-16.tar.gz
-R CMD check --as-cran mixSQP_0.1-16.tar.gz
+R CMD INSTALL mixSQP_0.1-21.tar.gz
+R CMD check --as-cran mixSQP_0.1-21.tar.gz
 ```
 
 Note that these commands require that the dependencies have already

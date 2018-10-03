@@ -1,3 +1,7 @@
+// This is included to suppress the warnings from solve() when the
+// system is singular or close to singular.
+#define ARMA_DONT_PRINT_ERRORS
+
 #include <RcppArmadillo.h>
 
 // This depends statement is needed to tell R where to find the
@@ -19,13 +23,15 @@ void   computegrad  (const arma::mat& L, const arma::vec& w,
 
 // FUNCTION DEFINITIONS
 // --------------------
-// SQP algorithm for optimizing mixtures. For more information, see
-// the help and comments accompanying the mixSQP function in R.
+// SQP algorithm for computing a maximum-likelihood estimate of a
+// mixture model. For more information, see the help and comments
+// accompanying the mixsqp R function.
 // 
 // [[Rcpp::export]]
 List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0, 
                   double convtolsqp, double zerothreshold, double eps,
-		  int maxitersqp, int maxiteractiveset, bool verbose) {
+		  double delta, int maxitersqp, int maxiteractiveset, 
+		  bool verbose) {
   
   // Get the number of rows (n) and columns (m) of the conditional
   // likelihood matrix.
@@ -34,7 +40,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP 0.1-20 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP 0.1-21 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP): %0.1e\n",convtolsqp);
     Rprintf("max. iter (SQP):        %d\n",maxitersqp);
     Rprintf("max. iter (active-set): %d\n",maxiteractiveset);
@@ -65,13 +71,13 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   arma::vec  p(m);    // Vector of length m storing y
   arma::vec  b(m);    // Vector of length m storing H*y+2+g+1
 
-  int    newind = 0;    // new index to be added or deleted
+  int    newind;        // New index to be added or deleted.
   double alpha  = 1;    // Define step size
   double status = 1;    // Convergence status.
   
   // This is used in computing the Hessian matrix.
   I  = arma::eye(m,m);
-  I *= convtolsqp * 1e-2;
+  I *= delta;
   
   // Initialize some loop variables used in the loops below.
   int i = 0; 
@@ -94,8 +100,8 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     // (gmin), which is used as a convergence criterion; the number of
     // nonzeros in the solution (nnz); and the number of inner-loop
     // iterations (nqp).
-    t       = (x > zerothreshold);
-    obj[i]  = mixobjective(L,w,x,eps,u);
+    t      = (x > zerothreshold);
+    obj[i] = mixobjective(L,w,x,eps,u);
 
     // Should be minimum of the nonzero x's only.
     gmin[i] = 1 + g.min();
@@ -104,7 +110,8 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
       if (i == 0)
         Rprintf("%4d  %0.5e %+0.2e %4d \n",i + 1,obj[i],-gmin[i],int(nnz[i]));
       else
-        Rprintf("%4d  %0.5e %+0.2e %4d %4u %4u\n",i + 1,obj[i],-gmin[i],int(nnz[i]),nqp[i-1],nls[i-1]);
+        Rprintf("%4d  %0.5e %+0.2e %4d %4u %4u\n",i + 1,obj[i],-gmin[i],
+		int(nnz[i]),nqp[i-1],nls[i-1]);
     }
     
     // Check convergence.
@@ -144,9 +151,8 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
       if (arma::norm(p,2) < convtolsqp) {
         
         // Compute the Lagrange multiplier.
-        if (b.min() >= -convtolsqp) {
+        if (b.min() >= -convtolsqp)
           break;
-	}
         
         // Find an index with smallest multiplier, Add this to the
         // inactive set.
@@ -184,7 +190,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     // sum(x) = sum(y) = 1 so replacing g by g+1 in dot product of x-y
     // and g has no effect.
     for (j = 0; j < 9; j++) {
-      if (obj[i] + sum(log(L * y + eps) % w) > dot(x-y, g) / (2 * n) ) 
+      if (obj[i] + sum(log(L * y + eps) % w) > dot(x-y,g)/(2*n)) 
 	break;
       y = (y-x)/2 + x;
     }
