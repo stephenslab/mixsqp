@@ -28,7 +28,7 @@ function in the [REBayes package][rebayes]).
 
 We begin by loading the Rmosek and mixSQP packages.
 
-```{r load-pkgs}
+```{r load-pkgs, message=FALSE}
 library("Rmosek")
 library("mixSQP")
 ```
@@ -41,7 +41,7 @@ set.seed(1)
 
 ## Generate a small data set
 
-Let's begin with a smaller example with $n = 50,000$ samples.
+Let's begin with a smaller example with $n=$ 50,000 samples.
 
 ```{r sim-data-small}
 L <- simulatemixdata(5e4,10)$L
@@ -49,8 +49,8 @@ dim(L)
 ```
 
 This call to `simulatemixdata` created an $n \times k$ conditional
-likelihood matrix for a mixture of zero-centered normals, with $k =
-20$. Note that the rows of the likelihood matrix are normalized by
+likelihood matrix for a mixture of zero-centered normals, with $m =
+10$. Note that the rows of the likelihood matrix are normalized by
 default so that the maximum entry in each row is 1.
 
 [mosek]: https://www.mosek.com
@@ -72,8 +72,8 @@ timing.ip <- system.time(fit.ip <- mixKWDual(L))
 cat(sprintf("Computation took %0.2f seconds.\n",timing.ip["elapsed"]))
 ```
 
-The runtime of the mix-SQP algorithm is about the same as the IP
-method, and the quality of the IP and SQP solutions is very similar.
+The runtime of the mix-SQP algorithm is less than the IP method, and
+the quality of the IP and SQP solutions is very similar.
 
 ```{r compare-solutions-small}
 cat(sprintf("Objective at SQP solution: %0.16f\n",fit.sqp$value,digits = 16))
@@ -83,7 +83,39 @@ cat(sprintf("Difference in objectives:  %0.4e\n",fit.sqp$value - fit.ip$value))
 
 ## Comparison using a large data set
 
-*Fill out code and text for this section.*
+Next, let's see what happens when we apply the IP and SQP methods
+algorithms to a considerably larger data set.
+
+As before, we compute the $n \times m$ likelihood matrix for a mixture
+of zero-centered normals. This time, we use a finer grid of $m = 50$
+normal densities, as well as more samples.
+
+```{r sim-data-large}
+L <- simulatemixdata(1e5,50)$L
+dim(L)
+```
+
+Now we fit the model using the two fitting algorithms.
+
+```{r fit-model-large}
+timing.ip  <- system.time(fit.ip  <- mixKWDual(L))
+timing.sqp <- system.time(fit.sqp <- mixSQP(L))
+```
+
+The mix-SQP algorithm algorithm is again faster than the IP solver.
+
+```{r timing-fit-large}
+cat(sprintf("Runtime of IP solver:  %0.2f\n",timing.ip["elapsed"]))
+cat(sprintf("Runtime of SQP solver: %0.2f\n",timing.sqp["elapsed"]))
+```
+
+Further, the quality of the IP and SQP solutions remains very similar:
+
+```{r compare-solutions-large}
+cat(sprintf("Objective at SQP solution: %0.16f\n",fit.sqp$value,digits = 16))
+cat(sprintf("Objective at IP solution:  %0.16f\n",fit.ip$value,digits = 16))
+cat(sprintf("Difference in objectives:  %0.4e\n",fit.sqp$value - fit.ip$value))
+```
 
 ## Session information
 
