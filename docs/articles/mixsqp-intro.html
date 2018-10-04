@@ -66,11 +66,11 @@
     
     
 <div class="contents">
-<p>In this vignette, we compare the runtime and accuracy of the mix-SQP algorithm against an interior-point (IP) solver implemented by the <a href="https://www.mosek.com">MOSEK</a> commercial software (and called via the “KWDual” function in the <a href="https://cran.r-project.org/package=REBayes">REBayes package</a>).</p>
+<p>In this vignette, we compare the runtime and accuracy of the mix-SQP algorithm against an interior-point (IP) solver implemented by the <a href="https://www.mosek.com">MOSEK</a> commercial software, and called via the “KWDual” function in the <a href="https://cran.r-project.org/package=REBayes">REBayes package</a>.</p>
 <div id="environment-set-up" class="section level2">
 <h2 class="hasAnchor">
 <a href="#environment-set-up" class="anchor"></a>Environment set-up</h2>
-<p>We begin by loading the mixSQP and Rmosek packages. (The Rmosek package is only needed to check the version of MOSEK interior-point solver being used.)</p>
+<p>We begin by loading the mixSQP and Rmosek packages. (The Rmosek package is only needed to check the version of MOSEK solver being used.)</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(mixSQP)
 <span class="kw">library</span>(Rmosek)</code></pre></div>
 <p>Next, initialize the sequence of pseudorandom numbers.</p>
@@ -114,7 +114,7 @@
 <p>Next, we fit the same mixture model using the IP solver.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">timing.ip &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.ip &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixSQP.html">mixKWDual</a></span>(L))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Computation took %0.2f seconds.</span><span class="ch">\n</span><span class="st">"</span>,timing.ip[<span class="st">"elapsed"</span>]))
-<span class="co"># Computation took 0.77 seconds.</span></code></pre></div>
+<span class="co"># Computation took 0.85 seconds.</span></code></pre></div>
 <p>The runtime of the mix-SQP algorithm is less than the IP method, and the quality of the IP and SQP solutions is very similar.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at SQP solution: %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.sqp<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at IP solution:  %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.ip<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))
@@ -156,8 +156,8 @@ timing.sqp &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit
 <p>The mix-SQP algorithm algorithm is again faster than the IP solver.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Runtime of IP solver:  %0.2f</span><span class="ch">\n</span><span class="st">"</span>,timing.ip[<span class="st">"elapsed"</span>]))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Runtime of SQP solver: %0.2f</span><span class="ch">\n</span><span class="st">"</span>,timing.sqp[<span class="st">"elapsed"</span>]))
-<span class="co"># Runtime of IP solver:  6.05</span>
-<span class="co"># Runtime of SQP solver: 1.96</span></code></pre></div>
+<span class="co"># Runtime of IP solver:  6.50</span>
+<span class="co"># Runtime of SQP solver: 2.10</span></code></pre></div>
 <p>Further, the quality of the IP and SQP solutions remains very similar:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at SQP solution: %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.sqp<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at IP solution:  %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.ip<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))

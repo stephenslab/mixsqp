@@ -21,14 +21,14 @@ knitr::opts_chunk$set(collapse = TRUE,results = "hold",comment = "#",
 
 In this vignette, we compare the runtime and accuracy of the mix-SQP
 algorithm against an interior-point (IP) solver implemented by the
-[MOSEK][mosek] commercial software (and called via the "KWDual"
-function in the [REBayes package][rebayes]).
+[MOSEK][mosek] commercial software, and called via the "KWDual"
+function in the [REBayes package][rebayes].
 
 ## Environment set-up
 
 We begin by loading the mixSQP and Rmosek packages. (The Rmosek
-package is only needed to check the version of MOSEK interior-point
-solver being used.)
+package is only needed to check the version of MOSEK solver being
+used.)
 
 ```{r load-pkgs, message=FALSE}
 library(mixSQP)

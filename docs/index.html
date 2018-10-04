@@ -15,10 +15,9 @@
 <meta property="og:description" content="Provides optimization algorithms based on sequential
   quadratic programming for maximum likelihood estimation of the
   mixture proportions in a finite mixture model where the component
-  densities are known. The SQP algorithm is expected to obtain
-  solutions that are at least as accurate as the state-of-the-art
-  interior-point solver implemented in the 'REBayes' package, and
-  converge to these solutions much more quickly in large data sets.">
+  densities are known.  The SQP algorithm is expected to
+  obtain solutions that are at least as accurate as the state-of-the-art
+  MOSEK interior-point solver (called by function " kwdual in the package and is expected to compute these solutions much more quickly large data sets.>
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -68,7 +67,9 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#mixsqp-r-package-for-fast-maximum-likelihood-estimation-of-mixture-proportions-using-sequential-quadratic-programming" class="anchor"></a>mixSQP: R package for fast maximum-likelihood estimation of mixture proportions using sequential quadratic programming</h1></div>
 
-<p>The mixSQP R package provides algorithms based on <a href="https://neos-guide.org/content/sequential-quadratic-programming">sequential quadratic programming</a> for maximum likelihood estimation of the mixture proportions in a finite mixture model where the component densities are known. The SQP algorithm is expected to obtain solutions that are at least as accurate as the state-of-the-art interior-point solver implemented in the <a href="https://cran.r-project.org/package=REBayes">REBayes package</a>, and converge to these solutions much more quickly in large data sets. For more details on the mixSQP algorithm, please see <a href="https://arxiv.org/abs/1806.01412">our paper on arXiv</a>.</p>
+<p>The mixSQP R package provides algorithms based on <a href="https://neos-guide.org/content/sequential-quadratic-programming">sequential quadratic programming</a> for maximum likelihood estimation of the mixture proportions in a finite mixture model where the component densities are known. The SQP algorithm is expected to obtain solutions that are at least as accurate as the state-of-the-art MOSEK interior-point solver (called via the “KWDual” function in the <a href="https://cran.r-project.org/package=REBayes">REBayes package</a>), and is expected to compute these solutions much more quickly in large data sets.</p>
+<p>For more details on the mixSQP algorithm, please see <a href="https://arxiv.org/abs/1806.01412">our paper on arXiv</a>.</p>
+<p>See also the <a href="https://github.com/stephenslab/mixsqp-paper">Julia implementation of mixSQP</a>, which is currently faster than the R implementation, particularly for large data sets.</p>
 <p>If you find a bug, or you have a question or feedback on our work, please post an <a href="https://github.com/youngseok-kim/mixsqp/issues">issue</a>.</p>
 <div id="citing-this-work" class="section level2">
 <h2 class="hasAnchor">
@@ -108,8 +109,8 @@
 <a href="#testing-the-package" class="anchor"></a>Testing the package</h3>
 <p>To install and test the mixSQP R package, run the following commands in the shell:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">R</span> CMD build mixSQP
-<span class="ex">R</span> CMD INSTALL mixSQP_0.1-36.tar.gz
-<span class="ex">R</span> CMD check --as-cran mixSQP_0.1-36.tar.gz</code></pre></div>
+<span class="ex">R</span> CMD INSTALL mixSQP_0.1-38.tar.gz
+<span class="ex">R</span> CMD check --as-cran mixSQP_0.1-38.tar.gz</code></pre></div>
 <p>Note that these commands require that the dependencies have already been installed. See the <a href="DESCRIPTION" class="uri">DESCRIPTION</a> file for details.</p>
 </div>
 <div id="updating-the-c-source-and-documentation" class="section level3">
