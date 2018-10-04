@@ -1,10 +1,23 @@
 to do
 =====
 
-* Add Travis CI and codecov---try this on a fork of the mixSQP repo.
+* Add Travis CI and codecov.
 
 + Fix appveyor settings so that a commit triggers a build---try this
   on a fork of the mixSQP repo.
+
++ Change SQP convergence check so that it is checking only the dual
+  residual for the nonzero entries of the current solution, x. Also,
+  add a more informative comment to accompany this check.
+
++ Move the active-set code into a separate function.
+
++ Move the backtracking line search code into a separate function.
+
++ Add an error message if backtracking line search could not find a
+  step size satisfying the sufficient decrease condition. Error
+  message should be something like, "Step size too small; consider
+  increasing..."
 
 + Understand where quadratic subproblem convergence criteria come
   from, and use this understanding to improve documentation.

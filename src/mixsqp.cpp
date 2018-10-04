@@ -41,7 +41,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP 0.1-38 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP 0.1-39 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):  %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set): %0.1e\n",convtolactiveset);
     Rprintf("max. iter (SQP):         %d\n",maxitersqp);
@@ -107,12 +107,15 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     // ----------------------------
     computegrad(L,w,x,eps,g,H,u,Z,I);
     
+    // Determine the nonzero co-ordinates in the current estimate of
+    // the solution, x.
+    t = (x >= zerothreshold);
+    
     // Report on the algorithm's progress. Here we compute: the value
     // of the objective at x (obj); the smallest gradient value
     // (gmin), which is used as a convergence criterion; the number of
     // nonzeros in the solution (nnz); and the number of inner-loop
     // iterations (nqp).
-    t      = (x >= zerothreshold);
     obj[i] = mixobjective(L,w,x,eps,u);
 
     // Should be minimum of the nonzero x's only.
@@ -127,8 +130,8 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 		dmax[i-1],-gmin[i],int(nnz[i]),int(nqp[i-1]),int(nls[i-1]));
     }
     
-    // Check convergence.
-    //
+    // CHECK CONVERGENCE
+    // -----------------
     // NOTE: I believe -gmin is the max residual ("rdual" on
     // p. 609 of Boyd & Vandenberghe).
     //
@@ -218,7 +221,9 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     dmax[i] = d.max();
     x = y;
   }
-  
+
+  // CONSTRUCT OUTPUT
+  // ----------------
   if (i < maxitersqp)
     i = i + 1;
   return List::create(Named("x")         = x,
