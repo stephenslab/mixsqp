@@ -110,14 +110,14 @@
   <code><a href='http://www.rdocumentation.org/packages/REBayes/topics/KWDual'>KWDual</a></code> for details.</p>
     
 
-    <pre class="usage"><span class='fu'>mixKWDual</span>(<span class='no'>L</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)), <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>mixSQP</span>(<span class='no'>L</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)), <span class='kw'>x0</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>ncol</span>(<span class='no'>L</span>)),
+  <span class='kw'>convtol.sqp</span> <span class='kw'>=</span> <span class='fl'>1e-08</span>, <span class='kw'>convtol.activeset</span> <span class='kw'>=</span> <span class='fl'>1e-10</span>,
+  <span class='kw'>zero.threshold</span> <span class='kw'>=</span> <span class='fl'>1e-06</span>, <span class='kw'>eps</span> <span class='kw'>=</span> <span class='no'>.Machine</span>$<span class='no'>double.eps</span>, <span class='kw'>delta</span> <span class='kw'>=</span> <span class='fl'>1e-10</span>,
+  <span class='kw'>maxiter.sqp</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>maxiter.activeset</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
-<span class='fu'>mixSQP</span>(<span class='no'>L</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)), <span class='kw'>x0</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>ncol</span>(<span class='no'>L</span>)),
-  <span class='kw'>convtol.sqp</span> <span class='kw'>=</span> <span class='fl'>1e-08</span>, <span class='kw'>zero.threshold</span> <span class='kw'>=</span> <span class='fl'>1e-06</span>,
-  <span class='kw'>eps</span> <span class='kw'>=</span> <span class='no'>.Machine</span>$<span class='no'>double.eps</span>, <span class='kw'>delta</span> <span class='kw'>=</span> <span class='fl'>1e-10</span>, <span class='kw'>maxiter.sqp</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
-  <span class='kw'>maxiter.activeset</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='fu'>mixobjective</span>(<span class='no'>L</span>, <span class='no'>x</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)))
 
-<span class='fu'>mixobjective</span>(<span class='no'>L</span>, <span class='no'>x</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)))</pre>
+<span class='fu'>mixKWDual</span>(<span class='no'>L</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)), <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -136,13 +136,10 @@ stored in double-precision; see <code>storage.mode</code>.</p></td>
       <th>w</th>
       <td><p>An optional numeric vector, with one entry for each row of
 <code>L</code>, specifying the "weights" associated with the rows of
-<code>L</code>. All weights must be finite, positive and not missing. The
-weights should sum to 1; if they are not, they will automatically
- be normalized to sum to 1. By default, all weights are the same.</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>Additional arguments passed to <code><a href='http://www.rdocumentation.org/packages/REBayes/topics/KWDual'>KWDual</a></code>.</p></td>
+<code>L</code>. All weights must be finite, non-negative and not
+missing. The weights should sum to 1; if they are not, they will
+automatically be normalized to sum to 1. By default, all weights
+are the same.</p></td>
     </tr>
     <tr>
       <th>x0</th>
@@ -154,8 +151,19 @@ sum to 1. By default, <code>x0</code> is the vector with all equal values.</p></
     </tr>
     <tr>
       <th>convtol.sqp</th>
-      <td><p>A convergence tolerance used for algorithm's
-convergence criterion. ADD MORE INFO HERE.</p></td>
+      <td><p>A small, non-negative number specifying the
+convergence tolerance for SQP algorithm; convergence is reached
+when the maximum dual residual in the Karush-Kuhn-Tucker optimality
+conditions is less than or equal to <code>convtol.sqp</code>. Smaller
+values will result in more stringent convergence criteria and more
+accurate solutions, at the expense of greater computation time.</p></td>
+    </tr>
+    <tr>
+      <th>convtol.activeset</th>
+      <td><p>Small, non-negative number specifying the
+convergence tolerance for the active-set step. Smaller values will
+result in higher quality search directions for the SQP algorithm
+but possibly a greater per-iteration computational cost.</p></td>
     </tr>
     <tr>
       <th>zero.threshold</th>
@@ -169,12 +177,15 @@ zeroing some co-ordinates.</p></td>
     </tr>
     <tr>
       <th>eps</th>
-      <td><p>A small positive number added to the terms inside the
-logarithms to sidestep computing logarithms of zero.</p></td>
+      <td><p>A small, non-negative number added to the terms inside the
+logarithms to sidestep computing logarithms of zero. This prevents
+numerical problems at the cost of introducing a small inaccuracy in
+the solution. Increasing this number may lead to faster convergence
+but possibly a less accurate solution.</p></td>
     </tr>
     <tr>
       <th>delta</th>
-      <td><p>A small positive number added to the diagonal of the
+      <td><p>A small, non-negative number added to the diagonal of the
 Hessian to improve numerical stability (and possibly the speed)
 when computing the search directions in the active-set step.</p></td>
     </tr>
@@ -206,6 +217,15 @@ of non-zero co-ordinates in the current estimate, as determined by
 iterations taken to solve the quadratic subproblem; "nls", the
 number of iterations in the backtracking line search.</p></td>
     </tr>
+    <tr>
+      <th>x</th>
+      <td><p>The point at which the objective is evaluated in
+<code>mixobjective</code>; see argument <code>x0</code> for details.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Additional arguments passed to <code><a href='http://www.rdocumentation.org/packages/REBayes/topics/KWDual'>KWDual</a></code>.</p></td>
+    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -222,6 +242,9 @@ list elements:</p>
 
 <dt>status</dt><dd><p>The return status from MOSEK.</p></dd>
 
+For more information on this output, see
+<a href='http://www.rdocumentation.org/packages/REBayes/topics/KWDual'>KWDual</a> and <a href='http://www.rdocumentation.org/packages/Rmosek/topics/mosek'>mosek</a>.
+
 mixSQP returns a list object with the following list elements:
 
 <dt>x</dt><dd><p>The estimated solution to the convex optimization problem.</p></dd>
@@ -231,6 +254,20 @@ mixSQP returns a list object with the following list elements:
 
 <dt>status</dt><dd><p>A character string giving the status of the algorithm
   upon termination.</p></dd>
+
+<dt>data</dt><dd><p>A data frame containing more detailed information about
+  the algorithm's progress. The data frame has one row per SQP
+  iteration. For an explanation of the columns, see the description
+  of the <code>verbose</code> argument above. Missing values (NA's) in the
+  last row indicate that these quantities were not computed because
+  convergence was reached before computing them. Also note that the
+  association of these quantities is slightly different than the
+  console output when <code>verbose = TRUE</code> as the console output
+  shows some quantities that were computed after the convergence
+  check in the previous iteration. The last entries of max.diff, nqp
+  and nls may not have been # assigned if the SQP algorithm converged
+  successfully (as indicated # by negative values), in which case we
+  should more appropriately # assign them missing values (NA).</p></dd>
 
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
@@ -272,11 +309,12 @@ mixSQP returns a list object with the following list elements:
 <span class='no'>m</span>  <span class='kw'>&lt;-</span> <span class='fl'>10</span>
 <span class='no'>w</span>  <span class='kw'>&lt;-</span> <span class='fu'>rep</span>(<span class='fl'>1</span>,<span class='no'>n</span>)/<span class='no'>n</span>
 <span class='no'>L</span>  <span class='kw'>&lt;-</span> <span class='fu'><a href='simulatemixdata.html'>simulatemixdata</a></span>(<span class='no'>n</span>,<span class='no'>m</span>)$<span class='no'>L</span>
-<span class='no'>out.mixsqp</span> <span class='kw'>&lt;-</span> <span class='fu'>mixSQP</span>(<span class='no'>L</span>,<span class='no'>w</span>)</div><div class='output co'>#&gt; Running mix-SQP 0.1-29 on 100000 x 10 matrix
-#&gt; convergence tol. (SQP): 1.0e-08
-#&gt; max. iter (SQP):        1000
-#&gt; max. iter (active-set): 100
-#&gt; zero threshold:         1.0e-06
+<span class='no'>out.mixsqp</span> <span class='kw'>&lt;-</span> <span class='fu'>mixSQP</span>(<span class='no'>L</span>,<span class='no'>w</span>)</div><div class='output co'>#&gt; Running mix-SQP 0.1-36 on 100000 x 10 matrix
+#&gt; convergence tol. (SQP):  1.0e-08
+#&gt; conv. tol. (active-set): 1.0e-10
+#&gt; max. iter (SQP):         1000
+#&gt; max. iter (active-set):  100
+#&gt; zero threshold:          1.0e-06
 #&gt; iter    objective max.diff max(rdual) nnz nqp nls
 #&gt;    1 +7.72664e-01       NA +2.756e-01  10  NA  NA
 #&gt;    2 +6.53047e-01 3.38e-01 +4.747e+00   5  13   1
