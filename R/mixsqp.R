@@ -105,8 +105,6 @@
 #'   iterations taken to solve the quadratic subproblem; "nls", the
 #'   number of iterations in the backtracking line search.
 #' 
-#' @param ... Additional arguments passed to \code{\link[REBayes]{KWDual}}.
-#' 
 #' @return \code{mixobjective} returns the value of the (unmodified)
 #' objective at \code{x}.
 #'

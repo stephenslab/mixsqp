@@ -1,9 +1,9 @@
 context("mixSQP")
 
-test_that("mixSQP version number is correct",{
+test_that("Version number in mixSQP with verbose = TRUE is correct",{
   data(tacks)
-  out <- capture.output(mixSQP(L,w))
-  x   <- unlist(strsplit(capture.output(out <- mixSQP(L,w))[1]," "))[[3]]
+  out <- capture.output(mixSQP(tacks$L,tacks$w))
+  x   <- unlist(strsplit(out[1]," "))[[3]]
   expect_equal(packageDescription("mixSQP")$Version,x)
 })
 
@@ -103,13 +103,15 @@ test_that(paste("mixSQP returns the same solution regardless whether",
 test_that(paste("mixSQP gives correct solution for Beckett & Diaconis",
                 "tack rolling example"),{
   data(tacks)
+  L <- tacks$L
+  w <- tacks$w
   capture.output(out <- mixSQP(L,w))
 
   # The mixSQP solution should be very close to the REBayes solution
   # and, more importantly, the quality of the mixSQP solution should
   # be higher.
-  expect_equal(x,out$x,tolerance = 5e-4)
-  expect_lte(out$value,mixobjective(L,x,w))
+  expect_equal(tacks$x,out$x,tolerance = 5e-4)
+  expect_lte(out$value,mixobjective(L,tacks$x,w))
 })
 
 # This test comes from Issue #3.
