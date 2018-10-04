@@ -57,7 +57,13 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   arma::vec nqp(maxitersqp);
   arma::vec nls(maxitersqp);
   arma::vec dmax(maxitersqp);
-  
+  obj.zeros();
+  gmin.zeros();
+  nnz.zeros();
+  nqp.fill(-1);
+  nls.fill(-1);
+  dmax.fill(-1);
+
   // Initialize the solution.
   arma::vec x = x0;
   
@@ -150,9 +156,12 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
       p.fill(0.0);
       p.elem(ind) = -solve(Hs,bs);
       
-      // Reset step size
+      // Reset step size.
       alpha = 1;
       
+      // TO DO: Revise this, and add more detailed comments about this
+      // convergence criterion; see p. 275 of Nocedal & Wright.
+      // 
       // Check convergence.
       if (arma::norm(p,2) <= convtolactiveset) {
         
@@ -209,7 +218,14 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     x = y;
   }
   
-  return List::create(Named("x") = x,Named("status") = status);
+  return List::create(Named("x")         = x,
+		      Named("status")    = status,
+		      Named("objective") = obj.head(i+1),
+		      Named("max.diff")  = dmax.head(i+1),
+		      Named("max.rdual") = -gmin.head(i+1),
+		      Named("nnz")       = nnz.head(i+1),
+		      Named("nqp")       = nqp.head(i+1),
+		      Named("nls")       = nls.head(i+1));
 }
 
 // Compute the value of the (unmodified) objective at x, assuming x is
@@ -248,36 +264,3 @@ void computegrad (const arma::mat& L, const arma::vec& w, const arma::vec& x,
   Z.each_col() %= u;
   H = trans(Z) * Z + I;
 }
-
-// Find the step size.
-// double linesearch (const arma::mat& px, double stepdec, double minstepsize) {
-//   double a = 1;  // The candidate step size.
-
-//   // Repeat until the sufficient decrease condition is satisfied, or
-//   // when we reach the maximum number of backtracking iterations.
-//   while (a >= minstepsize) {
-
-//     // Compute the value of the (modified) objective at the candidate
-//     // iterate.
-    
-//     // The candidate point does not meet our criteria, so decrease
-//     // the step size.
-//     a = a * stepdec;
-//   }
-  
-//   return alpha;
-// }
-//     // Compute the value of the (modified) objective at the.
-
-//     // Compute the directional gradient with respect to the (modified)
-//     // objective.
-//       if (psinew < psi + tau*eta*alpha*dpsi) {
-//         x <- xnew
-//         break
-//       }
-
-//           for (j = 0; j < 9; j++){
-//       if (obj[i] + sum(log(L * y + eps) % w) > dot(x-y, g) / (2 * n) ) 
-// 	break;
-// 	  }
-	  

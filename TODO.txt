@@ -5,16 +5,11 @@ to do
 
 + Fix appveyor settings so that a commit triggers a build.
 
-+ Complete help page for mixSQP.
-
-+ Add note to "mixsqp" documentation about multithreaded matrix
-  computations for large matrices.
-
-* Improve console output for mixsqp when verbose = TRUE. In
-  particular, print out the maximum difference between two successive
-  iterations of the outer loop.
-
 + Improve post-processing of mixSQP output.
 
 + Understand where quadratic subproblem convergence criteria come
   from, and use this understanding to improve documentation.
+
++ Check convergence status in all mixSQP tests.
+
++ Document "data" return value from mixSQP function.
