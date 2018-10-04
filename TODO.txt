@@ -6,11 +6,9 @@ to do
 + Fix appveyor settings so that a commit triggers a build---try this
   on a fork of the mixSQP repo.
 
-* Ask someone (e.g., Jason) to review package and documentation.
-
 + Understand where quadratic subproblem convergence criteria come
   from, and use this understanding to improve documentation.
 
-+ Document "data" return value from mixSQP function.
+* Ask someone (e.g., Jason) to review package and documentation.
 
-+ Fully describe mixSQP return value in roxygen2 docs.
++ Update pkgdown site.

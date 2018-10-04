@@ -4,7 +4,7 @@
 \alias{mixSQP}
 \alias{mixobjective}
 \alias{mixKWDual}
-\title{#' @title Solution to "Mixture Optimization" Problem}
+\title{Solution to "Mixture Optimization" Problem}
 \usage{
 mixSQP(L, w = rep(1, nrow(L)), x0 = rep(1, ncol(L)),
   convtol.sqp = 1e-08, convtol.activeset = 1e-10,
@@ -108,6 +108,9 @@ list elements:
 
 \item{status}{The return status from MOSEK.}
 
+For more information on this output, see
+\code{\link[REBayes]{KWDual}} and \code{\link[Rmosek]{mosek}}.
+
 \code{mixSQP} returns a list object with the following list elements:
 
 \item{x}{The estimated solution to the convex optimization problem.}
@@ -117,6 +120,20 @@ list elements:
 
 \item{status}{A character string giving the status of the algorithm
   upon termination.}
+
+\item{data}{A data frame containing more detailed information about
+  the algorithm's progress. The data frame has one row per SQP
+  iteration. For an explanation of the columns, see the description
+  of the \code{verbose} argument above. Missing values (NA's) in the
+  last row indicate that these quantities were not computed because
+  convergence was reached before computing them. Also note that the
+  association of these quantities is slightly different than the
+  console output when \code{verbose = TRUE} as the console output
+  shows some quantities that were computed after the convergence
+  check in the previous iteration. The last entries of max.diff, nqp
+  and nls may not have been # assigned if the SQP algorithm converged
+  successfully (as indicated # by negative values), in which case we
+  should more appropriately # assign them missing values (NA).}
 }
 \description{
 \code{mixSQP} and \code{mixKWDual} can be used to
