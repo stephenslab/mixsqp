@@ -42,12 +42,18 @@ convergence tolerance for SQP algorithm; convergence is reached
 when the maximum dual residual in the Karush-Kuhn-Tucker optimality
 conditions is less than or equal to \code{convtol.sqp}. Smaller
 values will result in more stringent convergence criteria and more
-accurate solutions, at the expense of greater computation time.}
+accurate solutions, at the expense of greater computation
+time. Note that changes to this tolerance parameter may require
+respective changes to \code{convtol.activeset} to obtain reliable
+convergence.}
 
 \item{convtol.activeset}{Small, non-negative number specifying the
 convergence tolerance for the active-set step. Smaller values will
 result in higher quality search directions for the SQP algorithm
-but possibly a greater per-iteration computational cost.}
+but possibly a greater per-iteration computational cost. Note that
+changes to this tolerance parameter can affect how reliably the SQP
+convergence criterion is satisfied, as determined by
+\code{convtol.sqp}.}
 
 \item{zero.threshold}{A small, non-negative number used to
 determine the "active set"; that is, it determines which entries of
