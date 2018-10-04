@@ -226,16 +226,22 @@ mixSQP <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # POST-PROCESS RESULT
   # -------------------
+  # The last entries of max.diff, nqp and nls may not have been
+  # assigned if the SQP algorithm converged successfully (as indicated
+  # by negative values), in which case we should more appropriately
+  # assign them missing values (NA).
+  out$max.diff[out$max.diff < 0] <- NA
+  out$nqp[out$nqp < 0]           <- NA
+  out$nls[out$nls < 0]           <- NA
+
   # Label the elements of the solution (x) by the column labels of the
   # likelihood matrix (L).
   x        <- out$x
   x        <- drop(x)
   names(x) <- colnames(L)
 
-  out$max.diff[out$max.diff < 0] <- NA
-  out$nqp[out$nqp < 0]           <- NA
-  out$nls[out$nls < 0]           <- NA
-  
+  # CONSTRUCT OUTPUT
+  # ----------------
   return(list(x      = x,
               status = status,
               value  = mixobj(L,w,x),

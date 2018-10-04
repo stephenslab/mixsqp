@@ -1,11 +1,12 @@
 to do
 =====
 
-* Add Travis CI and codecov (I will need Youngseok's help with this).
+* Add Travis CI and codecov---try this on a fork of the mixSQP repo.
 
-+ Fix appveyor settings so that a commit triggers a build.
++ Fix appveyor settings so that a commit triggers a build---try this
+  on a fork of the mixSQP repo.
 
-+ Improve post-processing of mixSQP output.
+* Ask someone (e.g., Jason) to review package and documentation.
 
 + Understand where quadratic subproblem convergence criteria come
   from, and use this understanding to improve documentation.
@@ -13,3 +14,5 @@ to do
 + Check convergence status in all mixSQP tests.
 
 + Document "data" return value from mixSQP function.
+
++ Fully describe mixSQP return value in roxygen2 docs.
