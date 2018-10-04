@@ -11,8 +11,6 @@ to do
 + Understand where quadratic subproblem convergence criteria come
   from, and use this understanding to improve documentation.
 
-+ Check convergence status in all mixSQP tests.
-
 + Document "data" return value from mixSQP function.
 
 + Fully describe mixSQP return value in roxygen2 docs.
