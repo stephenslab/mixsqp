@@ -7,10 +7,16 @@ The mixSQP R package provides algorithms based on
 estimation of the mixture proportions in a finite mixture model where
 the component densities are known. The SQP algorithm is expected to
 obtain solutions that are at least as accurate as the state-of-the-art
-interior-point solver implemented in the [REBayes package][rebayes],
-and converge to these solutions much more quickly in large data
-sets. For more details on the mixSQP algorithm, please see
+MOSEK interior-point solver (called via the "KWDual" function in
+the [REBayes package][rebayes]), and is expected to compute these
+solutions much more quickly in large data sets.
+
+For more details on the mixSQP algorithm, please see
 [our paper on arXiv][arxiv-paper].
+
+See also the [Julia implementation of mixSQP][mixsqp-julia], which is
+currently faster than the R implementation, particularly for large
+data sets.
 
 If you find a bug, or you have a question or feedback on our work,
 please post an [issue][issues].
@@ -80,8 +86,8 @@ in the shell:
 
 ```bash
 R CMD build mixSQP
-R CMD INSTALL mixSQP_0.1-37.tar.gz
-R CMD check --as-cran mixSQP_0.1-37.tar.gz
+R CMD INSTALL mixSQP_0.1-38.tar.gz
+R CMD check --as-cran mixSQP_0.1-38.tar.gz
 ```
 
 Note that these commands require that the dependencies have already
@@ -117,6 +123,7 @@ This project was developed by [Youngseok Kim][youngseok] at the
 
 [sqp]: https://neos-guide.org/content/sequential-quadratic-programming
 [arxiv-paper]: https://arxiv.org/abs/1806.01412
+[mixsqp-julia]: https://github.com/stephenslab/mixsqp-paper
 [issues]: https://github.com/youngseok-kim/mixsqp/issues
 [rebayes]: https://cran.r-project.org/package=REBayes
 [uchicago]: https://www.uchicago.edu
