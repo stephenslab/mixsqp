@@ -41,7 +41,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP 0.1-39 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP 0.1-40 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):  %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set): %0.1e\n",convtolactiveset);
     Rprintf("max. iter (SQP):         %d\n",maxitersqp);
@@ -83,9 +83,9 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 		      // differences between between two solution
 		      // estimates.
   
-  int    newind;        // New index to be added or deleted.
-  double alpha  = 1;    // Define step size
-  double status = 1;    // Convergence status.
+  int    newind;       // New index to be added or deleted.
+  double alpha  = 1;   // Define step size
+  double status = 1;   // Convergence status.
   
   // This is used in computing the Hessian matrix.
   I  = arma::eye(m,m);
@@ -108,7 +108,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     computegrad(L,w,x,eps,g,H,u,Z,I);
     
     // Determine the nonzero co-ordinates in the current estimate of
-    // the solution, x.
+    // the solution, x. This specifies the "inactive set".
     t = (x >= zerothreshold);
     
     // Report on the algorithm's progress. Here we compute: the value
@@ -123,8 +123,8 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     nnz[i]  = sum(t);
     if (verbose) {
       if (i == 0)
-        Rprintf("%4d %+0.5e       NA %+0.3e%4d  NA  NA\n",
-		i + 1,obj[i],-gmin[i],int(nnz[i]));
+        Rprintf("%4d %+0.5e       NA %+0.3e%4d  NA  NA\n",i + 1,obj[i],
+		-gmin[i],int(nnz[i]));
       else
         Rprintf("%4d %+0.5e %0.2e %+0.3e%4d %3d %3d\n",i + 1,obj[i],
 		dmax[i-1],-gmin[i],int(nnz[i]),int(nqp[i-1]),int(nls[i-1]));
@@ -157,14 +157,14 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
       arma::mat Hs = H.elem(ind,ind);
       
       // Solve the smaller problem.
-      p.fill(0.0);
+      p.fill(0);
       p.elem(ind) = -solve(Hs,bs);
       
       // Reset step size.
       alpha = 1;
       
       // TO DO: Revise this, and add more detailed comments about this
-      // convergence criterion; see p. 275 of Nocedal & Wright.
+      // convergence criterion; see p. 472 of Nocedal & Wright.
       // 
       // Check convergence.
       if (arma::norm(p,2) <= convtolactiveset) {
@@ -173,7 +173,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
         if (b.min() >= -convtolactiveset)
           break;
         
-        // Find an index with smallest multiplier, Add this to the
+        // Find an index with smallest multiplier, and add this to the
         // inactive set.
         newind     = b.index_min();
         t[newind]  = 1;
@@ -206,6 +206,8 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     
     // BACKTRACKING LINE SEARCH
     // ------------------------
+    // See p. 37 of Nocedal & Wright for backtracking line search.
+    // 
     // sum(x) = sum(y) = 1 so replacing g by g+1 in dot product of x-y
     // and g has no effect.
     for (j = 0; j < 9; j++) {
