@@ -114,6 +114,17 @@ test_that(paste("mixSQP gives correct solution for Beckett & Diaconis",
   expect_lte(out$value,mixobjective(L,tacks$x,w))
 })
 
+# This is mainly to test post-processing of the output when the
+# algorithm reaches the maximum number of iterations. This example is
+# used in one of the other tests above.
+test_that("mixSQP does not report an error with convergence failure",{
+  e <- 1e-8
+  L <- rbind(c(1,1,e),
+             c(1,1,1))
+  capture_output(out <- mixSQP(L,x0 = c(0,1,1),maxiter.sqp = 3))
+  expect_equal(dim(out$data),c(3,7))
+})
+
 # This test comes from Issue #3.
 test_that(paste("mixSQP gives correct solution for \"short and fat\" matrix,",
                 "even when linear systems in active-set method are not",

@@ -25,7 +25,8 @@ void   computegrad  (const arma::mat& L, const arma::vec& w,
 // --------------------
 // SQP algorithm for computing a maximum-likelihood estimate of a
 // mixture model. For more information, see the help and comments
-// accompanying the mixsqp R function.
+// accompanying the mixsqp R function and, in particular, see how
+// mixSQP_rcpp is called inside the mixSQP function.
 // 
 // [[Rcpp::export]]
 List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0, 
@@ -40,7 +41,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP 0.1-33 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP 0.1-35 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):  %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set): %0.1e\n",convtolactiveset);
     Rprintf("max. iter (SQP):         %d\n",maxitersqp);
@@ -218,14 +219,16 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     x = y;
   }
   
+  if (i < maxitersqp)
+    i = i + 1;
   return List::create(Named("x")         = x,
 		      Named("status")    = status,
-		      Named("objective") = obj.head(i+1),
-		      Named("max.diff")  = dmax.head(i+1),
-		      Named("max.rdual") = -gmin.head(i+1),
-		      Named("nnz")       = nnz.head(i+1),
-		      Named("nqp")       = nqp.head(i+1),
-		      Named("nls")       = nls.head(i+1));
+		      Named("objective") = obj.head(i),
+		      Named("max.diff")  = dmax.head(i),
+		      Named("max.rdual") = -gmin.head(i),
+		      Named("nnz")       = nnz.head(i),
+		      Named("nqp")       = nqp.head(i),
+		      Named("nls")       = nls.head(i));
 }
 
 // Compute the value of the (unmodified) objective at x, assuming x is
