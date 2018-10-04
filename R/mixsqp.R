@@ -1,4 +1,8 @@
-#' @title Solution to "Mixture Optimization" Problem
+# Possible convergence status messages in mixSQP.
+mixsqp.status.converged      <- "converged to optimal solution"
+mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
+
+#' #' @title Solution to "Mixture Optimization" Problem
 #'
 #' @description \code{mixSQP} and \code{mixKWDual} can be used to
 #'   compute maximum-likelihood estimates of mixture proportions in a
@@ -202,16 +206,17 @@ mixSQP <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # ----------------------------------------
   out <- mixSQP_rcpp(L,w,x0,convtol.sqp,convtol.activeset,zero.threshold,
                      eps,delta,maxiter.sqp,maxiter.activeset,verbose)
-
+  
   # Get the algorithm convergence status. The convention is that
   # status = 0 means that the algorithm has successfully converged to
   # the optimal solution, and a status = 1 means that the algorithm
   # reached the maximum number of iterations before converging to a
   # solution.
+  numiter <- length(out$nnz)
   if (out$status == 0)
-    status <- "converged to optimal solution"
+    status <- mixsqp.status.converged
   else
-    status <- "exceeded maximum number of iterations"
+    status <- mixsqp.status.didnotconverge
   if (verbose) {
     if (out$status == 0)
       cat("Convergence criteria met---optimal solution found.\n")
@@ -227,7 +232,18 @@ mixSQP <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   x        <- drop(x)
   names(x) <- colnames(L)
 
+  out$max.diff[out$max.diff < 0] <- NA
+  out$nqp[out$nqp < 0]           <- NA
+  out$nls[out$nls < 0]           <- NA
+  
   return(list(x      = x,
               status = status,
-              value  = mixobj(L,w,x)))
+              value  = mixobj(L,w,x),
+              data   = data.frame(iter      = 1:numiter,
+                                  objective = out$objective,
+                                  max.diff  = out$max.diff,
+                                  max.rdual = out$max.rdual,
+                                  nnz       = out$nnz,
+                                  nqp       = out$nqp,
+                                  nls       = out$nls)))
 }

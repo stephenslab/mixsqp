@@ -4,7 +4,7 @@
 \alias{mixSQP}
 \alias{mixobjective}
 \alias{mixKWDual}
-\title{Solution to "Mixture Optimization" Problem}
+\title{#' @title Solution to "Mixture Optimization" Problem}
 \usage{
 mixSQP(L, w = rep(1, nrow(L)), x0 = rep(1, ncol(L)),
   convtol.sqp = 1e-08, convtol.activeset = 1e-10,
