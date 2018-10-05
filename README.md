@@ -1,6 +1,6 @@
 # mixSQP: R package for fast maximum-likelihood estimation of mixture proportions using sequential quadratic programming
 
-[![Travis Build Status](https://travis-ci.org/stephenslab/susieR.svg?branch=master)](https://travis-ci.org/stephenslab/susieR)
+[![Travis Build Status](https://travis-ci.org/stephenslab/mixSQP.svg?branch=master)](https://travis-ci.org/stephenslab/mixSQP)
 [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/i8744qet66w5uhe2?svg=true)](https://ci.appveyor.com/project/pcarbo/mixsqp)
 
 The mixSQP R package provides algorithms based on [sequential
