@@ -48,7 +48,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP 0.1-44 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP 0.1-45 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):  %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set): %0.1e\n",convtolactiveset);
     Rprintf("max. iter (SQP):         %d\n",maxitersqp);
@@ -134,8 +134,9 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     
     // CHECK CONVERGENCE
     // -----------------
-    // NOTE: I believe -gmin is the max residual ("rdual" on
-    // p. 609 of Boyd & Vandenberghe).
+    
+    // The negative of gmin is also the maximum dual residual (denoted "rdual" 
+    // on p. 609 of Boyd & Vandenberghe, "Convex Optimization").
     //
     // NOTE: We should only be checking this condition for the nonzero
     // co-ordinates of x.

@@ -1,11 +1,6 @@
 to do
 =====
 
-* Add Travis CI and codecov.
-
-+ Fix appveyor settings so that a commit triggers a build---try this
-  on a fork of the mixSQP repo.
-
 + Change SQP convergence check so that it is checking the dual
   residual only for the *nonzero entries* of the current solution,
   x. Also, add a more informative comment to accompany this check.
