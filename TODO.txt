@@ -29,6 +29,9 @@ to do
 + Reorder columns in verbose=TRUE console output for mixSQP, and in
   "data" return value.
 
++ Consider changing package name from "mixSQP" to "mixsqp" (and
+  likewise for the main functions).
+
 + Ask someone (e.g., Jason) to review package and documentation.
 
 + Update pkgdown site.
