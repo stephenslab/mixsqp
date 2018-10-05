@@ -60,7 +60,7 @@
       <h1>Illustration of mix-SQP solver applied to a small data set, and a large one</h1>
                         <h4 class="author">Youngseok Kim and Peter Carbonetto</h4>
             
-            <h4 class="date">2018-10-04</h4>
+            <h4 class="date">2018-10-05</h4>
           </div>
 
     
@@ -76,9 +76,9 @@
 <p>Next, initialize the sequence of pseudorandom numbers.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">1</span>)</code></pre></div>
 </div>
-<div id="generate-a-small-data-set" class="section level2">
+<div id="generate-a-smaller-data-set" class="section level2">
 <h2 class="hasAnchor">
-<a href="#generate-a-small-data-set" class="anchor"></a>Generate a small data set</h2>
+<a href="#generate-a-smaller-data-set" class="anchor"></a>Generate a smaller data set</h2>
 <p>Let’s begin with a smaller example with <span class="math inline">\(n=\)</span> 50,000 samples.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">L &lt;-<span class="st"> </span><span class="kw"><a href="../reference/simulatemixdata.html">simulatemixdata</a></span>(<span class="fl">5e4</span>,<span class="dv">10</span>)<span class="op">$</span>L
 <span class="kw">dim</span>(L)
@@ -91,7 +91,7 @@
 <p>First, we fit the mixture model using the mix-SQP solver.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">timing.sqp &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.sqp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixSQP.html">mixSQP</a></span>(L))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Computation took %0.2f seconds.</span><span class="ch">\n</span><span class="st">"</span>,timing.sqp[<span class="st">"elapsed"</span>]))
-<span class="co"># Running mix-SQP 0.1-36 on 50000 x 10 matrix</span>
+<span class="co"># Running mix-SQP 0.1-42 on 50000 x 10 matrix</span>
 <span class="co"># convergence tol. (SQP):  1.0e-08</span>
 <span class="co"># conv. tol. (active-set): 1.0e-10</span>
 <span class="co"># max. iter (SQP):         1000</span>
@@ -114,7 +114,7 @@
 <p>Next, we fit the same mixture model using the IP solver.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">timing.ip &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.ip &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixSQP.html">mixKWDual</a></span>(L))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Computation took %0.2f seconds.</span><span class="ch">\n</span><span class="st">"</span>,timing.ip[<span class="st">"elapsed"</span>]))
-<span class="co"># Computation took 0.85 seconds.</span></code></pre></div>
+<span class="co"># Computation took 0.78 seconds.</span></code></pre></div>
 <p>The runtime of the mix-SQP algorithm is less than the IP method, and the quality of the IP and SQP solutions is very similar.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at SQP solution: %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.sqp<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at IP solution:  %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.ip<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))
@@ -123,9 +123,9 @@
 <span class="co"># Objective at IP solution:  0.6044234133023487</span>
 <span class="co"># Difference in objectives:  3.6401e-11</span></code></pre></div>
 </div>
-<div id="comparison-using-a-large-data-set" class="section level2">
+<div id="comparison-using-a-larger-data-set" class="section level2">
 <h2 class="hasAnchor">
-<a href="#comparison-using-a-large-data-set" class="anchor"></a>Comparison using a large data set</h2>
+<a href="#comparison-using-a-larger-data-set" class="anchor"></a>Comparison using a larger data set</h2>
 <p>Next, let’s see what happens when we apply the IP and SQP methods algorithms to a considerably larger data set.</p>
 <p>As before, we compute the <span class="math inline">\(n \times m\)</span> likelihood matrix for a mixture of zero-centered normals. This time, we use a finer grid of <span class="math inline">\(m = 50\)</span> normal densities, as well as more samples.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">L &lt;-<span class="st"> </span><span class="kw"><a href="../reference/simulatemixdata.html">simulatemixdata</a></span>(<span class="fl">1e5</span>,<span class="dv">50</span>)<span class="op">$</span>L
@@ -134,7 +134,7 @@
 <p>Now we fit the model using the two fitting algorithms.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">timing.ip  &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.ip  &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixSQP.html">mixKWDual</a></span>(L))
 timing.sqp &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.sqp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixSQP.html">mixSQP</a></span>(L))
-<span class="co"># Running mix-SQP 0.1-36 on 100000 x 50 matrix</span>
+<span class="co"># Running mix-SQP 0.1-42 on 100000 x 50 matrix</span>
 <span class="co"># convergence tol. (SQP):  1.0e-08</span>
 <span class="co"># conv. tol. (active-set): 1.0e-10</span>
 <span class="co"># max. iter (SQP):         1000</span>
@@ -156,8 +156,8 @@ timing.sqp &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit
 <p>The mix-SQP algorithm algorithm is again faster than the IP solver.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Runtime of IP solver:  %0.2f</span><span class="ch">\n</span><span class="st">"</span>,timing.ip[<span class="st">"elapsed"</span>]))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Runtime of SQP solver: %0.2f</span><span class="ch">\n</span><span class="st">"</span>,timing.sqp[<span class="st">"elapsed"</span>]))
-<span class="co"># Runtime of IP solver:  6.50</span>
-<span class="co"># Runtime of SQP solver: 2.10</span></code></pre></div>
+<span class="co"># Runtime of IP solver:  6.00</span>
+<span class="co"># Runtime of SQP solver: 1.96</span></code></pre></div>
 <p>Further, the quality of the IP and SQP solutions remains very similar:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at SQP solution: %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.sqp<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at IP solution:  %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.ip<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))
@@ -186,7 +186,7 @@ timing.sqp &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit
 <span class="co"># [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
 <span class="co"># </span>
 <span class="co"># other attached packages:</span>
-<span class="co"># [1] Rmosek_8.0.69 Matrix_1.2-12 mixSQP_0.1-36</span>
+<span class="co"># [1] Rmosek_8.0.69 Matrix_1.2-12 mixSQP_0.1-42</span>
 <span class="co"># </span>
 <span class="co"># loaded via a namespace (and not attached):</span>
 <span class="co">#  [1] Rcpp_0.12.19    lattice_0.20-35 digest_0.6.17   rprojroot_1.3-2</span>
@@ -207,9 +207,9 @@ timing.sqp &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#environment-set-up">Environment set-up</a></li>
-      <li><a href="#generate-a-small-data-set">Generate a small data set</a></li>
+      <li><a href="#generate-a-smaller-data-set">Generate a smaller data set</a></li>
       <li><a href="#fit-mixture-model">Fit mixture model</a></li>
-      <li><a href="#comparison-using-a-large-data-set">Comparison using a large data set</a></li>
+      <li><a href="#comparison-using-a-larger-data-set">Comparison using a larger data set</a></li>
       <li><a href="#session-information">Session information</a></li>
       </ul>
 </div>
