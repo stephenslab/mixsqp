@@ -20,6 +20,9 @@ void   computegrad  (const arma::mat& L, const arma::vec& w,
 		     const arma::vec& x, double e, arma::vec& g,
 		     arma::mat& H, arma::vec& u, arma::mat& Z,
 		     const arma::mat& I);
+double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
+		    arma::uvec t, int maxiteractiveset,
+		    double convtolactiveset);
 double backtrackinglinesearch (double f, const arma::mat& L,
 			       const arma::vec& w, const arma::vec& g,
 			       const arma::vec& x, arma::vec& y,
@@ -45,7 +48,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP 0.1-42 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP 0.1-43 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):  %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set): %0.1e\n",convtolactiveset);
     Rprintf("max. iter (SQP):         %d\n",maxitersqp);
@@ -81,14 +84,10 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   arma::mat  I(m,m);  // m x m diagonal matrix e*I.
   arma::uvec t(m);    // Temporary unsigned int. vector result of length m.
   arma::vec  y(m);    // Vector of length m storing y
-  arma::vec  p(m);    // Vector of length m storing y
-  arma::vec  b(m);    // Vector of length m storing H*y+2+g+1
   arma::vec  d(m);    // Vector of length m storing absolute
 		      // differences between between two solution
 		      // estimates.
   
-  int    newind;       // New index to be added or deleted.
-  double alpha  = 1;   // Define step size
   double status = 1;   // Convergence status.
   
   // This is used in computing the Hessian matrix.
@@ -97,7 +96,6 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   
   // Initialize some loop variables used in the loops below.
   int i = 0; 
-  int j = 0;
   
   // Print the column labels for reporting the algorithm's progress.
   if (verbose)
@@ -144,69 +142,13 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     //
     if (gmin[i] >= -convtolsqp) {
       status = 0;
+      i++;
       break;
     }
 
-    // Initialize the solution to the QP subproblem (y).
-    arma::uvec ind = find(t);
-    y.fill(0);
-    y.elem(ind).fill(1/nnz[i]);
-    
-    // Run active set method to solve the QP subproblem.
-    for (j = 0; j < maxiteractiveset; j++) {
-      
-      // Define the smaller QP subproblem.
-      b = H*y + 2*g + 1;
-      arma::vec bs = b.elem(ind);
-      arma::mat Hs = H.elem(ind,ind);
-      
-      // Solve the smaller problem.
-      p.fill(0);
-      p.elem(ind) = -solve(Hs,bs);
-      
-      // Reset step size.
-      alpha = 1;
-      
-      // TO DO: Revise this, and add more detailed comments about this
-      // convergence criterion; see p. 472 of Nocedal & Wright.
-      // 
-      // Check convergence.
-      if (arma::norm(p,2) <= convtolactiveset) {
-        
-        // Compute the Lagrange multiplier.
-        if (b.min() >= -convtolactiveset)
-          break;
-        
-        // Find an index with smallest multiplier, and add this to the
-        // inactive set.
-        newind     = b.index_min();
-        t[newind]  = 1;
-        ind        = find(t);
-      } else{
-        
-        // Define step size.
-        arma::uvec act = find(p < 0);
-        
-        if (!act.is_empty()) {
-          
-          arma::vec alp = -y.elem(act)/p.elem(act);
-          newind        = alp.index_min();
-          
-          if (alp[newind] < 1) {
-            
-            // Blocking constraint exists; find and delete it.
-            alpha          = alp[newind]; 
-            t[act[newind]] = 0;
-            ind            = find(t);
-          }
-        }
-      }
-      
-      // Move to the new "inner loop" iterate (y) along the search
-      // direction.
-      y += alpha * p;
-    }
-    nqp[i] = j + 1;
+    // SOLVE QUADRATIC SUBPROBLEM
+    // --------------------------
+    nqp[i] = activesetqp(H,g,y,t,maxiteractiveset,convtolactiveset);
     
     // BACKTRACKING LINE SEARCH
     // ------------------------
@@ -221,8 +163,6 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // CONSTRUCT OUTPUT
   // ----------------
-  if (i < maxitersqp)
-    i = i + 1;
   return List::create(Named("x")         = x,
 		      Named("status")    = status,
 		      Named("objective") = obj.head(i),
@@ -268,6 +208,80 @@ void computegrad (const arma::mat& L, const arma::vec& w, const arma::vec& x,
   u = sqrt(w) / u;
   Z.each_col() %= u;
   H = trans(Z) * Z + I;
+}
+
+// This implements the active-set method from p. 472 of of Nocedal &
+// Wright, Numerical Optimization, 2nd ed, 2006.
+double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
+		    arma::uvec t, int maxiteractiveset,
+		    double convtolactiveset) {
+  int    m     = g.n_elem;
+  int    nnz   = sum(t);
+  double alpha = 1;  // The step size.
+  int    newind;     // New index to be added or deleted.
+  int    j;
+  arma::vec b(m);    // Vector of length m storing H*y + 2*g + 1.
+  arma::vec p(m);    // Vector of length m storing the search direction.
+  
+  // Initialize the solution to the QP subproblem (y).
+  arma::uvec ind = find(t);
+  y.fill(0);
+  y.elem(ind).fill(1/nnz);
+    
+  // Run active set method to solve the QP subproblem.
+  for (j = 0; j < maxiteractiveset; j++) {
+      
+    // Define the smaller QP subproblem.
+    b = H*y + 2*g + 1;
+    arma::vec bs = b.elem(ind);
+    arma::mat Hs = H.elem(ind,ind);
+      
+    // Solve the smaller problem.
+    p.fill(0);
+    p.elem(ind) = -solve(Hs,bs);
+      
+    // Reset the step size.
+    alpha = 1;
+      
+    // TO DO: Revise this, and add more detailed comments about this
+    // convergence criterion; see p. 472 of Nocedal & Wright.
+    // 
+    // Check convergence.
+    if (arma::norm(p,2) <= convtolactiveset) {
+        
+      // Compute the Lagrange multiplier.
+      if (b.min() >= -convtolactiveset) {
+	j++;
+        break;
+      }
+      // Find an index with smallest multiplier, and add this to the
+      // inactive set.
+      newind     = b.index_min();
+      t[newind]  = 1;
+      ind        = find(t);
+    } else{
+        
+      // Define the step size.
+      arma::uvec act = find(p < 0);
+      if (!act.is_empty()) {
+        arma::vec alp = -y.elem(act)/p.elem(act);
+        newind        = alp.index_min();
+        if (alp[newind] < 1) {
+            
+          // Blocking constraint exists; find and delete it.
+          alpha          = alp[newind]; 
+          t[act[newind]] = 0;
+          ind            = find(t);
+        }
+     }
+    }
+      
+    // Move to the new "inner loop" iterate (y) along the search
+    // direction.
+    y += alpha * p;
+  }
+
+  return j;
 }
 
 // This implements the backtracking line search algorithm from p. 37
