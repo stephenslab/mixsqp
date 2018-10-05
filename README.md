@@ -2,6 +2,7 @@
 
 [![Travis Build Status](https://travis-ci.org/stephenslab/mixSQP.svg?branch=master)](https://travis-ci.org/stephenslab/mixSQP)
 [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/i8744qet66w5uhe2?svg=true)](https://ci.appveyor.com/project/pcarbo/mixsqp)
+[![codecov](https://codecov.io/gh/stephenslab/mixSQP/branch/master/graph/badge.svg)](https://codecov.io/gh/stephenslab/mixSQP)
 
 The mixSQP R package provides algorithms based on [sequential
 quadratic programming][sqp] for maximum likelihood estimation of the
