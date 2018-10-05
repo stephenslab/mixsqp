@@ -2,17 +2,17 @@
 
 [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/b7cp8eo5e7ikid0i?svg=true)](https://ci.appveyor.com/project/pcarbo/mixsqp)
 
-The mixSQP R package provides algorithms based on
-[sequential quadratic programming][sqp] for maximum likelihood
-estimation of the mixture proportions in a finite mixture model where
-the component densities are known. The SQP algorithm is expected to
-obtain solutions that are at least as accurate as the state-of-the-art
-MOSEK interior-point solver (called via the "KWDual" function in
-the [REBayes package][rebayes]), and is expected to compute these
+The mixSQP R package provides algorithms based on [sequential
+quadratic programming][sqp] for maximum likelihood estimation of the
+mixture proportions in a finite mixture model where the component
+densities are known. The SQP algorithm is expected to obtain solutions
+that are at least as accurate as the state-of-the-art MOSEK
+interior-point solver (called via the "KWDual" function in the
+[REBayes package][rebayes]), and is expected to compute these
 solutions much more quickly in large data sets.
 
-For more details on the mixSQP algorithm, please see
-[our paper on arXiv][arxiv-paper].
+For more details on the mixSQP algorithm, please see [our paper on
+arXiv][arxiv-paper].
 
 See also the [Julia implementation of mixSQP][mixsqp-julia], which is
 currently faster than the R implementation, particularly for large
