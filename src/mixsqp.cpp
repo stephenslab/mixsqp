@@ -20,6 +20,10 @@ void   computegrad  (const arma::mat& L, const arma::vec& w,
 		     const arma::vec& x, double e, arma::vec& g,
 		     arma::mat& H, arma::vec& u, arma::mat& Z,
 		     const arma::mat& I);
+double backtrackinglinesearch (double f, const arma::mat& L,
+			       const arma::vec& w, const arma::vec& g,
+			       const arma::vec& x, arma::vec& y,
+			       double eps);
 
 // FUNCTION DEFINITIONS
 // --------------------
@@ -41,7 +45,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP 0.1-41 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP 0.1-42 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):  %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set): %0.1e\n",convtolactiveset);
     Rprintf("max. iter (SQP):         %d\n",maxitersqp);
@@ -206,16 +210,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     
     // BACKTRACKING LINE SEARCH
     // ------------------------
-    // See p. 37 of Nocedal & Wright for backtracking line search.
-    // 
-    // sum(x) = sum(y) = 1 so replacing g by g+1 in dot product of x-y
-    // and g has no effect.
-    for (j = 0; j < 9; j++) {
-      if (obj[i] + sum(log(L * y + eps) % w) > dot(x-y,g)/(2*n)) 
-	break;
-      y = (y-x)/2 + x;
-    }
-    nls[i] = j + 1;
+    nls[i] = backtrackinglinesearch(obj[i],L,w,g,x,y,eps);
     
     // UPDATE THE SOLUTION
     // -------------------
@@ -273,4 +268,28 @@ void computegrad (const arma::mat& L, const arma::vec& w, const arma::vec& x,
   u = sqrt(w) / u;
   Z.each_col() %= u;
   H = trans(Z) * Z + I;
+}
+
+// This implements the backtracking line search algorithm from p. 37
+// of Nocedal & Wright, Numerical Optimization, 2nd ed, 2006. The
+// return value is the number of line search iterations needed to
+// identify a step size satisfying the "sufficient decrease"
+// condition.
+// 
+// Note that sum(x) = sum(y) = 1, so replacing g by g+1 in dot product
+// of x-y & g has no effect.
+double backtrackinglinesearch (double f, const arma::mat& L,
+			       const arma::vec& w, const arma::vec& g,
+			       const arma::vec& x, arma::vec& y,
+			       double eps) {
+  int n = L.n_rows;
+  int j;
+  for (j = 0; j < 9; j++) {
+    if (f + sum(log(L*y + eps) % w) > dot(x - y,g)/(2*n)) {
+      j++;
+      break;
+    }
+    y = (y - x)/2 + x;
+  }
+  return j;
 }

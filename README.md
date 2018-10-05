@@ -86,8 +86,8 @@ in the shell:
 
 ```bash
 R CMD build mixSQP
-R CMD INSTALL mixSQP_0.1-41.tar.gz
-R CMD check --as-cran mixSQP_0.1-41.tar.gz
+R CMD INSTALL mixSQP_0.1-42.tar.gz
+R CMD check --as-cran mixSQP_0.1-42.tar.gz
 ```
 
 Note that these commands require that the dependencies have already

@@ -23,8 +23,6 @@ to do
 
 + Move the active-set code into a separate function.
 
-+ Move the backtracking line search code into a separate function.
-
 + Add an error message if backtracking line search could not find a
   step size satisfying the sufficient decrease condition. Error
   message should be something like, "Step size too small; consider
