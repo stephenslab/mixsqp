@@ -1,5 +1,5 @@
 ---
-title: "Illustration of mix-SQP solver applied to a small data set, and a large one"
+title: "Illustration of mix-SQP solver applied to a smaller data set, and a larger one"
 author: "Youngseok Kim and Peter Carbonetto"
 date: "`r Sys.Date()`"
 output:
@@ -45,7 +45,7 @@ set.seed(1)
 
 Let's begin with a smaller example with $n=$ 50,000 samples.
 
-```{r sim-data-small}
+```{r sim-data-smaller}
 L <- simulatemixdata(5e4,10)$L
 dim(L)
 ```
@@ -62,14 +62,14 @@ default so that the maximum entry in each row is 1.
 
 First, we fit the mixture model using the mix-SQP solver.
 
-```{r fit-model-mixsqp-small}
+```{r fit-model-mixsqp-smaller}
 timing.sqp <- system.time(fit.sqp <- mixSQP(L))
 cat(sprintf("Computation took %0.2f seconds.\n",timing.sqp["elapsed"]))
 ```
 
 Next, we fit the same mixture model using the IP solver.
 
-```{r fit-model-kwdual-small}
+```{r fit-model-kwdual-smaller}
 timing.ip <- system.time(fit.ip <- mixKWDual(L))
 cat(sprintf("Computation took %0.2f seconds.\n",timing.ip["elapsed"]))
 ```
@@ -78,7 +78,7 @@ The runtime of the mix-SQP algorithm is about the same, or slightly
 less than, the IP method, and the quality of the IP and SQP solutions
 is very similar.
 
-```{r compare-solutions-small}
+```{r compare-solutions-smaller}
 cat(sprintf("Objective at SQP solution: %0.16f\n",fit.sqp$value,digits = 16))
 cat(sprintf("Objective at IP solution:  %0.16f\n",fit.ip$value,digits = 16))
 cat(sprintf("Difference in objectives:  %0.4e\n",fit.sqp$value - fit.ip$value))
@@ -93,28 +93,28 @@ As before, we compute the $n \times m$ likelihood matrix for a mixture
 of zero-centered normals. This time, we use a finer grid of $m = 50$
 normal densities, as well as more samples.
 
-```{r sim-data-large}
+```{r sim-data-larger}
 L <- simulatemixdata(1e5,50)$L
 dim(L)
 ```
 
 Now we fit the model using the two fitting algorithms.
 
-```{r fit-model-large}
+```{r fit-model-larger}
 timing.ip  <- system.time(fit.ip  <- mixKWDual(L))
 timing.sqp <- system.time(fit.sqp <- mixSQP(L))
 ```
 
 The mix-SQP algorithm is noticeably faster than the IP solver.
 
-```{r timing-fit-large}
+```{r timing-fit-larger}
 cat(sprintf("Runtime of IP solver:  %0.2f\n",timing.ip["elapsed"]))
 cat(sprintf("Runtime of SQP solver: %0.2f\n",timing.sqp["elapsed"]))
 ```
 
 Further, the quality of the IP and SQP solutions remains very similar:
 
-```{r compare-solutions-large}
+```{r compare-solutions-larger}
 cat(sprintf("Objective at SQP solution: %0.16f\n",fit.sqp$value,digits = 16))
 cat(sprintf("Objective at IP solution:  %0.16f\n",fit.ip$value,digits = 16))
 cat(sprintf("Difference in objectives:  %0.4e\n",fit.sqp$value - fit.ip$value))
