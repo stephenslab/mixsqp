@@ -48,7 +48,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP 0.1-45 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP 0.1-46 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):  %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set): %0.1e\n",convtolactiveset);
     Rprintf("max. iter (SQP):         %d\n",maxitersqp);
@@ -112,7 +112,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     // Determine the nonzero co-ordinates in the current estimate of
     // the solution, x. This specifies the "inactive set".
     t = (x >= zerothreshold);
-    
+
     // Report on the algorithm's progress. Here we compute: the value
     // of the objective at x (obj); the smallest gradient value
     // (gmin), which is used as a convergence criterion; the number of
@@ -120,8 +120,9 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     // iterations (nqp).
     obj[i] = mixobjective(L,w,x,eps,u);
 
-    // Should be minimum of the nonzero x's only.
-    gmin[i] = 1 + g.min();
+    // Note that only the dual residuals (gmin's) corresponding to the
+    // nonzero co-ordinates are relevant.
+    gmin[i] = 1 + g(find(t)).min();
     nnz[i]  = sum(t);
     if (verbose) {
       if (i == 0)
@@ -134,13 +135,11 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     
     // CHECK CONVERGENCE
     // -----------------
-    
-    // The negative of gmin is also the maximum dual residual (denoted "rdual" 
-    // on p. 609 of Boyd & Vandenberghe, "Convex Optimization").
-    //
-    // NOTE: We should only be checking this condition for the nonzero
-    // co-ordinates of x.
-    //
+    // Convergence is reached with the maximum dual residual
+    // (corresponding to the nonzero co-ordinates of x only) is
+    // small. The negative of "gmin" is also the maximum dual residual
+    // (denoted as "rdual" on p. 609 of Boyd & Vandenberghe, "Convex
+    // Optimization", 2009).
     if (gmin[i] >= -convtolsqp) {
       status = 0;
       i++;
@@ -224,22 +223,23 @@ double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
   arma::vec b(m);    // Vector of length m storing H*y + 2*g + 1.
   arma::vec p(m);    // Vector of length m storing the search direction.
   
-  // Initialize the solution to the QP subproblem (y).
-  arma::uvec ind = find(t);
+  // Initialize the solution to the QP subproblem, y.
+  arma::uvec i0 = find(1 - t);
+  arma::uvec i1 = find(t);
   y.fill(0);
-  y.elem(ind).fill(1/nnz);
+  y.elem(i1).fill(1/nnz);
     
   // Run active set method to solve the QP subproblem.
   for (j = 0; j < maxiteractiveset; j++) {
       
     // Define the smaller QP subproblem.
     b = H*y + 2*g + 1;
-    arma::vec bs = b.elem(ind);
-    arma::mat Hs = H.elem(ind,ind);
+    arma::vec bs = b.elem(i1);
+    arma::mat Hs = H.elem(i1,i1);
       
     // Solve the smaller problem.
     p.fill(0);
-    p.elem(ind) = -solve(Hs,bs);
+    p.elem(i1) = -solve(Hs,bs);
       
     // Reset the step size.
     alpha = 1;
@@ -250,16 +250,19 @@ double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
     // Check convergence.
     if (arma::norm(p,2) <= convtolactiveset) {
         
-      // Compute the Lagrange multiplier.
-      if (b.min() >= -convtolactiveset) {
+      // If all the Lagrange multiplers in the working set (that is,
+      // zeroed co-ordinates) are positive, or nearly positive, we
+      // have reached a suitable solution.
+      if (b(i0).min() >= -convtolactiveset) {
 	j++;
         break;
       }
       // Find an index with smallest multiplier, and add this to the
       // inactive set.
-      newind     = b.index_min();
+      newind     = i0[b(i0).index_min()];
       t[newind]  = 1;
-      ind        = find(t);
+      i0         = find(1 - t);
+      i1         = find(t);
     } else {
         
       // Define the step size.
@@ -272,7 +275,8 @@ double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
           // Blocking constraint exists; find and delete it.
           alpha          = alp[newind]; 
           t[act[newind]] = 0;
-          ind            = find(t);
+          i1             = find(t);
+	  i0             = find(1 - t);
         }
       }
     }

@@ -1,20 +1,9 @@
 to do
 =====
 
-+ Change SQP convergence check so that it is checking the dual
-  residual only for the *nonzero entries* of the current solution,
-  x. Also, add a more informative comment to accompany this check.
-
 + Change norm(p,2) <= convtolactiveset stopping criterion for
   active-set method. Also replace "convtolactiveset" by
   "zero.searchdir".
-
-+ Change the b.min() >= -convtolactiveset stopping criterion so that
-  it is only over co-ordinates in the working set (that is, the "zero"
-  co-ordinates).
-
-+ Fix newind = b.index_min() so that it is limited to the active
-  (working) set.
 
 + Add an error message if backtracking line search could not find a
   step size satisfying the sufficient decrease condition. Error
