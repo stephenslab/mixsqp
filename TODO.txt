@@ -21,12 +21,13 @@ to do
 + Fix newind = b.index_min() so that it is limited to the active
   (working) set.
 
-+ Move the active-set code into a separate function.
-
 + Add an error message if backtracking line search could not find a
   step size satisfying the sufficient decrease condition. Error
   message should be something like, "Step size too small; consider
   increasing..."
+
++ Reorder columns in verbose=TRUE console output for mixSQP, and in
+  "data" return value.
 
 + Ask someone (e.g., Jason) to review package and documentation.
 
