@@ -1,6 +1,8 @@
 to do
 =====
 
++ Get Travis CI & codecov working.
+
 + Change norm(p,2) <= convtolactiveset stopping criterion for
   active-set method. Also replace "convtolactiveset" by
   "zero.searchdir".
