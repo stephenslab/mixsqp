@@ -21,7 +21,7 @@ void   computegrad  (const arma::mat& L, const arma::vec& w,
 		     arma::mat& H, arma::vec& u, arma::mat& Z,
 		     const arma::mat& I);
 double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
-		    arma::uvec t, int maxiteractiveset,
+		    arma::uvec& t, int maxiteractiveset,
 		    double convtolactiveset);
 double backtrackinglinesearch (double f, const arma::mat& L,
 			       const arma::vec& w, const arma::vec& g,
@@ -48,7 +48,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP 0.1-43 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP 0.1-44 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):  %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set): %0.1e\n",convtolactiveset);
     Rprintf("max. iter (SQP):         %d\n",maxitersqp);
@@ -213,10 +213,10 @@ void computegrad (const arma::mat& L, const arma::vec& w, const arma::vec& x,
 // This implements the active-set method from p. 472 of of Nocedal &
 // Wright, Numerical Optimization, 2nd ed, 2006.
 double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
-		    arma::uvec t, int maxiteractiveset,
+		    arma::uvec& t, int maxiteractiveset,
 		    double convtolactiveset) {
   int    m     = g.n_elem;
-  int    nnz   = sum(t);
+  double nnz   = sum(t);
   double alpha = 1;  // The step size.
   int    newind;     // New index to be added or deleted.
   int    j;
@@ -259,7 +259,7 @@ double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
       newind     = b.index_min();
       t[newind]  = 1;
       ind        = find(t);
-    } else{
+    } else {
         
       // Define the step size.
       arma::uvec act = find(p < 0);
@@ -273,7 +273,7 @@ double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
           t[act[newind]] = 0;
           ind            = find(t);
         }
-     }
+      }
     }
       
     // Move to the new "inner loop" iterate (y) along the search
