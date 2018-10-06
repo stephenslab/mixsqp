@@ -304,7 +304,7 @@ double backtrackinglinesearch (double f, const arma::mat& L,
 			       double eps) {
   int n = L.n_rows;
   int j;
-  for (j = 0; j < 12; j++) {
+  for (j = 0; j < 16; j++) {
     if (f + sum(log(L*y + eps) % w) > dot(x - y,g)/(2*n)) {
       j++;
       break;

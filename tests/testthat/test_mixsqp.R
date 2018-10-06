@@ -170,7 +170,7 @@ test_that(paste("mixSQP converges, and outputs correct solution, for example",
   # stability measure is used for the active-set linear systems (i.e.,
   # delta = 0).
   out1 <- mixKWDual(L)
-  capture.output(out2 <- mixSQP(L,convtol.sqp = 0,maxiter.sqp = 50))
+  capture.output(out2 <- mixSQP(L,convtol.sqp = 0,maxiter.sqp = 20))
   capture.output(out3 <- mixSQP(L))
   capture.output(out4 <- mixSQP(L,delta = 0))
   

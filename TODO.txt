@@ -14,6 +14,6 @@ to do
 
 + Update mixSQP function call in ashr package.
 
-+ Ask someone (e.g., Jason) to review package and documentation.
++ Ask Jason & Jean to review package and documentation.
 
 + Update pkgdown site.
