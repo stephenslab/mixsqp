@@ -12,6 +12,8 @@ to do
 + Change package name from "mixSQP" to "mixsqp" (and
   likewise for the main functions).
 
++ Update mixSQP function call in ashr package.
+
 + Ask someone (e.g., Jason) to review package and documentation.
 
 + Update pkgdown site.
