@@ -9,11 +9,6 @@ to do
   active-set method. Also replace "convtolactiveset" by
   "zero.searchdir".
 
-+ Add an error message if backtracking line search could not find a
-  step size satisfying the sufficient decrease condition. Error
-  message should be something like, "Step size too small; consider
-  increasing..."
-
 + Change package name from "mixSQP" to "mixsqp" (and
   likewise for the main functions).
 
