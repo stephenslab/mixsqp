@@ -137,9 +137,9 @@ For more information on this output, see
   console output when \code{verbose = TRUE} as the console output
   shows some quantities that were computed after the convergence
   check in the previous iteration. The last entries of max.diff, nqp
-  and nls may not have been # assigned if the SQP algorithm converged
-  successfully (as indicated # by negative values), in which case we
-  should more appropriately # assign them missing values (NA).}
+  and nls may not have been assigned if the SQP algorithm converged
+  successfully (as indicated by negative values), in which case we
+  should more appropriately assign them missing values (NA).}
 }
 \description{
 \code{mixSQP} and \code{mixKWDual} can be used to
