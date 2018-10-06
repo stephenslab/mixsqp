@@ -48,7 +48,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP 0.1-47 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP 0.1-48 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):  %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set): %0.1e\n",convtolactiveset);
     Rprintf("max. iter (SQP):         %d\n",maxitersqp);
@@ -99,7 +99,7 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   
   // Print the column labels for reporting the algorithm's progress.
   if (verbose)
-    Rprintf("iter    objective max.diff max(rdual) nnz nqp nls\n");
+    Rprintf("iter    objective max(rdual) nnz max.diff nqp nls\n");
   
   // Repeat until the convergence criterion is met, or until we reach
   // the maximum number of (outer loop) iterations.
@@ -126,11 +126,12 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     nnz[i]  = sum(t);
     if (verbose) {
       if (i == 0)
-        Rprintf("%4d %+0.5e       NA %+0.3e%4d  NA  NA\n",i + 1,obj[i],
+        Rprintf("%4d %+0.5e %+0.3e%4d       NA  NA  NA\n",i + 1,obj[i],
 		-gmin[i],int(nnz[i]));
       else
-        Rprintf("%4d %+0.5e %0.2e %+0.3e%4d %3d %3d\n",i + 1,obj[i],
-		dmax[i-1],-gmin[i],int(nnz[i]),int(nqp[i-1]),int(nls[i-1]));
+        Rprintf("%4d %+0.5e %+0.3e%4d %0.2e %3d %3d\n",i + 1,obj[i],
+		-gmin[i],int(nnz[i]),dmax[i-1],int(nqp[i-1]),
+		int(nls[i-1]));
     }
     
     // CHECK CONVERGENCE
@@ -166,9 +167,9 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   return List::create(Named("x")         = x,
 		      Named("status")    = status,
 		      Named("objective") = obj.head(i),
-		      Named("max.diff")  = dmax.head(i),
 		      Named("max.rdual") = -gmin.head(i),
 		      Named("nnz")       = nnz.head(i),
+		      Named("max.diff")  = dmax.head(i),
 		      Named("nqp")       = nqp.head(i),
 		      Named("nls")       = nls.head(i));
 }
