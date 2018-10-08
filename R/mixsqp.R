@@ -64,8 +64,8 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #'   values will result in more stringent convergence criteria and more
 #'   accurate solutions, at the expense of greater computation
 #'   time. Note that changes to this tolerance parameter may require
-#'   respective changes to \code{convtol.activeset} to obtain reliable
-#'   convergence.
+#'   respective changes to \code{convtol.activeset} and/or
+#'   \code{zero.threshold.searchdir} to obtain reliable convergence.
 #'
 #' @param convtol.activeset Small, non-negative number specifying the
 #'   convergence tolerance for the active-set step. Smaller values will
@@ -75,13 +75,20 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #'   convergence criterion is satisfied, as determined by
 #'   \code{convtol.sqp}.
 #' 
-#' @param zero.threshold A small, non-negative number used to
+#' @param zero.threshold.solution A small, non-negative number used to
 #'   determine the "active set"; that is, it determines which entries of
 #'   the solution are exactly zero. Any entries that are less than or
-#'   equal to \code{zero.threshold} are considered to be exactly
-#'   zero. Larger values of \code{zero.threshold} may lead to speedups
-#'   for matrices with many columns, at the (slight) risk of prematurely
-#'   zeroing some co-ordinates.
+#'   equal to \code{zero.threshold.solution} are considered to be
+#'   exactly zero. Larger values of \code{zero.threshold.solution} may
+#'   lead to speedups for matrices with many columns, at the (slight)
+#'   risk of prematurely zeroing some co-ordinates.
+#'
+#' @param zero.threshold.searchdir A small, non-negative number used
+#'   to determine when the search direction in the active-set step is
+#'   considered "small enough". Note that changes to this tolerance
+#'   parameter can affect how reliably the SQP convergence criterion is
+#'   satisfied, as determined by \code{convtol.sqp}, so choose this
+#'   parameter carefully.
 #' 
 #' @param eps A small, non-negative number added to the terms inside the
 #'   logarithms to sidestep computing logarithms of zero. This prevents
@@ -111,9 +118,9 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #'   residual" in the Karush-Kuhn-Tucker (KKT) conditions, which is used
 #'   to monitor convergence (see \code{convtol.sqp}); "nnz", the number
 #'   of non-zero co-ordinates in the current estimate, as determined by
-#'   \code{zero.threshold}, "nqp", the number of (inner loop) active-set
-#'   iterations taken to solve the quadratic subproblem; "nls", the
-#'   number of iterations in the backtracking line search.
+#'   \code{zero.threshold.solution}, "nqp", the number of (inner loop)
+#'   active-set iterations taken to solve the quadratic subproblem;
+#'   "nls", the number of iterations in the backtracking line search.
 #' 
 #' @return \code{mixobjective} returns the value of the (unmodified)
 #' objective at \code{x}.
@@ -182,9 +189,11 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #' 
 mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)), 
                     convtol.sqp = 1e-8, convtol.activeset = 1e-10,
-                    zero.threshold = 1e-6, eps = .Machine$double.eps,
-                    delta = 1e-10, maxiter.sqp = 1000,
-                    maxiter.activeset = 100, verbose = TRUE) {
+                    zero.threshold.solution = 1e-6,
+                    zero.threshold.searchdir = 1e-8,
+                    eps = .Machine$double.eps, delta = 1e-10,
+                    maxiter.sqp = 1000, maxiter.activeset = 100,
+                    verbose = TRUE) {
 
   # CHECK & PROCESS INPUTS
   # ----------------------
@@ -212,13 +221,15 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   maxiter.activeset <- as.double(maxiter.activeset)
 
   # Input arguments "convtol.sqp", "convtol.activeset",
-  # "zero.threshold" and "eps" should be non-negative scalars.
-  # Additionally, "zero.threshold" should be less than 1/m.
+  # "zero.threshold.solution", "zero.threshold.searchdir", and "eps"
+  # should be non-negative scalars.  Additionally,
+  # "zero.threshold.solution" should be less than 1/m.
   verify.nonneg.scalar.arg(convtol.sqp)
   verify.nonneg.scalar.arg(convtol.activeset)
-  verify.nonneg.scalar.arg(zero.threshold)
+  verify.nonneg.scalar.arg(zero.threshold.solution)
+  verify.nonneg.scalar.arg(zero.threshold.searchdir)
   verify.nonneg.scalar.arg(eps)
-  if (zero.threshold >= 1/m)
+  if (zero.threshold.solution >= 1/m)
     stop(paste("Behavior of algorithm will be unpredictable if",
                "zero.threshold > 1/m, where m = ncol(X)"))
   
@@ -227,7 +238,8 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # SOLVE OPTIMIZATION PROBLEM USING mix-SQP
   # ----------------------------------------
-  out <- mixsqp_rcpp(L,w,x0,convtol.sqp,convtol.activeset,zero.threshold,
+  out <- mixsqp_rcpp(L,w,x0,convtol.sqp,convtol.activeset,
+                     zero.threshold.solution,zero.threshold.searchdir,
                      eps,delta,maxiter.sqp,maxiter.activeset,verbose)
   
   # Get the algorithm convergence status. The convention is that
