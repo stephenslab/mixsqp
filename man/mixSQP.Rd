@@ -8,8 +8,9 @@
 \usage{
 mixsqp(L, w = rep(1, nrow(L)), x0 = rep(1, ncol(L)),
   convtol.sqp = 1e-08, convtol.activeset = 1e-10,
-  zero.threshold = 1e-06, eps = .Machine$double.eps, delta = 1e-10,
-  maxiter.sqp = 1000, maxiter.activeset = 100, verbose = TRUE)
+  zero.threshold.solution = 1e-06, zero.threshold.searchdir = 1e-08,
+  eps = .Machine$double.eps, delta = 1e-10, maxiter.sqp = 1000,
+  maxiter.activeset = 100, verbose = TRUE)
 
 mixobjective(L, x, w = rep(1, nrow(L)))
 
@@ -44,8 +45,8 @@ conditions is less than or equal to \code{convtol.sqp}. Smaller
 values will result in more stringent convergence criteria and more
 accurate solutions, at the expense of greater computation
 time. Note that changes to this tolerance parameter may require
-respective changes to \code{convtol.activeset} to obtain reliable
-convergence.}
+respective changes to \code{convtol.activeset} and/or
+\code{zero.threshold.searchdir} to obtain reliable convergence.}
 
 \item{convtol.activeset}{Small, non-negative number specifying the
 convergence tolerance for the active-set step. Smaller values will
@@ -55,13 +56,20 @@ changes to this tolerance parameter can affect how reliably the SQP
 convergence criterion is satisfied, as determined by
 \code{convtol.sqp}.}
 
-\item{zero.threshold}{A small, non-negative number used to
+\item{zero.threshold.solution}{A small, non-negative number used to
 determine the "active set"; that is, it determines which entries of
 the solution are exactly zero. Any entries that are less than or
-equal to \code{zero.threshold} are considered to be exactly
-zero. Larger values of \code{zero.threshold} may lead to speedups
-for matrices with many columns, at the (slight) risk of prematurely
-zeroing some co-ordinates.}
+equal to \code{zero.threshold.solution} are considered to be
+exactly zero. Larger values of \code{zero.threshold.solution} may
+lead to speedups for matrices with many columns, at the (slight)
+risk of prematurely zeroing some co-ordinates.}
+
+\item{zero.threshold.searchdir}{A small, non-negative number used
+to determine when the search direction in the active-set step is
+considered "small enough". Note that changes to this tolerance
+parameter can affect how reliably the SQP convergence criterion is
+satisfied, as determined by \code{convtol.sqp}, so choose this
+parameter carefully.}
 
 \item{eps}{A small, non-negative number added to the terms inside the
 logarithms to sidestep computing logarithms of zero. This prevents
@@ -91,9 +99,9 @@ between two successive iterations; "max(rdual)", the maximum "dual
 residual" in the Karush-Kuhn-Tucker (KKT) conditions, which is used
 to monitor convergence (see \code{convtol.sqp}); "nnz", the number
 of non-zero co-ordinates in the current estimate, as determined by
-\code{zero.threshold}, "nqp", the number of (inner loop) active-set
-iterations taken to solve the quadratic subproblem; "nls", the
-number of iterations in the backtracking line search.}
+\code{zero.threshold.solution}, "nqp", the number of (inner loop)
+active-set iterations taken to solve the quadratic subproblem;
+"nls", the number of iterations in the backtracking line search.}
 
 \item{x}{The point at which the objective is evaluated in
 \code{mixobjective}; see argument \code{x0} for details.}

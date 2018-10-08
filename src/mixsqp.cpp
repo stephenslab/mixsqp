@@ -22,6 +22,7 @@ void   computegrad  (const arma::mat& L, const arma::vec& w,
 		     const arma::mat& I);
 double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
 		    arma::uvec& t, int maxiteractiveset,
+		    double zerothresholdsearchdir, 
 		    double convtolactiveset);
 double backtrackinglinesearch (double f, const arma::mat& L,
 			       const arma::vec& w, const arma::vec& g,
@@ -38,8 +39,9 @@ double backtrackinglinesearch (double f, const arma::mat& L,
 // [[Rcpp::export]]
 List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0, 
                   double convtolsqp, double convtolactiveset,
-		  double zerothreshold, double eps, double delta,
-		  int maxitersqp, int maxiteractiveset, bool verbose) {
+		  double zerothresholdsolution, double zerothresholdsearchdir,
+		  double eps, double delta, int maxitersqp, 
+		  int maxiteractiveset, bool verbose) {
   
   // Get the number of rows (n) and columns (m) of the conditional
   // likelihood matrix.
@@ -48,12 +50,13 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP algorithm 0.1-51 on %d x %d matrix\n",n,m);
-    Rprintf("convergence tol. (SQP):  %0.1e\n",convtolsqp);
-    Rprintf("max. iter (SQP):         %d\n",maxitersqp);
-    Rprintf("conv. tol. (active-set): %0.1e\n",convtolactiveset);
-    Rprintf("max. iter (active-set):  %d\n",maxiteractiveset);
-    Rprintf("zero threshold:          %0.1e\n",zerothreshold);
+    Rprintf("Running mix-SQP algorithm 0.1-52 on %d x %d matrix\n",n,m);
+    Rprintf("convergence tol. (SQP):     %0.1e\n",convtolsqp);
+    Rprintf("conv. tol. (active-set):    %0.1e\n",convtolactiveset);
+    Rprintf("zero threshold (solution):  %0.1e\n",zerothresholdsolution);
+    Rprintf("zero thresh. (search dir.): %0.1e\n",zerothresholdsearchdir);
+    Rprintf("max. iter (SQP):            %d\n",maxitersqp);
+    Rprintf("max. iter (active-set):     %d\n",maxiteractiveset);
   }
   
   // PREPARE DATA STRUCTURES
@@ -111,7 +114,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     
     // Determine the nonzero co-ordinates in the current estimate of
     // the solution, x. This specifies the "inactive set".
-    t = (x >= zerothreshold);
+    t = (x >= zerothresholdsolution);
 
     // Report on the algorithm's progress. Here we compute: the value
     // of the objective at x (obj); the smallest gradient value
@@ -149,7 +152,8 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
     // SOLVE QUADRATIC SUBPROBLEM
     // --------------------------
-    nqp[i] = activesetqp(H,g,y,t,maxiteractiveset,convtolactiveset);
+    nqp[i] = activesetqp(H,g,y,t,maxiteractiveset,zerothresholdsearchdir,
+			 convtolactiveset);
     
     // BACKTRACKING LINE SEARCH
     // ------------------------
@@ -215,6 +219,7 @@ void computegrad (const arma::mat& L, const arma::vec& w, const arma::vec& x,
 // Wright, Numerical Optimization, 2nd ed, 2006.
 double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
 		    arma::uvec& t, int maxiteractiveset,
+		    double zerothresholdsearchdir, 
 		    double convtolactiveset) {
   int    m     = g.n_elem;
   double nnz   = sum(t);
@@ -245,11 +250,10 @@ double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
     // Reset the step size.
     alpha = 1;
       
-    // TO DO: Revise this, and add more detailed comments about this
-    // convergence criterion; see p. 472 of Nocedal & Wright.
-    // 
-    // Check convergence.
-    if (arma::norm(p,2) <= convtolactiveset) {
+    // First check that the search direction is close to zero
+    // (according to the "zerothresholdsearchdir" parameter).
+    if (p.max() <= zerothresholdsearchdir &
+	-p.min() <= zerothresholdsearchdir) {
         
       // If all the Lagrange multiplers in the working set (that is,
       // zeroed co-ordinates) are positive, or nearly positive, we

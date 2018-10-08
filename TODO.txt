@@ -1,12 +1,6 @@
 to do
 =====
 
-+ Add codecov.
-
-+ Change norm(p,2) <= convtolactiveset stopping criterion for
-  active-set method. Also replace "convtolactiveset" by
-  "zero.searchdir".
-
 + Update mixSQP function call in ashr package.
 
 + Ask Jason & Jean to review package and documentation.

@@ -112,8 +112,9 @@
 
     <pre class="usage"><span class='fu'>mixsqp</span>(<span class='no'>L</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)), <span class='kw'>x0</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>ncol</span>(<span class='no'>L</span>)),
   <span class='kw'>convtol.sqp</span> <span class='kw'>=</span> <span class='fl'>1e-08</span>, <span class='kw'>convtol.activeset</span> <span class='kw'>=</span> <span class='fl'>1e-10</span>,
-  <span class='kw'>zero.threshold</span> <span class='kw'>=</span> <span class='fl'>1e-06</span>, <span class='kw'>eps</span> <span class='kw'>=</span> <span class='no'>.Machine</span>$<span class='no'>double.eps</span>, <span class='kw'>delta</span> <span class='kw'>=</span> <span class='fl'>1e-10</span>,
-  <span class='kw'>maxiter.sqp</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>maxiter.activeset</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+  <span class='kw'>zero.threshold.solution</span> <span class='kw'>=</span> <span class='fl'>1e-06</span>, <span class='kw'>zero.threshold.searchdir</span> <span class='kw'>=</span> <span class='fl'>1e-08</span>,
+  <span class='kw'>eps</span> <span class='kw'>=</span> <span class='no'>.Machine</span>$<span class='no'>double.eps</span>, <span class='kw'>delta</span> <span class='kw'>=</span> <span class='fl'>1e-10</span>, <span class='kw'>maxiter.sqp</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
+  <span class='kw'>maxiter.activeset</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
 <span class='fu'>mixobjective</span>(<span class='no'>L</span>, <span class='no'>x</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)))
 
@@ -158,8 +159,8 @@ conditions is less than or equal to <code>convtol.sqp</code>. Smaller
 values will result in more stringent convergence criteria and more
 accurate solutions, at the expense of greater computation
 time. Note that changes to this tolerance parameter may require
-respective changes to <code>convtol.activeset</code> to obtain reliable
-convergence.</p></td>
+respective changes to <code>convtol.activeset</code> and/or
+<code>zero.threshold.searchdir</code> to obtain reliable convergence.</p></td>
     </tr>
     <tr>
       <th>convtol.activeset</th>
@@ -172,14 +173,23 @@ convergence criterion is satisfied, as determined by
 <code>convtol.sqp</code>.</p></td>
     </tr>
     <tr>
-      <th>zero.threshold</th>
+      <th>zero.threshold.solution</th>
       <td><p>A small, non-negative number used to
 determine the "active set"; that is, it determines which entries of
 the solution are exactly zero. Any entries that are less than or
-equal to <code>zero.threshold</code> are considered to be exactly
-zero. Larger values of <code>zero.threshold</code> may lead to speedups
-for matrices with many columns, at the (slight) risk of prematurely
-zeroing some co-ordinates.</p></td>
+equal to <code>zero.threshold.solution</code> are considered to be
+exactly zero. Larger values of <code>zero.threshold.solution</code> may
+lead to speedups for matrices with many columns, at the (slight)
+risk of prematurely zeroing some co-ordinates.</p></td>
+    </tr>
+    <tr>
+      <th>zero.threshold.searchdir</th>
+      <td><p>A small, non-negative number used
+to determine when the search direction in the active-set step is
+considered "small enough". Note that changes to this tolerance
+parameter can affect how reliably the SQP convergence criterion is
+satisfied, as determined by <code>convtol.sqp</code>, so choose this
+parameter carefully.</p></td>
     </tr>
     <tr>
       <th>eps</th>
@@ -219,9 +229,9 @@ between two successive iterations; "max(rdual)", the maximum "dual
 residual" in the Karush-Kuhn-Tucker (KKT) conditions, which is used
 to monitor convergence (see <code>convtol.sqp</code>); "nnz", the number
 of non-zero co-ordinates in the current estimate, as determined by
-<code>zero.threshold</code>, "nqp", the number of (inner loop) active-set
-iterations taken to solve the quadratic subproblem; "nls", the
-number of iterations in the backtracking line search.</p></td>
+<code>zero.threshold.solution</code>, "nqp", the number of (inner loop)
+active-set iterations taken to solve the quadratic subproblem;
+"nls", the number of iterations in the backtracking line search.</p></td>
     </tr>
     <tr>
       <th>x</th>
@@ -315,12 +325,13 @@ mixsqp returns a list object with the following list elements:
 <span class='no'>m</span>  <span class='kw'>&lt;-</span> <span class='fl'>10</span>
 <span class='no'>w</span>  <span class='kw'>&lt;-</span> <span class='fu'>rep</span>(<span class='fl'>1</span>,<span class='no'>n</span>)/<span class='no'>n</span>
 <span class='no'>L</span>  <span class='kw'>&lt;-</span> <span class='fu'><a href='simulatemixdata.html'>simulatemixdata</a></span>(<span class='no'>n</span>,<span class='no'>m</span>)$<span class='no'>L</span>
-<span class='no'>out.mixsqp</span> <span class='kw'>&lt;-</span> <span class='fu'>mixsqp</span>(<span class='no'>L</span>,<span class='no'>w</span>)</div><div class='output co'>#&gt; Running mix-SQP algorithm 0.1-50 on 100000 x 10 matrix
-#&gt; convergence tol. (SQP):  1.0e-08
-#&gt; max. iter (SQP):         1000
-#&gt; conv. tol. (active-set): 1.0e-10
-#&gt; max. iter (active-set):  100
-#&gt; zero threshold:          1.0e-06
+<span class='no'>out.mixsqp</span> <span class='kw'>&lt;-</span> <span class='fu'>mixsqp</span>(<span class='no'>L</span>,<span class='no'>w</span>)</div><div class='output co'>#&gt; Running mix-SQP algorithm 0.1-52 on 100000 x 10 matrix
+#&gt; convergence tol. (SQP):     1.0e-08
+#&gt; conv. tol. (active-set):    1.0e-10
+#&gt; zero threshold (solution):  1.0e-06
+#&gt; zero thresh. (search dir.): 1.0e-08
+#&gt; max. iter (SQP):            1000
+#&gt; max. iter (active-set):     100
 #&gt; iter    objective max(rdual) nnz max.diff nqp nls
 #&gt;    1 +7.72664e-01 +2.756e-01  10       NA  NA  NA
 #&gt;    2 +6.53047e-01 +1.054e-01   5 3.38e-01  13   1
