@@ -1,8 +1,6 @@
 to do
 =====
 
-+ Run tests conditional on availability of the REBayes package.
-
 + Add codecov.
 
 + Change norm(p,2) <= convtolactiveset stopping criterion for

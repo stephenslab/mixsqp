@@ -19,8 +19,8 @@ test_that(paste("mix-SQP gives correct solutions for 2 x 2 and",
   
   # In this second example, any solution of the form (x1,x2,0) gives
   # the same value for the objective.
-  L    <- rbind(c(1,1,e),
-                c(1,1,1))
+  L <- rbind(c(1,1,e),
+             c(1,1,1))
   capture.output(out1 <- mixsqp(L,x0 = c(1,1,0)))
   capture.output(out2 <- mixsqp(L,x0 = c(0,1,1)))
   expect_equal(out1$status,mixsqp.status.converged)
@@ -32,9 +32,6 @@ test_that(paste("mix-SQP gives correct solutions for 2 x 2 and",
 test_that(paste("mix-SQP and KWDual return the same solution for",
                 "1000 x 10 likelihood matrix"),{
 
-  # The REBayes package is required to run this test.
-  skip_if_not_installed("REBayes")
-                    
   # Simulate a 1,000 x 10 likelihood matrix. Note that I add row and
   # column names to the matrix to check that the column names are
   # retained in the solution vector.
@@ -45,16 +42,19 @@ test_that(paste("mix-SQP and KWDual return the same solution for",
   rownames(L) <- paste0("x",1:n)
   colnames(L) <- paste0("s",1:m)
   
-  # Apply KWDual and mix-SQP to the data set.
-  out1 <- mixkwdual(L)
-  capture.output(out2 <- mixsqp(L))
-
-  # The outputted solutions, and the objective values at those
-  # solutions, should be nearly identical. Also check that the
-  # solution entries are labeled correctly.
-  expect_equal(out2$status,mixsqp.status.converged)
+  # Apply mix-SQP solver to the data set. Check that the solution
+  # entries are labeled correctly.
+  capture.output(out1 <- mixsqp(L))
+  expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
   expect_equal(names(out1$x),colnames(L))
+
+  # Apply KWDual solver to the data set. 
+  skip_if_not_installed("REBayes")
+  out2 <- mixkwdual(L)
   expect_equal(names(out2$x),colnames(L))
+
+  # The outputted solutions, and # the objective values at those
+  # solutions, should be nearly identical.
   expect_equal(out1$x,out2$x,tolerance = 1e-6)
   expect_equal(out1$value,out2$value,tolerance = 1e-8)
 })
@@ -72,13 +72,16 @@ test_that(paste("mix-SQP & KWDual return the same solution for",
   w <- runif(1000)
   w <- w/sum(w)
   
-  # Apply KWDual and mix-SQP to the data set.
-  out1 <- mixkwdual(L,w)
-  capture.output(out2 <- mixsqp(L,w))
+  # Apply mix-SQP solver to the data set.
+  capture.output(out1 <- mixsqp(L,w))
+  expect_equal(out1$status,mixsqp::mixsqp.status.converged)
 
+  # Apply KWDual solver to the data set.
+  skip_if_not_installed("REBayes")
+  out2 <- mixkwdual(L,w)
+  
   # The outputted solutions, and the objective values at those
   # solutions, should be nearly identical.
-  expect_equal(out2$status,mixsqp.status.converged)
   expect_equal(out1$x,out2$x,tolerance = 2e-8)
   expect_equal(out1$value,out2$value,tolerance = 2e-8)
 })
@@ -101,8 +104,8 @@ test_that(paste("mix-SQP returns the same solution regardless whether",
 
   # The outputted solutions should be nearly identical (although the
   # values of the objectives will be different).
-  expect_equal(out1$status,mixsqp.status.converged)
-  expect_equal(out2$status,mixsqp.status.converged)
+  expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
+  expect_equal(out2$status,mixsqp:::mixsqp.status.converged)
   expect_equal(out1$x,out2$x,tolerance = 1e-8)
 })
                     
@@ -116,7 +119,7 @@ test_that(paste("mix-SQP gives correct solution for Beckett & Diaconis",
   # The mix-SQP solution should be very close to the KWDual solution
   # and, more importantly, the quality of the mix-SQP solution should
   # be higher.
-  expect_equal(out$status,mixsqp.status.converged)
+  expect_equal(out$status,mixsqp:::mixsqp.status.converged)
   expect_equal(tacks$x,out$x,tolerance = 5e-4)
   expect_lte(out$value,mixobjective(L,tacks$x,w))
 })
@@ -139,21 +142,22 @@ test_that(paste("mix-SQP gives correct solution for \"short and fat\" matrix,",
                 "necessarily s.p.d."),{
   set.seed(1)
   L    <- matrix(rgamma(1000,1,1),nrow = 10)
-  out1 <- mixkwdual(L)
-  capture.output(out2 <- mixsqp(L))
-  capture.output(out3 <- mixsqp(L,delta = 0))
-  
-  # The mix-SQP solution should be very close to the REBayes solution
+  capture.output(out1 <- mixsqp(L))
+  capture.output(out2 <- mixsqp(L,delta = 0))
+  expect_equal(out1$status,mixsqp.status.converged)
+  expect_equal(out2$status,mixsqp.status.converged)
+
+  # The mix-SQP solution should be very close to the KWDual solution
   # and, more importantly, the quality of the mix-SQP solution should
   # be very similar, even when the Newton search direction in the
   # active-set method is not necessarily unique (i.e., the Hessian is
   # not s.p.d.).
-  expect_equal(out2$status,mixsqp.status.converged)
-  expect_equal(out3$status,mixsqp.status.converged)
-  expect_equal(out1$x,out2$x,tolerance = 1e-8)
+  skip_if_not_installed("REBayes")
+  out3 <- mixkwdual(L)
   expect_equal(out1$x,out3$x,tolerance = 1e-8)
-  expect_equal(out1$value,out2$value,tolerance = 1e-8)
+  expect_equal(out2$x,out3$x,tolerance = 1e-8)
   expect_equal(out1$value,out3$value,tolerance = 1e-8)
+  expect_equal(out2$value,out3$value,tolerance = 1e-8)
 })
 
 # This test comes from Issue #5.
@@ -162,26 +166,27 @@ test_that(paste("mix-SQP converges, and outputs correct solution, for example",
 
   # Generate the data set for testing.
   set.seed(1)
-  n    <- 1e5
-  m    <- 12
-  L    <- simulatemixdata(n,m)$L
+  n <- 1e5
+  m <- 12
+  L <- simulatemixdata(n,m)$L
 
   # Here we also check convergence for the case when no numerical
   # stability measure is used for the active-set linear systems (i.e.,
-  # delta = 0).
-  out1 <- mixkwdual(L)
-  capture.output(out2 <- mixsqp(L,convtol.sqp = 0,maxiter.sqp = 20))
-  capture.output(out3 <- mixsqp(L))
-  capture.output(out4 <- mixsqp(L,delta = 0))
+  # delta = 0). Also, when convtol.sqp = 0, the mix-SQP algorithm
+  # should report that it failed to converge in this example.
+  capture.output(out1 <- mixsqp(L,convtol.sqp = 0,maxiter.sqp = 20))
+  capture.output(out2 <- mixsqp(L))
+  capture.output(out3 <- mixsqp(L,delta = 0))
+  expect_equal(out1$status,"exceeded maximum number of iterations")
+  expect_equal(out2$status,mixsqp.status.converged)
+  expect_equal(out3$status,mixsqp.status.converged)
   
   # When the mix-SQP iterates converge, they should be very close to
-  # the REBayes solution, and when convtol.sqp = 0, the mix-SQP
-  # algorithm should report that it failed to converge in this
-  # example.
-  expect_equal(out2$status,"exceeded maximum number of iterations")
-  expect_equal(out3$status,mixsqp.status.converged)
-  expect_equal(out4$status,mixsqp.status.converged)
-  expect_equal(out1$x,out3$x,tolerance = 1e-7)
-  expect_equal(out1$x,out4$x,tolerance = 1e-7)
+  # the KWDual solution.
+  skip_if_not_installed("REBayes")
+  out4 <- mixkwdual(L)
+  expect_equal(out2$x,out4$x,tolerance = 1e-7)
+  expect_equal(out3$x,out4$x,tolerance = 1e-7)
+  expect_equal(out1$value,out2$value,tolerance = 1e-8)
   expect_equal(out1$value,out3$value,tolerance = 1e-8)
 })
