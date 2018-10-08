@@ -33,10 +33,10 @@ double backtrackinglinesearch (double f, const arma::mat& L,
 // SQP algorithm for computing a maximum-likelihood estimate of a
 // mixture model. For more information, see the help and comments
 // accompanying the mixsqp R function and, in particular, see how
-// mixSQP_rcpp is called inside the mixSQP function.
+// mixsqp_rcpp is called inside the mixsqp function.
 // 
 // [[Rcpp::export]]
-List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0, 
+List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0, 
                   double convtolsqp, double convtolactiveset,
 		  double zerothreshold, double eps, double delta,
 		  int maxitersqp, int maxiteractiveset, bool verbose) {
@@ -48,10 +48,10 @@ List mixSQP_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP 0.1-49 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP algorithm 0.1-50 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):  %0.1e\n",convtolsqp);
-    Rprintf("conv. tol. (active-set): %0.1e\n",convtolactiveset);
     Rprintf("max. iter (SQP):         %d\n",maxitersqp);
+    Rprintf("conv. tol. (active-set): %0.1e\n",convtolactiveset);
     Rprintf("max. iter (active-set):  %d\n",maxiteractiveset);
     Rprintf("zero threshold:          %0.1e\n",zerothreshold);
   }

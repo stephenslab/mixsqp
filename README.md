@@ -1,10 +1,10 @@
-# mixSQP: R package for fast maximum-likelihood estimation of mixture proportions using sequential quadratic programming
+# mixsqp: R package for fast maximum-likelihood estimation of mixture proportions using sequential quadratic programming
 
-[![Travis Build Status](https://travis-ci.org/stephenslab/mixSQP.svg?branch=master)](https://travis-ci.org/stephenslab/mixSQP)
+[![Travis Build Status](https://travis-ci.org/stephenslab/mixsqp.svg?branch=master)](https://travis-ci.org/stephenslab/mixsqp)
 [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/i8744qet66w5uhe2?svg=true)](https://ci.appveyor.com/project/pcarbo/mixsqp)
-[![codecov](https://codecov.io/gh/stephenslab/mixSQP/branch/master/graph/badge.svg)](https://codecov.io/gh/stephenslab/mixSQP)
+[![codecov](https://codecov.io/gh/stephenslab/mixsqp/branch/master/graph/badge.svg)](https://codecov.io/gh/stephenslab/mixsqp)
 
-The mixSQP R package provides algorithms based on [sequential
+The mixsqp R package provides algorithms based on [sequential
 quadratic programming][sqp] for maximum likelihood estimation of the
 mixture proportions in a finite mixture model where the component
 densities are known. The SQP algorithm is expected to obtain solutions
@@ -13,20 +13,19 @@ interior-point solver (called via the "KWDual" function in the
 [REBayes package][rebayes]), and is expected to compute these
 solutions much more quickly in large data sets.
 
-For more details on the mixSQP algorithm, please see [our paper on
+For more details on the SQP algorithm, please see [our paper on
 arXiv][arxiv-paper].
 
-See also the [Julia implementation of mixSQP][mixsqp-julia], which is
-currently faster than the R implementation, particularly for large
-data sets.
+See also the [Julia implementation][mixsqp-julia], which is currently
+faster than the R implementation, particularly for large data sets.
 
 If you find a bug, or you have a question or feedback on our work,
 please post an [issue][issues].
 
 ## Citing this work
 
-If you find that the mixSQP package, or any of the source code in this
-repository, is useful for your work, please cite our paper:
+If you find the mixsqp package or any of the source code in this
+repository useful for your work, please cite our paper:
 
 > Youngseok Kim, Peter Carbonetto, Matthew Stephens and Mihai
 > Anitescu. *A fast algorithm for maximum likelihood estimation of
@@ -49,13 +48,13 @@ This command should automatically retrieve and install the ashr
 package from Github. If it does not, install ashr separately using
 devtools:
 
-To install the latest version of the mixSQP package from GitHub,
+To install the latest version of the mixsqp package from GitHub,
 use [devtools][devtools]:
 
 ```R
 install.packages("devtools")
 library(devtools)
-install_github("youngseok-kim/mixsqp",build_vignettes = TRUE,
+install_github("stephenslab/mixsqp",build_vignettes = TRUE,
                upgrade_dependencies = FALSE)
 ```
 
@@ -64,16 +63,16 @@ they are not installed already.
 
 Alternatively, if you have cloned the repository locally, you can
 install the package with the `install_local` function from
-devtools. Assuming your working directory contains the mixSQP
+devtools. Assuming your working directory contains the mixsqp
 repository, run this code to install the package:
 
 ```R
 library(devtools)
-list.files(pattern = "mixSQP") # Should output "mixSQP".
-nstall_local("mixSQP",build_vignettes = TRUE,upgrade_dependencies = FALSE)
+list.files(pattern = "mixsqp") # Should output "mixsqp".
+install_local("mixsqp",build_vignettes = TRUE,upgrade_dependencies = FALSE)
 ```
 
-**Important note:** Compiling the mixSQP package from source will
+**Important note:** Compiling the mixsqp package from source will
 require a C++ compiler setup that is appropriate for the the R
 installed on your computer. For details, refer to the
 [CRAN documentation][cran]. For Mac computers, see
@@ -83,13 +82,13 @@ installed on your computer. For details, refer to the
 
 ### Testing the package
 
-To install and test the mixSQP R package, run the following commands
+To install and test the mixsqp R package, run the following commands
 in the shell:
 
 ```bash
-R CMD build mixSQP
-R CMD INSTALL mixSQP_0.1-49.tar.gz
-R CMD check --as-cran mixSQP_0.1-49.tar.gz
+R CMD build mixsqp
+R CMD INSTALL mixsqp_0.1-50.tar.gz
+R CMD check --as-cran mixsqp_0.1-50.tar.gz
 ```
 
 Note that these commands require that the dependencies have already

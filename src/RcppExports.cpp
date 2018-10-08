@@ -6,9 +6,9 @@
 
 using namespace Rcpp;
 
-// mixSQP_rcpp
-List mixSQP_rcpp(const arma::mat& L, const arma::vec& w, const arma::vec& x0, double convtolsqp, double convtolactiveset, double zerothreshold, double eps, double delta, int maxitersqp, int maxiteractiveset, bool verbose);
-RcppExport SEXP _mixSQP_mixSQP_rcpp(SEXP LSEXP, SEXP wSEXP, SEXP x0SEXP, SEXP convtolsqpSEXP, SEXP convtolactivesetSEXP, SEXP zerothresholdSEXP, SEXP epsSEXP, SEXP deltaSEXP, SEXP maxitersqpSEXP, SEXP maxiteractivesetSEXP, SEXP verboseSEXP) {
+// mixsqp_rcpp
+List mixsqp_rcpp(const arma::mat& L, const arma::vec& w, const arma::vec& x0, double convtolsqp, double convtolactiveset, double zerothreshold, double eps, double delta, int maxitersqp, int maxiteractiveset, bool verbose);
+RcppExport SEXP _mixsqp_mixsqp_rcpp(SEXP LSEXP, SEXP wSEXP, SEXP x0SEXP, SEXP convtolsqpSEXP, SEXP convtolactivesetSEXP, SEXP zerothresholdSEXP, SEXP epsSEXP, SEXP deltaSEXP, SEXP maxitersqpSEXP, SEXP maxiteractivesetSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -23,17 +23,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type maxitersqp(maxitersqpSEXP);
     Rcpp::traits::input_parameter< int >::type maxiteractiveset(maxiteractivesetSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(mixSQP_rcpp(L, w, x0, convtolsqp, convtolactiveset, zerothreshold, eps, delta, maxitersqp, maxiteractiveset, verbose));
+    rcpp_result_gen = Rcpp::wrap(mixsqp_rcpp(L, w, x0, convtolsqp, convtolactiveset, zerothreshold, eps, delta, maxitersqp, maxiteractiveset, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_mixSQP_mixSQP_rcpp", (DL_FUNC) &_mixSQP_mixSQP_rcpp, 11},
+    {"_mixsqp_mixsqp_rcpp", (DL_FUNC) &_mixsqp_mixsqp_rcpp, 11},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_mixSQP(DllInfo *dll) {
+RcppExport void R_init_mixsqp(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

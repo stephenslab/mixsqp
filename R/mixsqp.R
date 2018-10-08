@@ -1,27 +1,27 @@
-# Possible convergence status messages in mixSQP.
+# Possible convergence status messages in mixsqp.
 mixsqp.status.converged      <- "converged to optimal solution"
 mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 
 #' @title Solution to "Mixture Optimization" Problem
 #'
-#' @description \code{mixSQP} and \code{mixKWDual} can be used to
+#' @description \code{mixsqp} and \code{mixkwdual} can be used to
 #'   compute maximum-likelihood estimates of mixture proportions in a
 #'   (finite) mixture model, or it can be used more generally to solve
 #'   the a constrained, convex optimization problem of the form given
-#'   below (see "Details"). \code{mixSQP} uses a Sequential Quadatric
+#'   below (see "Details"). \code{mixsqp} uses a Sequential Quadatric
 #'   Programming (SQP) approach to solve a slightly modified primal
 #'   formulation of the convex optimization problem. See "References"
 #'   for more details about the SQP algorithm and the motivation behind
-#'   it. \code{mixKWDual} uses the MOSEK interior-point (IP) algorithm
+#'   it. \code{mixkwdual} uses the MOSEK interior-point (IP) algorithm
 #'   to solve a dual formulation of the original problem; see
 #'   \code{\link[REBayes]{KWDual}} for details.
 #'
 #' @details Here is a mathematical description of the constrained,
-#'   convex optimization problem solved by \code{mixSQP} and
-#'   \code{mixKWDual}. Let \eqn{L} be a matrix with \eqn{n} rows and
+#'   convex optimization problem solved by \code{mixsqp} and
+#'   \code{mixkwdual}. Let \eqn{L} be a matrix with \eqn{n} rows and
 #'   \eqn{m} rows containing only non-negative entries, and let \eqn{w =
 #'   (w_1, \ldots, w_n)} be a matrix of non-negative "weights" that sum
-#'   to 1. mixSQP computes the value of vector \eqn{x = (x_1, \ldots,
+#'   to 1. \code{mixsqp} computes the value of vector \eqn{x = (x_1, \ldots,
 #'   x_m)} minimizing the following objective function, \deqn{f(x) =
 #'   -1/n \sum_{j=1}^n w_j log (\sum_{k=1}^m L_{jk} x_k),} subject to
 #'   the constraint that \eqn{x} lie within the simplex; that is, all
@@ -30,9 +30,9 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #'   used to solve this optimization problem, but it is intolerably slow
 #'   in many interesting cases.
 #'
-#'   \code{mixSQP} is implemented using the Armadillo C++ linear
+#'   \code{mixsqp} is implemented using the Armadillo C++ linear
 #'   algebra library, which can automatically take advantage of
-#'   multithreaded matrix computations to speed up \code{mixSQP} for
+#'   multithreaded matrix computations to speed up \code{mixsqp} for
 #'   large \code{L} matrices, but only when R has been configured with a
 #'   multithreaded BLAS/LAPACK library (e.g., OpenBLAS).
 #'
@@ -118,7 +118,7 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #' @return \code{mixobjective} returns the value of the (unmodified)
 #' objective at \code{x}.
 #'
-#' \code{mixKWDual} returns a list object with the following
+#' \code{mixkwdual} returns a list object with the following
 #' list elements:
 #'
 #' \item{x}{The estimated solution to the convex optimization problem.}
@@ -131,7 +131,7 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #' For more information on this output, see
 #' \code{\link[REBayes]{KWDual}} and \code{\link[Rmosek]{mosek}}.
 #'
-#' \code{mixSQP} returns a list object with the following list elements:
+#' \code{mixsqp} returns a list object with the following list elements:
 #'
 #' \item{x}{The estimated solution to the convex optimization problem.}
 #'
@@ -169,18 +169,18 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #' m  <- 10
 #' w  <- rep(1,n)/n
 #' L  <- simulatemixdata(n,m)$L
-#' out.mixsqp <- mixSQP(L,w)
-#' out.kwdual <- mixKWDual(L,w)
+#' out.mixsqp <- mixsqp(L,w)
+#' out.kwdual <- mixkwdual(L,w)
 #' print(mixobjective(L,out.mixsqp$x,w),digits = 16)
 #' print(mixobjective(L,out.kwdual$x,w),digits = 16)
 #' 
-#' @useDynLib mixSQP
+#' @useDynLib mixsqp
 #' 
 #' @importFrom Rcpp evalCpp
 #' 
 #' @export
 #' 
-mixSQP <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)), 
+mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)), 
                     convtol.sqp = 1e-8, convtol.activeset = 1e-10,
                     zero.threshold = 1e-6, eps = .Machine$double.eps,
                     delta = 1e-10, maxiter.sqp = 1000,
@@ -227,7 +227,7 @@ mixSQP <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # SOLVE OPTIMIZATION PROBLEM USING mix-SQP
   # ----------------------------------------
-  out <- mixSQP_rcpp(L,w,x0,convtol.sqp,convtol.activeset,zero.threshold,
+  out <- mixsqp_rcpp(L,w,x0,convtol.sqp,convtol.activeset,zero.threshold,
                      eps,delta,maxiter.sqp,maxiter.activeset,verbose)
   
   # Get the algorithm convergence status. The convention is that

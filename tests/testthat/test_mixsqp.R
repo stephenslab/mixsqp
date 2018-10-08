@@ -1,35 +1,35 @@
-context("mixSQP")
+context("mixsqp")
 
-test_that("Version number in mixSQP with verbose = TRUE is correct",{
+test_that("Version number in mixsqp with verbose = TRUE is correct",{
   data(tacks)
-  out <- capture.output(mixSQP(tacks$L,tacks$w))
-  x   <- unlist(strsplit(out[1]," "))[[3]]
-  expect_equal(packageDescription("mixSQP")$Version,x)
+  out <- capture.output(mixsqp(tacks$L,tacks$w))
+  x   <- unlist(strsplit(out[1]," "))[4]
+  expect_equal(packageDescription("mixsqp")$Version,x)
 })
 
-test_that(paste("mixSQP gives correct solutions for 2 x 2 and",
+test_that(paste("mix-SQP gives correct solutions for 2 x 2 and",
                 "2 x 3 likelihood matrices"),{
   e <- 1e-8
 
   # In this first example, the correct solution is (1/2,1/2).
   L   <- rbind(c(1,e),
                c(e,1))
-  capture.output(out <- mixSQP(L))
+  capture.output(out <- mixsqp(L))
   expect_equal(out$x,c(0.5,0.5),tolerance = 1e-8)
   
   # In this second example, any solution of the form (x1,x2,0) gives
   # the same value for the objective.
   L    <- rbind(c(1,1,e),
                 c(1,1,1))
-  capture.output(out1 <- mixSQP(L,x0 = c(1,1,0)))
-  capture.output(out2 <- mixSQP(L,x0 = c(0,1,1)))
+  capture.output(out1 <- mixsqp(L,x0 = c(1,1,0)))
+  capture.output(out2 <- mixsqp(L,x0 = c(0,1,1)))
   expect_equal(out1$status,mixsqp.status.converged)
   expect_equal(out2$status,mixsqp.status.converged)
   expect_equal(out1$x[3],0,tolerance = 1e-8)
   expect_equal(out2$x[3],0,tolerance = 1e-8)
 })
 
-test_that(paste("mixSQP and KWDual return the same solution for",
+test_that(paste("mix-SQP and KWDual return the same solution for",
                 "1000 x 10 likelihood matrix"),{
 
   # The REBayes package is required to run this test.
@@ -45,9 +45,9 @@ test_that(paste("mixSQP and KWDual return the same solution for",
   rownames(L) <- paste0("x",1:n)
   colnames(L) <- paste0("s",1:m)
   
-  # Apply KWDual and mixSQP to the data set.
-  out1 <- mixKWDual(L)
-  capture.output(out2 <- mixSQP(L))
+  # Apply KWDual and mix-SQP to the data set.
+  out1 <- mixkwdual(L)
+  capture.output(out2 <- mixsqp(L))
 
   # The outputted solutions, and the objective values at those
   # solutions, should be nearly identical. Also check that the
@@ -59,7 +59,7 @@ test_that(paste("mixSQP and KWDual return the same solution for",
   expect_equal(out1$value,out2$value,tolerance = 1e-8)
 })
 
-test_that(paste("mixSQP & KWDual return the same solution for",
+test_that(paste("mix-SQP & KWDual return the same solution for",
                 "1000 x 10 likelihood matrix with unequal row weights"),{
 
   # The REBayes package is required to run this test.
@@ -72,9 +72,9 @@ test_that(paste("mixSQP & KWDual return the same solution for",
   w <- runif(1000)
   w <- w/sum(w)
   
-  # Apply KWDual and mixSQP to the data set.
-  out1 <- mixKWDual(L,w)
-  capture.output(out2 <- mixSQP(L,w))
+  # Apply KWDual and mix-SQP to the data set.
+  out1 <- mixkwdual(L,w)
+  capture.output(out2 <- mixsqp(L,w))
 
   # The outputted solutions, and the objective values at those
   # solutions, should be nearly identical.
@@ -83,7 +83,7 @@ test_that(paste("mixSQP & KWDual return the same solution for",
   expect_equal(out1$value,out2$value,tolerance = 2e-8)
 })
 
-test_that(paste("mixSQP returns the same solution regardless whether",
+test_that(paste("mix-SQP returns the same solution regardless whether",
                 "the likelihood matrix is normalized"),{
   
   # Simulate two 100 x 10 likelihood matrices---one normalized and one
@@ -95,9 +95,9 @@ test_that(paste("mixSQP returns the same solution regardless whether",
   w  <- runif(100)
   w  <- w/sum(w)
 
-  # Apply mixSQP to normalized and unnormalized data sets.
-  capture.output(out1 <- mixSQP(L1,w))
-  capture.output(out2 <- mixSQP(L2,w))
+  # Apply mix-SQP to normalized and unnormalized data sets.
+  capture.output(out1 <- mixsqp(L1,w))
+  capture.output(out2 <- mixsqp(L2,w))
 
   # The outputted solutions should be nearly identical (although the
   # values of the objectives will be different).
@@ -106,15 +106,15 @@ test_that(paste("mixSQP returns the same solution regardless whether",
   expect_equal(out1$x,out2$x,tolerance = 1e-8)
 })
                     
-test_that(paste("mixSQP gives correct solution for Beckett & Diaconis",
+test_that(paste("mix-SQP gives correct solution for Beckett & Diaconis",
                 "tack rolling example"),{
   data(tacks)
   L <- tacks$L
   w <- tacks$w
-  capture.output(out <- mixSQP(L,w))
+  capture.output(out <- mixsqp(L,w))
 
-  # The mixSQP solution should be very close to the REBayes solution
-  # and, more importantly, the quality of the mixSQP solution should
+  # The mix-SQP solution should be very close to the KWDual solution
+  # and, more importantly, the quality of the mix-SQP solution should
   # be higher.
   expect_equal(out$status,mixsqp.status.converged)
   expect_equal(tacks$x,out$x,tolerance = 5e-4)
@@ -124,27 +124,27 @@ test_that(paste("mixSQP gives correct solution for Beckett & Diaconis",
 # This is mainly to test post-processing of the output when the
 # algorithm reaches the maximum number of iterations. This example is
 # used in one of the other tests above.
-test_that("mixSQP does not report an error with convergence failure",{
+test_that("mix-SQP does not report an error with convergence failure",{
   e <- 1e-8
   L <- rbind(c(1,1,e),
              c(1,1,1))
-  capture_output(out <- mixSQP(L,x0 = c(0,1,1),maxiter.sqp = 3))
+  capture_output(out <- mixsqp(L,x0 = c(0,1,1),maxiter.sqp = 3))
   expect_equal(out$status,mixsqp.status.didnotconverge)
   expect_equal(dim(out$data),c(3,6))
 })
 
 # This test comes from Issue #3.
-test_that(paste("mixSQP gives correct solution for \"short and fat\" matrix,",
+test_that(paste("mix-SQP gives correct solution for \"short and fat\" matrix,",
                 "even when linear systems in active-set method are not",
                 "necessarily s.p.d."),{
   set.seed(1)
   L    <- matrix(rgamma(1000,1,1),nrow = 10)
-  out1 <- mixKWDual(L)
-  capture.output(out2 <- mixSQP(L))
-  capture.output(out3 <- mixSQP(L,delta = 0))
+  out1 <- mixkwdual(L)
+  capture.output(out2 <- mixsqp(L))
+  capture.output(out3 <- mixsqp(L,delta = 0))
   
-  # The mixSQP solution should be very close to the REBayes solution
-  # and, more importantly, the quality of the mixSQP solution should
+  # The mix-SQP solution should be very close to the REBayes solution
+  # and, more importantly, the quality of the mix-SQP solution should
   # be very similar, even when the Newton search direction in the
   # active-set method is not necessarily unique (i.e., the Hessian is
   # not s.p.d.).
@@ -157,7 +157,7 @@ test_that(paste("mixSQP gives correct solution for \"short and fat\" matrix,",
 })
 
 # This test comes from Issue #5.
-test_that(paste("mixSQP converges, and outputs correct solution, for example",
+test_that(paste("mix-SQP converges, and outputs correct solution, for example",
                 "in which the \"dual residual\" never reaches exactly zero"),{
 
   # Generate the data set for testing.
@@ -169,13 +169,13 @@ test_that(paste("mixSQP converges, and outputs correct solution, for example",
   # Here we also check convergence for the case when no numerical
   # stability measure is used for the active-set linear systems (i.e.,
   # delta = 0).
-  out1 <- mixKWDual(L)
-  capture.output(out2 <- mixSQP(L,convtol.sqp = 0,maxiter.sqp = 20))
-  capture.output(out3 <- mixSQP(L))
-  capture.output(out4 <- mixSQP(L,delta = 0))
+  out1 <- mixkwdual(L)
+  capture.output(out2 <- mixsqp(L,convtol.sqp = 0,maxiter.sqp = 20))
+  capture.output(out3 <- mixsqp(L))
+  capture.output(out4 <- mixsqp(L,delta = 0))
   
-  # When the mixSQP iterates converge, they should be very close to
-  # the REBayes solution, and when convtol.sqp = 0, the mixSQP
+  # When the mix-SQP iterates converge, they should be very close to
+  # the REBayes solution, and when convtol.sqp = 0, the mix-SQP
   # algorithm should report that it failed to converge in this
   # example.
   expect_equal(out2$status,"exceeded maximum number of iterations")

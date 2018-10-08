@@ -1,6 +1,6 @@
-#' @rdname mixSQP
+#' @rdname mixsqp
 #'
-#' @name mixSQP
+#' @name mixsqp
 #'
 #' @param x The point at which the objective is evaluated in
 #'   \code{mixobjective}; see argument \code{x0} for details.

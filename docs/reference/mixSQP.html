@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Solution to "Mixture Optimization" Problem — mixSQP • mixSQP</title>
+<title>Solution to "Mixture Optimization" Problem — mixsqp • mixsqp</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -27,17 +27,17 @@
 <script src="../pkgdown.js"></script>
   
   
-<meta property="og:title" content="Solution to "Mixture Optimization" Problem — mixSQP" />
+<meta property="og:title" content="Solution to "Mixture Optimization" Problem — mixsqp" />
 
-<meta property="og:description" content="mixSQP and mixKWDual can be used to
+<meta property="og:description" content="mixsqp and mixkwdual can be used to
   compute maximum-likelihood estimates of mixture proportions in a
   (finite) mixture model, or it can be used more generally to solve
   the a constrained, convex optimization problem of the form given
-  below (see "Details"). mixSQP uses a Sequential Quadatric
+  below (see "Details"). mixsqp uses a Sequential Quadatric
   Programming (SQP) approach to solve a slightly modified primal
   formulation of the convex optimization problem. See "References"
   for more details about the SQP algorithm and the motivation behind
-  it. mixKWDual uses the MOSEK interior-point (IP) algorithm
+  it. mixkwdual uses the MOSEK interior-point (IP) algorithm
   to solve a dual formulation of the original problem; see
   KWDual for details." />
 <meta name="twitter:card" content="summary" />
@@ -63,7 +63,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">mixSQP</a>
+      <a class="navbar-brand" href="../index.html">mixsqp</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
@@ -97,27 +97,27 @@
     </div>
 
     
-    <p><code>mixSQP</code> and <code>mixKWDual</code> can be used to
+    <p><code>mixsqp</code> and <code>mixkwdual</code> can be used to
   compute maximum-likelihood estimates of mixture proportions in a
   (finite) mixture model, or it can be used more generally to solve
   the a constrained, convex optimization problem of the form given
-  below (see "Details"). <code>mixSQP</code> uses a Sequential Quadatric
+  below (see "Details"). <code>mixsqp</code> uses a Sequential Quadatric
   Programming (SQP) approach to solve a slightly modified primal
   formulation of the convex optimization problem. See "References"
   for more details about the SQP algorithm and the motivation behind
-  it. <code>mixKWDual</code> uses the MOSEK interior-point (IP) algorithm
+  it. <code>mixkwdual</code> uses the MOSEK interior-point (IP) algorithm
   to solve a dual formulation of the original problem; see
   <code><a href='http://www.rdocumentation.org/packages/REBayes/topics/KWDual'>KWDual</a></code> for details.</p>
     
 
-    <pre class="usage"><span class='fu'>mixSQP</span>(<span class='no'>L</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)), <span class='kw'>x0</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>ncol</span>(<span class='no'>L</span>)),
+    <pre class="usage"><span class='fu'>mixsqp</span>(<span class='no'>L</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)), <span class='kw'>x0</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>ncol</span>(<span class='no'>L</span>)),
   <span class='kw'>convtol.sqp</span> <span class='kw'>=</span> <span class='fl'>1e-08</span>, <span class='kw'>convtol.activeset</span> <span class='kw'>=</span> <span class='fl'>1e-10</span>,
   <span class='kw'>zero.threshold</span> <span class='kw'>=</span> <span class='fl'>1e-06</span>, <span class='kw'>eps</span> <span class='kw'>=</span> <span class='no'>.Machine</span>$<span class='no'>double.eps</span>, <span class='kw'>delta</span> <span class='kw'>=</span> <span class='fl'>1e-10</span>,
   <span class='kw'>maxiter.sqp</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>maxiter.activeset</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
 <span class='fu'>mixobjective</span>(<span class='no'>L</span>, <span class='no'>x</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)))
 
-<span class='fu'>mixKWDual</span>(<span class='no'>L</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)), <span class='no'>...</span>)</pre>
+<span class='fu'>mixkwdual</span>(<span class='no'>L</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)), <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -239,7 +239,7 @@ number of iterations in the backtracking line search.</p></td>
     <p><code>mixobjective</code> returns the value of the (unmodified)
 objective at <code>x</code>.
 
-<code>mixKWDual</code> returns a list object with the following
+<code>mixkwdual</code> returns a list object with the following
 list elements:</p>
 <dt>x</dt><dd><p>The estimated solution to the convex optimization problem.</p></dd>
 
@@ -251,7 +251,7 @@ list elements:</p>
 For more information on this output, see
 <a href='http://www.rdocumentation.org/packages/REBayes/topics/KWDual'>KWDual</a> and <a href='http://www.rdocumentation.org/packages/Rmosek/topics/mosek'>mosek</a>.
 
-mixSQP returns a list object with the following list elements:
+mixsqp returns a list object with the following list elements:
 
 <dt>x</dt><dd><p>The estimated solution to the convex optimization problem.</p></dd>
 
@@ -271,19 +271,19 @@ mixSQP returns a list object with the following list elements:
   console output when <code>verbose = TRUE</code> as the console output
   shows some quantities that were computed after the convergence
   check in the previous iteration. The last entries of max.diff, nqp
-  and nls may not have been # assigned if the SQP algorithm converged
-  successfully (as indicated # by negative values), in which case we
-  should more appropriately # assign them missing values (NA).</p></dd>
+  and nls may not have been assigned if the SQP algorithm converged
+  successfully (as indicated by negative values), in which case we
+  should more appropriately assign them missing values (NA).</p></dd>
 
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Here is a mathematical description of the constrained,
-  convex optimization problem solved by <code>mixSQP</code> and
-  <code>mixKWDual</code>. Let \(L\) be a matrix with \(n\) rows and
+  convex optimization problem solved by <code>mixsqp</code> and
+  <code>mixkwdual</code>. Let \(L\) be a matrix with \(n\) rows and
   \(m\) rows containing only non-negative entries, and let \(w =
   (w_1, \ldots, w_n)\) be a matrix of non-negative "weights" that sum
-  to 1. mixSQP computes the value of vector \(x = (x_1, \ldots,
+  to 1. <code>mixsqp</code> computes the value of vector \(x = (x_1, \ldots,
   x_m)\) minimizing the following objective function, $$f(x) =
   -1/n \sum_{j=1}^n w_j log (\sum_{k=1}^m L_{jk} x_k),$$ subject to
   the constraint that \(x\) lie within the simplex; that is, all
@@ -291,9 +291,9 @@ mixSQP returns a list object with the following list elements:
   is equal to 1. The Expectation Maximization (EM) algorithm can be
   used to solve this optimization problem, but it is intolerably slow
   in many interesting cases.</p>
-<p><code>mixSQP</code> is implemented using the Armadillo C++ linear
+<p><code>mixsqp</code> is implemented using the Armadillo C++ linear
   algebra library, which can automatically take advantage of
-  multithreaded matrix computations to speed up <code>mixSQP</code> for
+  multithreaded matrix computations to speed up <code>mixsqp</code> for
   large <code>L</code> matrices, but only when R has been configured with a
   multithreaded BLAS/LAPACK library (e.g., OpenBLAS).</p>
     
@@ -315,25 +315,25 @@ mixSQP returns a list object with the following list elements:
 <span class='no'>m</span>  <span class='kw'>&lt;-</span> <span class='fl'>10</span>
 <span class='no'>w</span>  <span class='kw'>&lt;-</span> <span class='fu'>rep</span>(<span class='fl'>1</span>,<span class='no'>n</span>)/<span class='no'>n</span>
 <span class='no'>L</span>  <span class='kw'>&lt;-</span> <span class='fu'><a href='simulatemixdata.html'>simulatemixdata</a></span>(<span class='no'>n</span>,<span class='no'>m</span>)$<span class='no'>L</span>
-<span class='no'>out.mixsqp</span> <span class='kw'>&lt;-</span> <span class='fu'>mixSQP</span>(<span class='no'>L</span>,<span class='no'>w</span>)</div><div class='output co'>#&gt; Running mix-SQP 0.1-47 on 100000 x 10 matrix
+<span class='no'>out.mixsqp</span> <span class='kw'>&lt;-</span> <span class='fu'>mixsqp</span>(<span class='no'>L</span>,<span class='no'>w</span>)</div><div class='output co'>#&gt; Running mix-SQP algorithm 0.1-50 on 100000 x 10 matrix
 #&gt; convergence tol. (SQP):  1.0e-08
-#&gt; conv. tol. (active-set): 1.0e-10
 #&gt; max. iter (SQP):         1000
+#&gt; conv. tol. (active-set): 1.0e-10
 #&gt; max. iter (active-set):  100
 #&gt; zero threshold:          1.0e-06
-#&gt; iter    objective max.diff max(rdual) nnz nqp nls
-#&gt;    1 +7.72664e-01       NA +2.756e-01  10  NA  NA
-#&gt;    2 +6.53047e-01 3.38e-01 +1.054e-01   5  13   1
-#&gt;    3 +6.04839e-01 4.67e-02 +8.177e-01   5   8   1
-#&gt;    4 +5.99876e-01 8.23e-03 +4.844e-01   5   2   1
-#&gt;    5 +5.99756e-01 1.59e-03 +2.977e-01   5   2   1
-#&gt;    6 +5.99697e-01 4.94e-03 +1.651e-01   5   2   1
-#&gt;    7 +5.99516e-01 9.17e-03 +7.180e-02   5   2   1
-#&gt;    8 +5.99192e-01 8.85e-03 +1.964e-02   5   2   1
-#&gt;    9 +5.98988e-01 3.64e-03 +1.972e-03   5   2   1
-#&gt;   10 +5.98959e-01 4.00e-04 +2.234e-05   5   2   1
-#&gt;   11 +5.98959e-01 4.45e-06 +2.888e-09   5   2   1
-#&gt; Convergence criteria met---optimal solution found.</div><div class='input'><span class='no'>out.kwdual</span> <span class='kw'>&lt;-</span> <span class='fu'>mixKWDual</span>(<span class='no'>L</span>,<span class='no'>w</span>)
+#&gt; iter    objective max(rdual) nnz max.diff nqp nls
+#&gt;    1 +7.72664e-01 +2.756e-01  10       NA  NA  NA
+#&gt;    2 +6.53047e-01 +1.054e-01   5 3.38e-01  13   1
+#&gt;    3 +6.04839e-01 +8.177e-01   5 4.67e-02   8   1
+#&gt;    4 +5.99876e-01 +4.844e-01   5 8.23e-03   2   1
+#&gt;    5 +5.99756e-01 +2.977e-01   5 1.59e-03   2   1
+#&gt;    6 +5.99697e-01 +1.651e-01   5 4.94e-03   2   1
+#&gt;    7 +5.99516e-01 +7.180e-02   5 9.17e-03   2   1
+#&gt;    8 +5.99192e-01 +1.964e-02   5 8.85e-03   2   1
+#&gt;    9 +5.98988e-01 +1.972e-03   5 3.64e-03   2   1
+#&gt;   10 +5.98959e-01 +2.234e-05   5 4.00e-04   2   1
+#&gt;   11 +5.98959e-01 +2.888e-09   5 4.45e-06   2   1
+#&gt; Convergence criteria met---optimal solution found.</div><div class='input'><span class='no'>out.kwdual</span> <span class='kw'>&lt;-</span> <span class='fu'>mixkwdual</span>(<span class='no'>L</span>,<span class='no'>w</span>)
 <span class='fu'>print</span>(<span class='fu'>mixobjective</span>(<span class='no'>L</span>,<span class='no'>out.mixsqp</span>$<span class='no'>x</span>,<span class='no'>w</span>),<span class='kw'>digits</span> <span class='kw'>=</span> <span class='fl'>16</span>)</div><div class='output co'>#&gt; [1] 0.5989590363728408</div><div class='input'><span class='fu'>print</span>(<span class='fu'>mixobjective</span>(<span class='no'>L</span>,<span class='no'>out.kwdual</span>$<span class='no'>x</span>,<span class='no'>w</span>),<span class='kw'>digits</span> <span class='kw'>=</span> <span class='fl'>16</span>)</div><div class='output co'>#&gt; [1] 0.5989590363746571</div><div class='input'>
 </div></pre>
   </div>
