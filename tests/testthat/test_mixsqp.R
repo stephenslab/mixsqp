@@ -23,8 +23,8 @@ test_that(paste("mix-SQP gives correct solutions for 2 x 2 and",
              c(1,1,1))
   capture.output(out1 <- mixsqp(L,x0 = c(1,1,0)))
   capture.output(out2 <- mixsqp(L,x0 = c(0,1,1)))
-  expect_equal(out1$status,mixsqp.status.converged)
-  expect_equal(out2$status,mixsqp.status.converged)
+  expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
+  expect_equal(out2$status,mixsqp:::mixsqp.status.converged)
   expect_equal(out1$x[3],0,tolerance = 1e-8)
   expect_equal(out2$x[3],0,tolerance = 1e-8)
 })
@@ -74,7 +74,7 @@ test_that(paste("mix-SQP & KWDual return the same solution for",
   
   # Apply mix-SQP solver to the data set.
   capture.output(out1 <- mixsqp(L,w))
-  expect_equal(out1$status,mixsqp::mixsqp.status.converged)
+  expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
 
   # Apply KWDual solver to the data set.
   skip_if_not_installed("REBayes")
@@ -144,8 +144,8 @@ test_that(paste("mix-SQP gives correct solution for \"short and fat\" matrix,",
   L    <- matrix(rgamma(1000,1,1),nrow = 10)
   capture.output(out1 <- mixsqp(L))
   capture.output(out2 <- mixsqp(L,delta = 0))
-  expect_equal(out1$status,mixsqp.status.converged)
-  expect_equal(out2$status,mixsqp.status.converged)
+  expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
+  expect_equal(out2$status,mixsqp:::mixsqp.status.converged)
 
   # The mix-SQP solution should be very close to the KWDual solution
   # and, more importantly, the quality of the mix-SQP solution should
@@ -178,8 +178,8 @@ test_that(paste("mix-SQP converges, and outputs correct solution, for example",
   capture.output(out2 <- mixsqp(L))
   capture.output(out3 <- mixsqp(L,delta = 0))
   expect_equal(out1$status,"exceeded maximum number of iterations")
-  expect_equal(out2$status,mixsqp.status.converged)
-  expect_equal(out3$status,mixsqp.status.converged)
+  expect_equal(out2$status,mixsqp:::mixsqp.status.converged)
+  expect_equal(out3$status,mixsqp:::mixsqp.status.converged)
   
   # When the mix-SQP iterates converge, they should be very close to
   # the KWDual solution.
