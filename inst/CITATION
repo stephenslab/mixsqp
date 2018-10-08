@@ -1,4 +1,4 @@
-citHeader("To cite the mixSQP package in publications, please use:")
+citHeader("To cite the mixsqp package in publications, please use:")
 
 citEntry(entry   = "Unpublished",
          title   = 

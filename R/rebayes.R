@@ -1,12 +1,12 @@
-#' @rdname mixSQP
+#' @rdname mixsqp
 #' 
-#' @name mixSQP
+#' @name mixsqp
 #'
 #' @param ... Additional arguments passed to \code{\link[REBayes]{KWDual}}.
 #' 
 #' @export
 #' 
-mixKWDual <- function (L, w = rep(1,nrow(L)), ...)  {
+mixkwdual <- function (L, w = rep(1,nrow(L)), ...)  {
 
   # CHECK & PROCESS INPUTS
   # ----------------------

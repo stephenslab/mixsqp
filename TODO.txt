@@ -9,9 +9,6 @@ to do
   active-set method. Also replace "convtolactiveset" by
   "zero.searchdir".
 
-+ Change package name from "mixSQP" to "mixsqp" (and
-  likewise for the main functions).
-
 + Update mixSQP function call in ashr package.
 
 + Ask Jason & Jean to review package and documentation.

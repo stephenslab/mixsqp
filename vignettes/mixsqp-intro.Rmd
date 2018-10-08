@@ -8,7 +8,7 @@ output:
     before_body: header.html
     after_body: footer.html
 vignette: >
-  %\VignetteIndexEntry{mixSQP-intro}
+  %\VignetteIndexEntry{mixsqp-intro}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -26,12 +26,12 @@ function in the [REBayes package][rebayes].
 
 ## Environment set-up
 
-We begin by loading the mixSQP and Rmosek packages. (The Rmosek
+We begin by loading the mixsqp and Rmosek packages. (The Rmosek
 package is only needed to check the version of MOSEK solver being
 used.)
 
 ```{r load-pkgs, message=FALSE}
-library(mixSQP)
+library(mixsqp)
 library(Rmosek)
 ```
 
@@ -63,14 +63,14 @@ default so that the maximum entry in each row is 1.
 First, we fit the mixture model using the mix-SQP solver.
 
 ```{r fit-model-mixsqp-smaller}
-timing.sqp <- system.time(fit.sqp <- mixSQP(L))
+timing.sqp <- system.time(fit.sqp <- mixsqp(L))
 cat(sprintf("Computation took %0.2f seconds.\n",timing.sqp["elapsed"]))
 ```
 
 Next, we fit the same mixture model using the IP solver.
 
 ```{r fit-model-kwdual-smaller}
-timing.ip <- system.time(fit.ip <- mixKWDual(L))
+timing.ip <- system.time(fit.ip <- mixkwdual(L))
 cat(sprintf("Computation took %0.2f seconds.\n",timing.ip["elapsed"]))
 ```
 
@@ -101,8 +101,8 @@ dim(L)
 Now we fit the model using the two fitting algorithms.
 
 ```{r fit-model-larger}
-timing.ip  <- system.time(fit.ip  <- mixKWDual(L))
-timing.sqp <- system.time(fit.sqp <- mixSQP(L))
+timing.ip  <- system.time(fit.ip  <- mixkwdual(L))
+timing.sqp <- system.time(fit.sqp <- mixsqp(L))
 ```
 
 The mix-SQP algorithm is noticeably faster than the IP solver.
