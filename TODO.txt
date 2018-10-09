@@ -1,8 +1,0 @@
-to do
-=====
-
-+ Update mixSQP function call in ashr package.
-
-+ Ask Jason & Jean to review package and documentation.
-
-
