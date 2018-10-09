@@ -68,11 +68,20 @@ list.files(pattern = "mixsqp") # Should output "mixsqp".
 install_local("mixsqp",build_vignettes = TRUE,upgrade_dependencies = FALSE)
 ```
 
-**Important note:** Compiling the mixsqp package from source will
-require a C++ compiler setup that is appropriate for the the R
-installed on your computer. For details, refer to the
-[CRAN documentation][cran]. For Mac computers, see
-[these notes][compiling-macos].
+### Additional setup notes
+
++ Compiling the mixsqp package from source will require a C++ compiler
+setup that is appropriate for the the R installed on your
+computer. For details, refer to the [CRAN documentation][cran]. For
+Mac computers, see [these notes][compiling-macos].
+
++ To use the (optional) alternative solver, `mixkwdual`, you will need
+to install the [REBayes][rebayes] package which, in turn, requires the
+[Rmosek][mosek] package. Refer to the
+[MOSEK documentation][mosek-docs] for instructions on installing the
+Rmosek package. Once you have followed these steps, you can run
+[this example](inst/code/test.rmosek.R) to check that Rmosek is
+correctly installed.
 
 ## Developer notes
 
@@ -123,6 +132,8 @@ This project was developed by [Youngseok Kim][youngseok] at the
 [mixsqp-julia]: https://github.com/stephenslab/mixsqp-paper
 [issues]: https://github.com/youngseok-kim/mixsqp/issues
 [rebayes]: https://cran.r-project.org/package=REBayes
+[mosek]: https://www.mosek.com
+[mosek-docs]: https://www.mosek.com/documentation
 [uchicago]: https://www.uchicago.edu
 [youngseok]: https://github.com/youngseok-kim
 [peter]: https://pcarbo.github.io
