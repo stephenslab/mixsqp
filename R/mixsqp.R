@@ -2,33 +2,36 @@
 mixsqp.status.converged      <- "converged to optimal solution"
 mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 
-#' @title Solution to "Mixture Optimization" Problem
+#' @title Maximum-likelihood estimation of mixture proportions using SQP
 #'
-#' @description \code{mixsqp} and \code{mixkwdual} can be used to
-#'   compute maximum-likelihood estimates of mixture proportions in a
-#'   (finite) mixture model, or it can be used more generally to solve
-#'   the a constrained, convex optimization problem of the form given
-#'   below (see "Details"). \code{mixsqp} uses a Sequential Quadatric
-#'   Programming (SQP) approach to solve a slightly modified primal
-#'   formulation of the convex optimization problem. See "References"
-#'   for more details about the SQP algorithm and the motivation behind
-#'   it. \code{mixkwdual} uses the MOSEK interior-point (IP) algorithm
-#'   to solve a dual formulation of the original problem; see
-#'   \code{\link[REBayes]{KWDual}} for details.
+#' @description The \code{mixsqp} function uses a Sequential Quadratic
+#'   Programming (SQP) algorithm to find the maximum likelihood
+#'   estimates of mixture proportions in a (finite) mixture model. More
+#'   generally, \code{mixsqp} solves the corresponding constrained,
+#'   convex optimization problem, which is given below (see
+#'   "Details"). See "References" for more details about the SQP
+#'   algorithm.
 #'
-#' @details Here is a mathematical description of the constrained,
-#'   convex optimization problem solved by \code{mixsqp} and
-#'   \code{mixkwdual}. Let \eqn{L} be a matrix with \eqn{n} rows and
-#'   \eqn{m} rows containing only non-negative entries, and let \eqn{w =
-#'   (w_1, \ldots, w_n)} be a matrix of non-negative "weights" that sum
-#'   to 1. \code{mixsqp} computes the value of vector \eqn{x = (x_1, \ldots,
-#'   x_m)} minimizing the following objective function, \deqn{f(x) =
-#'   -\sum_{j=1}^n w_j log (\sum_{k=1}^m L_{jk} x_k),} subject to
-#'   the constraint that \eqn{x} lie within the simplex; that is, all
-#'   entries of \eqn{x} are non-negative, and the sum of these entries
-#'   is equal to 1. The Expectation Maximization (EM) algorithm can be
-#'   used to solve this optimization problem, but it is intolerably slow
-#'   in many interesting cases.
+#' @details \code{mixsqp} solves the following optimization problem.
+#'   Let \eqn{L} be a matrix with \eqn{n} rows and \eqn{m} columns
+#'   containing only non-negative entries, and let \eqn{w = (w_1,
+#'   \ldots, w_n)} be a vector of non-negative "weights". \code{mixsqp}
+#'   computes the value of vector \eqn{x = (x_1, \ldots, x_m)}
+#'   minimizing the following objective function, \deqn{f(x) =
+#'   -\sum_{j=1}^n w_j log (\sum_{k=1}^m L_{jk} x_k),} subject to the
+#'   constraint that \eqn{x} lie within the simplex; that is, the
+#'   entries of \eqn{x} are non-negative and sum to 1.
+#'   
+#'   If all weights are equal, solving this optimization problem
+#'   corresponds to finding the maximum-likelihood estimate of the
+#'   mixture proportions \eqn{x} given \eqn{n} independent data points
+#'   drawn from a mixture model with \eqn{m} components.  In this case,
+#'   \eqn{L_{jk}} is the likelihood for mixture component \eqn{k} and
+#'   data point \eqn{j}.
+#'     
+#'   The Expectation Maximization (EM) algorithm can be used to solve
+#'   this optimization problem, but it is intolerably slow in many
+#'   interesting cases, and mixsqp is much faster.
 #'
 #'   \code{mixsqp} is implemented using the Armadillo C++ linear
 #'   algebra library, which can automatically take advantage of
@@ -38,23 +41,23 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #'
 #' @param L Matrix specifying the optimization problem to be solved.
 #'   In the context of mixture-model fitting, \code{L[j,k]} should be
-#'   the response of the kth mixture component density at the jth data
+#'   the value of the kth mixture component density at the jth data
 #'   point. \code{L} should be a numeric matrix with at least two
-#'   columns, in which all its entries are positive finite (and not
+#'   columns, with all entries positive and finite (and not
 #'   missing). For large matrices, it is preferrable that the matrix is
 #'   stored in double-precision; see \code{\link{storage.mode}}.
 #'
 #' @param w An optional numeric vector, with one entry for each row of
 #'   \code{L}, specifying the "weights" associated with the rows of
 #'   \code{L}. All weights must be finite, non-negative and not
-#'   missing. The weights should sum to 1; if they are not, they will
-#'   automatically be normalized to sum to 1. By default, all weights
-#'   are the same.
+#'   missing. Internally, the weights are normalized to sum to 1,
+#'   which does not change the problem, but does change the value of the
+#'   objective function reported. By default, all weights are equal.
 #' 
 #' @param x0 An optional numeric vector providing an initial estimate
 #'   of the solution to the optimization problem. It should contain only
-#'   finite, non-missing, non-negative values, and the entries should
-#'   sum to 1; if it is not, the vector is automatically normalized to
+#'   finite, non-missing, non-negative values. The vector will be 
+#'   normalized to
 #'   sum to 1. By default, \code{x0} is the vector with all equal values.
 #' 
 #' @param convtol.sqp A small, non-negative number specifying the
@@ -123,25 +126,9 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #'   quadratic subproblem; "nls", the number of iterations in the
 #'   backtracking line search.
 #' 
-#' @return \code{mixobjective} returns the value of the objective (see
-#'   \eqn{f(x)} in "Details") at \code{x}.
+#' @return A list object with the following elements:
 #'
-#' \code{mixkwdual} returns a list object with the following
-#' list elements:
-#'
-#' \item{x}{The estimated solution to the convex optimization problem.}
-#'
-#' \item{value}{The value of the objective function, \eqn{f(x)}, at
-#'   \code{x}.}
-#'
-#' \item{status}{The return status from MOSEK.}
-#'
-#' For more information on this output, see
-#' \code{\link[REBayes]{KWDual}} and \code{\link[Rmosek]{mosek}}.
-#'
-#' \code{mixsqp} returns a list object with the following list elements:
-#'
-#' \item{x}{The estimated solution to the convex optimization problem.}
+#' \item{x}{The solution to the convex optimization problem.}
 #'
 #' \item{value}{The value of the objective function, \eqn{f(x)}, at
 #'   \code{x}.}
@@ -169,7 +156,7 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #'   using sequential quadratic programming. arXiv:1806.01412
 #'   \url{https://arxiv.org/abs/1806.01412}.
 #'
-#' @seealso \code{\link[REBayes]{KWDual}}
+#' @seealso \code{mixobjective}, \code{mixkwdual}
 #' 
 #' @examples
 #' set.seed(1)
@@ -178,8 +165,13 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #' w  <- rep(1,n)/n
 #' L  <- simulatemixdata(n,m)$L
 #' out.mixsqp <- mixsqp(L,w)
-#' out.kwdual <- mixkwdual(L,w)
 #' print(mixobjective(L,out.mixsqp$x,w),digits = 16)
+#' 
+#' # We can also compare this result with solution found from an
+#' # interior-point approach called via the "KWDual" function from the
+#' # REBayes package. (This requires installation of the MOSEK
+#' # optimization library as well as the REBayes package.)
+#' out.kwdual <- mixkwdual(L,w)
 #' print(mixobjective(L,out.kwdual$x,w),digits = 16)
 #' 
 #' @useDynLib mixsqp
