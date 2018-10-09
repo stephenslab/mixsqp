@@ -1,7 +1,12 @@
-#' @rdname mixsqp
+#' @title Maximum likelihood estimation of mixture proportions
 #' 
-#' @name mixsqp
+#' @details This function is simply a convenient wrapper to REBayes::KWDual to solve the same
+#' problem as \code{mixopt}. See the \code{mixopt} documentation for details.
 #'
+#' @param L a matrix of likelihoods (see \code{mixopt} for details).
+#' 
+#' @param w a vector of weights (see \code{mixopt} for details).
+#' 
 #' @param ... Additional arguments passed to \code{\link[REBayes]{KWDual}}.
 #' 
 #' @export
