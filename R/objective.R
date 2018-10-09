@@ -1,9 +1,30 @@
-#' @rdname mixsqp
+#' @title Compute objective optimized by mixsqp.
 #'
-#' @name mixsqp
+#' @description See \code{\link{mixsqp}} for a full description of the
+#'   objective function optimized by the mix-SQP algorithm.
+#' 
+#' @param L Matrix specifying the optimization problem to be solved.
+#'   In the context of mixture-model fitting, \code{L[j,k]} should be
+#'   the value of the kth mixture component density at the jth data
+#'   point. \code{L} should be a numeric matrix with at least two
+#'   columns, with all entries positive and finite (and not
+#'   missing). For large matrices, it is preferrable that the matrix is
+#'   stored in double-precision; see \code{\link{storage.mode}}.
 #'
 #' @param x The point at which the objective is evaluated in
-#'   \code{mixobjective}; see argument \code{x0} for details.
+#'   \code{mixobjective}; see argument \code{x0} in \code{\link{mixsqp}}
+#'   for details.
+#'   
+#' @param w An optional numeric vector, with one entry for each row of
+#'   \code{L}, specifying the "weights" associated with the rows of
+#'   \code{L}. All weights must be finite, non-negative and not
+#'   missing. Internally, the weights are normalized to sum to 1,
+#'   which does not change the problem, but does change the value of the
+#'   objective function reported. By default, all weights are equal.
+#' 
+#' @return The value of the objective at \code{x}.
+#'
+#' @seealso \code{\link{mixsqp}}
 #' 
 #' @export
 #' 
