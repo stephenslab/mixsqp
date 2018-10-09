@@ -44,10 +44,6 @@ file [LICENSE](LICENSE) for the full text of the license.
 
 ## Setup
 
-This command should automatically retrieve and install the ashr
-package from Github. If it does not, install ashr separately using
-devtools:
-
 To install the latest version of the mixsqp package from GitHub,
 use [devtools][devtools]:
 
