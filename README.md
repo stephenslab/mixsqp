@@ -75,12 +75,12 @@ setup that is appropriate for the the R installed on your
 computer. For details, refer to the [CRAN documentation][cran]. For
 Mac computers, see [these notes][compiling-macos].
 
-+ To use the (optional) alternative solver, `mixkwdual`, you will need
++ To use the (optional) alternative solver, "mixkwdual", you will need
 to install the [REBayes][rebayes] package which, in turn, requires the
 [Rmosek][mosek] package. Refer to the
 [MOSEK documentation][mosek-docs] for instructions on installing the
 Rmosek package. Once you have followed these steps, you can run
-[this example](inst/code/test.rmosek.R) to check that Rmosek is
+[this example](inst/code/test.rmosek.R) to verify that Rmosek is
 correctly installed.
 
 ## Developer notes
