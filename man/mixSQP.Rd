@@ -93,15 +93,16 @@ and a summary of the optimization settings are printed to the
 console. The algorithm's progress is displayed in a table with one
 row per SQP (outer loop) iteration, and with the following columns:
 "iter", the (outer loop) SQP iteration; "objective", the value of
-the (unmodified) objective function at the current estimate of the
-solution; "max.diff", the maximum difference in the estimates
-between two successive iterations; "max(rdual)", the maximum "dual
+the objective function (see \eqn{f(x)} in "Details") at the current
+estimate of the solution, \eqn{x}; "max(rdual)", the maximum "dual
 residual" in the Karush-Kuhn-Tucker (KKT) conditions, which is used
 to monitor convergence (see \code{convtol.sqp}); "nnz", the number
 of non-zero co-ordinates in the current estimate, as determined by
-\code{zero.threshold.solution}, "nqp", the number of (inner loop)
-active-set iterations taken to solve the quadratic subproblem;
-"nls", the number of iterations in the backtracking line search.}
+\code{zero.threshold.solution}; "max.diff", the maximum difference
+in the estimates between two successive iterations; "nqp", the
+number of (inner loop) active-set iterations taken to solve the
+quadratic subproblem; "nls", the number of iterations in the
+backtracking line search.}
 
 \item{x}{The point at which the objective is evaluated in
 \code{mixobjective}; see argument \code{x0} for details.}
@@ -109,15 +110,15 @@ active-set iterations taken to solve the quadratic subproblem;
 \item{...}{Additional arguments passed to \code{\link[REBayes]{KWDual}}.}
 }
 \value{
-\code{mixobjective} returns the value of the (unmodified)
-objective at \code{x}.
+\code{mixobjective} returns the value of the objective (see
+  \eqn{f(x)} in "Details") at \code{x}.
 
 \code{mixkwdual} returns a list object with the following
 list elements:
 
 \item{x}{The estimated solution to the convex optimization problem.}
 
-\item{value}{The value of the (unmodified) objective function at
+\item{value}{The value of the objective function, \eqn{f(x)}, at
   \code{x}.}
 
 \item{status}{The return status from MOSEK.}
@@ -129,7 +130,7 @@ For more information on this output, see
 
 \item{x}{The estimated solution to the convex optimization problem.}
 
-\item{value}{The value of the (unmodified) objective function at
+\item{value}{The value of the objective function, \eqn{f(x)}, at
   \code{x}.}
 
 \item{status}{A character string giving the status of the algorithm
@@ -170,7 +171,7 @@ Here is a mathematical description of the constrained,
   (w_1, \ldots, w_n)} be a matrix of non-negative "weights" that sum
   to 1. \code{mixsqp} computes the value of vector \eqn{x = (x_1, \ldots,
   x_m)} minimizing the following objective function, \deqn{f(x) =
-  -1/n \sum_{j=1}^n w_j log (\sum_{k=1}^m L_{jk} x_k),} subject to
+  -\sum_{j=1}^n w_j log (\sum_{k=1}^m L_{jk} x_k),} subject to
   the constraint that \eqn{x} lie within the simplex; that is, all
   entries of \eqn{x} are non-negative, and the sum of these entries
   is equal to 1. The Expectation Maximization (EM) algorithm can be

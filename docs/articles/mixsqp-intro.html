@@ -60,7 +60,7 @@
       <h1>Illustration of mix-SQP solver applied to a smaller data set, and a larger one</h1>
                         <h4 class="author">Youngseok Kim and Peter Carbonetto</h4>
             
-            <h4 class="date">2018-10-08</h4>
+            <h4 class="date">2018-10-09</h4>
           </div>
 
     
@@ -91,12 +91,13 @@
 <p>First, we fit the mixture model using the mix-SQP solver.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">timing.sqp &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.sqp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixsqp.html">mixsqp</a></span>(L))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Computation took %0.2f seconds.</span><span class="ch">\n</span><span class="st">"</span>,timing.sqp[<span class="st">"elapsed"</span>]))
-<span class="co"># Running mix-SQP algorithm 0.1-50 on 50000 x 10 matrix</span>
-<span class="co"># convergence tol. (SQP):  1.0e-08</span>
-<span class="co"># max. iter (SQP):         1000</span>
-<span class="co"># conv. tol. (active-set): 1.0e-10</span>
-<span class="co"># max. iter (active-set):  100</span>
-<span class="co"># zero threshold:          1.0e-06</span>
+<span class="co"># Running mix-SQP algorithm 0.1-53 on 50000 x 10 matrix</span>
+<span class="co"># convergence tol. (SQP):     1.0e-08</span>
+<span class="co"># conv. tol. (active-set):    1.0e-10</span>
+<span class="co"># zero threshold (solution):  1.0e-06</span>
+<span class="co"># zero thresh. (search dir.): 1.0e-08</span>
+<span class="co"># max. iter (SQP):            1000</span>
+<span class="co"># max. iter (active-set):     100</span>
 <span class="co"># iter    objective max(rdual) nnz max.diff nqp nls</span>
 <span class="co">#    1 +7.51074e-01 +2.614e-01  10       NA  NA  NA</span>
 <span class="co">#    2 +6.66166e-01 +1.091e-01   4 3.01e-01  17   1</span>
@@ -110,11 +111,11 @@
 <span class="co">#   10 +6.04423e-01 +1.080e-06   5 2.57e-04   2   1</span>
 <span class="co">#   11 +6.04423e-01 +4.667e-11   5 5.41e-07   2   1</span>
 <span class="co"># Convergence criteria met---optimal solution found.</span>
-<span class="co"># Computation took 0.08 seconds.</span></code></pre></div>
+<span class="co"># Computation took 0.09 seconds.</span></code></pre></div>
 <p>Next, we fit the same mixture model using the IP solver.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">timing.ip &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.ip &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixsqp.html">mixkwdual</a></span>(L))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Computation took %0.2f seconds.</span><span class="ch">\n</span><span class="st">"</span>,timing.ip[<span class="st">"elapsed"</span>]))
-<span class="co"># Computation took 0.78 seconds.</span></code></pre></div>
+<span class="co"># Computation took 0.77 seconds.</span></code></pre></div>
 <p>The runtime of the mix-SQP algorithm is about the same, or slightly less than, the IP method, and the quality of the IP and SQP solutions is very similar.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at SQP solution: %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.sqp<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at IP solution:  %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.ip<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))
@@ -134,12 +135,13 @@
 <p>Now we fit the model using the two fitting algorithms.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">timing.ip  &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.ip  &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixsqp.html">mixkwdual</a></span>(L))
 timing.sqp &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.sqp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixsqp.html">mixsqp</a></span>(L))
-<span class="co"># Running mix-SQP algorithm 0.1-50 on 100000 x 50 matrix</span>
-<span class="co"># convergence tol. (SQP):  1.0e-08</span>
-<span class="co"># max. iter (SQP):         1000</span>
-<span class="co"># conv. tol. (active-set): 1.0e-10</span>
-<span class="co"># max. iter (active-set):  100</span>
-<span class="co"># zero threshold:          1.0e-06</span>
+<span class="co"># Running mix-SQP algorithm 0.1-53 on 100000 x 50 matrix</span>
+<span class="co"># convergence tol. (SQP):     1.0e-08</span>
+<span class="co"># conv. tol. (active-set):    1.0e-10</span>
+<span class="co"># zero threshold (solution):  1.0e-06</span>
+<span class="co"># zero thresh. (search dir.): 1.0e-08</span>
+<span class="co"># max. iter (SQP):            1000</span>
+<span class="co"># max. iter (active-set):     100</span>
 <span class="co"># iter    objective max(rdual) nnz max.diff nqp nls</span>
 <span class="co">#    1 +7.71366e-01 +2.220e-01  50       NA  NA  NA</span>
 <span class="co">#    2 +6.89004e-01 +1.026e-01   5 3.95e-01  74   1</span>
@@ -156,8 +158,8 @@ timing.sqp &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit
 <p>The mix-SQP algorithm is noticeably faster than the IP solver.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Runtime of IP solver:  %0.2f</span><span class="ch">\n</span><span class="st">"</span>,timing.ip[<span class="st">"elapsed"</span>]))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Runtime of SQP solver: %0.2f</span><span class="ch">\n</span><span class="st">"</span>,timing.sqp[<span class="st">"elapsed"</span>]))
-<span class="co"># Runtime of IP solver:  6.12</span>
-<span class="co"># Runtime of SQP solver: 2.10</span></code></pre></div>
+<span class="co"># Runtime of IP solver:  6.63</span>
+<span class="co"># Runtime of SQP solver: 2.23</span></code></pre></div>
 <p>Further, the quality of the IP and SQP solutions remains very similar:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at SQP solution: %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.sqp<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at IP solution:  %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.ip<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))
@@ -186,7 +188,7 @@ timing.sqp &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit
 <span class="co"># [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
 <span class="co"># </span>
 <span class="co"># other attached packages:</span>
-<span class="co"># [1] Rmosek_8.0.69 Matrix_1.2-12 mixsqp_0.1-50</span>
+<span class="co"># [1] Rmosek_8.0.69 Matrix_1.2-12 mixsqp_0.1-54</span>
 <span class="co"># </span>
 <span class="co"># loaded via a namespace (and not attached):</span>
 <span class="co">#  [1] Rcpp_0.12.19    lattice_0.20-35 digest_0.6.17   rprojroot_1.3-2</span>

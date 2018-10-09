@@ -223,15 +223,16 @@ and a summary of the optimization settings are printed to the
 console. The algorithm's progress is displayed in a table with one
 row per SQP (outer loop) iteration, and with the following columns:
 "iter", the (outer loop) SQP iteration; "objective", the value of
-the (unmodified) objective function at the current estimate of the
-solution; "max.diff", the maximum difference in the estimates
-between two successive iterations; "max(rdual)", the maximum "dual
+the objective function (see \(f(x)\) in "Details") at the current
+estimate of the solution, \(x\); "max(rdual)", the maximum "dual
 residual" in the Karush-Kuhn-Tucker (KKT) conditions, which is used
 to monitor convergence (see <code>convtol.sqp</code>); "nnz", the number
 of non-zero co-ordinates in the current estimate, as determined by
-<code>zero.threshold.solution</code>, "nqp", the number of (inner loop)
-active-set iterations taken to solve the quadratic subproblem;
-"nls", the number of iterations in the backtracking line search.</p></td>
+<code>zero.threshold.solution</code>; "max.diff", the maximum difference
+in the estimates between two successive iterations; "nqp", the
+number of (inner loop) active-set iterations taken to solve the
+quadratic subproblem; "nls", the number of iterations in the
+backtracking line search.</p></td>
     </tr>
     <tr>
       <th>x</th>
@@ -246,14 +247,14 @@ active-set iterations taken to solve the quadratic subproblem;
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>mixobjective</code> returns the value of the (unmodified)
-objective at <code>x</code>.
+    <p><code>mixobjective</code> returns the value of the objective (see
+  \(f(x)\) in "Details") at <code>x</code>.
 
 <code>mixkwdual</code> returns a list object with the following
 list elements:</p>
 <dt>x</dt><dd><p>The estimated solution to the convex optimization problem.</p></dd>
 
-<dt>value</dt><dd><p>The value of the (unmodified) objective function at
+<dt>value</dt><dd><p>The value of the objective function, \(f(x)\), at
   <code>x</code>.</p></dd>
 
 <dt>status</dt><dd><p>The return status from MOSEK.</p></dd>
@@ -265,7 +266,7 @@ mixsqp returns a list object with the following list elements:
 
 <dt>x</dt><dd><p>The estimated solution to the convex optimization problem.</p></dd>
 
-<dt>value</dt><dd><p>The value of the (unmodified) objective function at
+<dt>value</dt><dd><p>The value of the objective function, \(f(x)\), at
   <code>x</code>.</p></dd>
 
 <dt>status</dt><dd><p>A character string giving the status of the algorithm
@@ -295,7 +296,7 @@ mixsqp returns a list object with the following list elements:
   (w_1, \ldots, w_n)\) be a matrix of non-negative "weights" that sum
   to 1. <code>mixsqp</code> computes the value of vector \(x = (x_1, \ldots,
   x_m)\) minimizing the following objective function, $$f(x) =
-  -1/n \sum_{j=1}^n w_j log (\sum_{k=1}^m L_{jk} x_k),$$ subject to
+  -\sum_{j=1}^n w_j log (\sum_{k=1}^m L_{jk} x_k),$$ subject to
   the constraint that \(x\) lie within the simplex; that is, all
   entries of \(x\) are non-negative, and the sum of these entries
   is equal to 1. The Expectation Maximization (EM) algorithm can be
@@ -325,7 +326,7 @@ mixsqp returns a list object with the following list elements:
 <span class='no'>m</span>  <span class='kw'>&lt;-</span> <span class='fl'>10</span>
 <span class='no'>w</span>  <span class='kw'>&lt;-</span> <span class='fu'>rep</span>(<span class='fl'>1</span>,<span class='no'>n</span>)/<span class='no'>n</span>
 <span class='no'>L</span>  <span class='kw'>&lt;-</span> <span class='fu'><a href='simulatemixdata.html'>simulatemixdata</a></span>(<span class='no'>n</span>,<span class='no'>m</span>)$<span class='no'>L</span>
-<span class='no'>out.mixsqp</span> <span class='kw'>&lt;-</span> <span class='fu'>mixsqp</span>(<span class='no'>L</span>,<span class='no'>w</span>)</div><div class='output co'>#&gt; Running mix-SQP algorithm 0.1-52 on 100000 x 10 matrix
+<span class='no'>out.mixsqp</span> <span class='kw'>&lt;-</span> <span class='fu'>mixsqp</span>(<span class='no'>L</span>,<span class='no'>w</span>)</div><div class='output co'>#&gt; Running mix-SQP algorithm 0.1-54 on 100000 x 10 matrix
 #&gt; convergence tol. (SQP):     1.0e-08
 #&gt; conv. tol. (active-set):    1.0e-10
 #&gt; zero threshold (solution):  1.0e-06
