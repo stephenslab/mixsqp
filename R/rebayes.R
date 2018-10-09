@@ -2,7 +2,7 @@
 #' 
 #' @description This function is simply a wrapper to
 #'   \code{\link[REBayes]{KWDual}} with a similar interface to
-#'   \code{mixsqp} and solving the same problem as \code{mixsqp}. See
+#'   \code{mixsqp} for solving the same problem as \code{mixsqp}. See
 #'   \code{\link{mixsqp}} and \code{\link[REBayes]{KWDual}} for details.
 #'
 #' @param L Matrix specifying the optimization problem to be solved.
