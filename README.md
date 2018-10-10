@@ -67,13 +67,13 @@ example("mixsqp")
 
 For a more detailed illustration of the SQP algorithm applied to
 the problem of computing maximum-likelihood estimates for a mixture
-model, walk through the introductory vignette:
+model, work through the introductory vignette:
 
 ```R
 vignette("mixsqp-intro")
 ```
 
-To learn more, visit the [package website][mixsqp-website], or see the
+To learn more, visit the [package website][mixsqp-website], or view the
 "mixsqp" help page:
 
 ```R
