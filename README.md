@@ -42,6 +42,43 @@ under the terms of the
 [MIT license][mit-license]. See
 file [LICENSE](LICENSE) for the full text of the license.
 
+## Quick Start
+
+1. Install the latest version of the mixsqp package from GitHub. (See
+   "Setup" below for more detailed package installation instructions.)
+
+    ```R
+    devtools::install_github("stephenslab/mixsqp",
+                             build_vignettes = TRUE,
+                             upgrade_dependencies = FALSE)
+    ```
+
+2. Once you have installed the package, load the package in R:
+
+   ```R
+   library(mixsqp)
+   ```
+
+3. Run the small example provided with the mixsqp function:
+
+   ```R
+   example("mixsqp")
+   ```
+
+4. For a more detailed illustration of the SQP algorithm applied to
+   the problem of computing maximum-likelihood estimates for a mixture
+   model, walk through the introductory vignette:
+
+   ```R
+   vignette("mixsqp-intro")
+   ```
+
+5. To learn more, see the "mixsqp" help page:
+
+   ```R
+   help("mixsqp")
+   ```
+
 ## Setup
 
 To install the latest version of the mixsqp package from GitHub,
