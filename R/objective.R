@@ -7,9 +7,10 @@
 #'   In the context of mixture-model fitting, \code{L[j,k]} should be
 #'   the value of the kth mixture component density at the jth data
 #'   point. \code{L} should be a numeric matrix with at least two
-#'   columns, with all entries positive and finite (and not
-#'   missing). For large matrices, it is preferrable that the matrix is
-#'   stored in double-precision; see \code{\link{storage.mode}}.
+#'   columns, with all entries being non-negative and finite (and not
+#'   missing). Further, no column should be entirely zeros. For large
+#'   matrices, it is preferrable that the matrix is stored in
+#'   double-precision; see \code{\link{storage.mode}}.
 #'
 #' @param x The point at which the objective is evaluated in
 #'   \code{mixobjective}; see argument \code{x0} in \code{\link{mixsqp}}
@@ -22,7 +23,9 @@
 #'   which does not change the problem, but does change the value of the
 #'   objective function reported. By default, all weights are equal.
 #' 
-#' @return The value of the objective at \code{x}.
+#' @return The value of the objective at \code{x}. If any entry of
+#'   \code{L \%*\% x} is less than or equal to zero, \code{Inf} is
+#'   returned.
 #'
 #' @seealso \code{\link{mixsqp}}
 #' 
@@ -54,9 +57,10 @@ mixobjective <- function (L, x, w = rep(1,nrow(L))) {
 # small, positive number (zero by default) to better ensure numerical
 # stability of the optimization.
 mixobj <- function (L, w, x, e = 0) {
- if (any(x < 0))
-   return(Inf)
+ y <- drop(L %*% x) + e
+ if (all(y > 0))
+   return(-sum(w * log(y)))
  else
-   return(-sum(w * log(drop(L %*% x) + e)))
+   return(Inf)
 }
 

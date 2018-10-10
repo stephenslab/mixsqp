@@ -50,7 +50,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP algorithm 0.1-55 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP algorithm 0.1-56 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):     %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set):    %0.1e\n",convtolactiveset);
     Rprintf("zero threshold (solution):  %0.1e\n",zerothresholdsolution);
@@ -107,7 +107,10 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   // Repeat until the convergence criterion is met, or until we reach
   // the maximum number of (outer loop) iterations.
   for (i = 0; i < maxitersqp; i++) {
-    
+
+    // Compute the value of the objective at x (obj).
+    obj[i] = mixobjective(L,w,x,eps,u);
+
     // COMPUTE GRADIENT AND HESSIAN
     // ----------------------------
     computegrad(L,w,x,eps,g,H,u,Z,I);
@@ -116,13 +119,9 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     // the solution, x. This specifies the "inactive set".
     t = (x >= zerothresholdsolution);
 
-    // Report on the algorithm's progress. Here we compute: the value
-    // of the objective at x (obj); the smallest gradient value
-    // (gmin), which is used as a convergence criterion; the number of
-    // nonzeros in the solution (nnz); and the number of inner-loop
-    // iterations (nqp).
-    obj[i] = mixobjective(L,w,x,eps,u);
-
+    // Report on the algorithm's progress. Here we compute: the
+    // smallest gradient value (gmin), which is used as a convergence
+    // criterion; and the number of nonzeros in the solution (nnz).
     // Note that only the dual residuals (gmin's) corresponding to the
     // nonzero co-ordinates are relevant.
     gmin[i] = 1 + g(find(t)).min();
@@ -186,6 +185,8 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 double mixobjective (const arma::mat& L, const arma::vec& w,
 		     const arma::vec& x, double e, arma::vec& u) {
   u = L*x + e;
+  if (u.min() <= 0)
+    Rcpp::stop("Halting because the objective function has a non-finite value (logarithms of numbers less than or equal to zero) at the current estimate of the solution");
   return -sum(w % log(u));
 }
 
