@@ -15,9 +15,10 @@ mixsqp(L, w = rep(1, nrow(L)), x0 = rep(1, ncol(L)),
 In the context of mixture-model fitting, \code{L[j,k]} should be
 the value of the kth mixture component density at the jth data
 point. \code{L} should be a numeric matrix with at least two
-columns, with all entries positive and finite (and not
-missing). For large matrices, it is preferrable that the matrix is
-stored in double-precision; see \code{\link{storage.mode}}.}
+columns, with all entries being non-negative and finite (and not
+missing). Further, no column should be entirely zeros. For large
+matrices, it is preferrable that the matrix is stored in
+double-precision; see \code{\link{storage.mode}}.}
 
 \item{w}{An optional numeric vector, with one entry for each row of
 \code{L}, specifying the "weights" associated with the rows of
@@ -28,9 +29,11 @@ objective function reported. By default, all weights are equal.}
 
 \item{x0}{An optional numeric vector providing an initial estimate
 of the solution to the optimization problem. It should contain only
-finite, non-missing, non-negative values. The vector will be 
-normalized to
-sum to 1. By default, \code{x0} is the vector with all equal values.}
+finite, non-missing, non-negative values, and all entries of
+\code{L \%*\% x0} must be greater than zero (to ensure that the
+objective evaluates to a finite value at \code{x0}). The vector
+will be normalized to sum to 1. By default, \code{x0} is the vector
+with all equal values.}
 
 \item{convtol.sqp}{A small, non-negative number specifying the
 convergence tolerance for SQP algorithm; convergence is reached
@@ -141,7 +144,11 @@ The \code{mixsqp} function uses a Sequential Quadratic
   minimizing the following objective function, \deqn{f(x) =
   -\sum_{j=1}^n w_j log (\sum_{k=1}^m L_{jk} x_k),} subject to the
   constraint that \eqn{x} lie within the simplex; that is, the
-  entries of \eqn{x} are non-negative and sum to 1.
+  entries of \eqn{x} are non-negative and sum to 1. Implicitly, there
+  is an additional constraint \eqn{L*x > 0} in order to ensure that
+  the objective has a finite value. In practice, this constraint only
+  needs to be checked for the initial estimate to ensure that it
+  holds for all subsequent iterates.
   
   If all weights are equal, solving this optimization problem
   corresponds to finding the maximum-likelihood estimate of the

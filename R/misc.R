@@ -50,16 +50,17 @@ verify.maxiter.arg <- function (x, arg.name = deparse(substitute(x))) {
 # returned.
 verify.likelihood.matrix <- function (L) {
   msg <- paste("Input argument \"L\" should be a numeric matrix with >= 2",
-               "columns, and all its entries should be positive, finite and",
-               "not NA")
+               "columns, all its entries should be non-negative, finite",
+               "and not NA, and no column should be entirely zeros")
   if (!is.matrix(L))
     stop(msg)
   else if (!(ncol(L) >= 2 &
              is.numeric(L)))
     stop(msg)
-  else if (!(all(L > 0) &
+  else if (!(all(L >= 0) &
              all(is.finite(L)) &
-             !any(missing(L))))
+             !any(missing(L)) &
+             all(apply(L,2,max) > 0)))
     stop(msg)
   return(TRUE)
 }
