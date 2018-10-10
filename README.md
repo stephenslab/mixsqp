@@ -44,40 +44,41 @@ file [LICENSE](LICENSE) for the full text of the license.
 
 ## Quick Start
 
-1. Install the latest version of the mixsqp package from GitHub. (See
-   "Setup" below for more detailed package installation instructions.)
+Install the latest version of the mixsqp package from GitHub. (See
+"Setup" below for more detailed package installation instructions.)
 
-    ```R
-    devtools::install_github("stephenslab/mixsqp",
-                             build_vignettes = TRUE,
-                             upgrade_dependencies = FALSE)
-    ```
+```R
+devtools::install_github("stephenslab/mixsqp",
+                         build_vignettes = TRUE,
+                         upgrade_dependencies = FALSE)
+```
 
-2. Once you have installed the package, load the package in R:
+Once you have installed the package, load the package in R:
 
-   ```R
-   library(mixsqp)
-   ```
+```R
+library(mixsqp)
+```
 
-3. Run the small example provided with the mixsqp function:
+Next, run the small example provided with the mixsqp function:
 
-   ```R
-   example("mixsqp")
-   ```
+```R
+example("mixsqp")
+```
 
-4. For a more detailed illustration of the SQP algorithm applied to
-   the problem of computing maximum-likelihood estimates for a mixture
-   model, walk through the introductory vignette:
+For a more detailed illustration of the SQP algorithm applied to
+the problem of computing maximum-likelihood estimates for a mixture
+model, walk through the introductory vignette:
 
-   ```R
-   vignette("mixsqp-intro")
-   ```
+```R
+vignette("mixsqp-intro")
+```
 
-5. To learn more, see the "mixsqp" help page:
+To learn more, visit the [package website][mixsqp-website], or see the
+"mixsqp" help page:
 
-   ```R
-   help("mixsqp")
-   ```
+```R
+help("mixsqp")
+```
 
 ## Setup
 
@@ -164,6 +165,7 @@ This project was developed by [Youngseok Kim][youngseok] at the
 [Peter Carbonetto][peter], [Matthew Stephens][matthew] and
 [Mihai Anitescu][mihai].
 
+[mixsqp-website]: https://stephenslab.github.io/mixsqp
 [sqp]: https://neos-guide.org/content/sequential-quadratic-programming
 [arxiv-paper]: https://arxiv.org/abs/1806.01412
 [mixsqp-julia]: https://github.com/stephenslab/mixsqp-paper
