@@ -50,7 +50,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP algorithm 0.1-56 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP algorithm 0.1-57 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):     %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set):    %0.1e\n",convtolactiveset);
     Rprintf("zero threshold (solution):  %0.1e\n",zerothresholdsolution);
@@ -124,7 +124,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     // criterion; and the number of nonzeros in the solution (nnz).
     // Note that only the dual residuals (gmin's) corresponding to the
     // nonzero co-ordinates are relevant.
-    gmin[i] = 1 + g(find(t)).min();
+    gmin[i] = 1 + g.min();
     nnz[i]  = sum(t);
     if (verbose) {
       if (i == 0)
@@ -138,11 +138,14 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     
     // CHECK CONVERGENCE
     // -----------------
-    // Convergence is reached with the maximum dual residual
-    // (corresponding to the nonzero co-ordinates of x only) is
+    // Convergence is reached with the maximum dual residual is
     // small. The negative of "gmin" is also the maximum dual residual
     // (denoted as "rdual" on p. 609 of Boyd & Vandenberghe, "Convex
-    // Optimization", 2009).
+    // Optimization", 2009). Although "gmin" here includes both zero
+    // (active) and non-zero (inactive) co-ordinates, this condition
+    // is trivially satisfied for the zero co-ordinates as the
+    // gradient must be non-negative for these co-ordinates. (See
+    // communication with Youngseok on Slack.)
     if (gmin[i] >= -convtolsqp) {
       status = 0;
       i++;
@@ -254,7 +257,8 @@ double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
     // First check that the search direction is close to zero
     // (according to the "zerothresholdsearchdir" parameter).
     if (p.max() <= zerothresholdsearchdir &
-	-p.min() <= zerothresholdsearchdir) {
+	-p.min() <= zerothresholdsearchdir &
+        i0.n_elem > 0) {
         
       // If all the Lagrange multiplers in the working set (that is,
       // zeroed co-ordinates) are positive, or nearly positive, we
@@ -263,13 +267,18 @@ double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
 	j++;
         break;
       }
+
       // Find an index with smallest multiplier, and add this to the
       // inactive set.
       newind     = i0[b(i0).index_min()];
       t[newind]  = 1;
       i0         = find(1 - t);
       i1         = find(t);
-    } else {
+
+    // In this next part, we consider adding a co-ordinate to the
+    // working set, but only if there is at least 2 non-zero
+    // co-ordinates.
+    } else if (sum(t) > 1) {
         
       // Define the step size.
       arma::uvec act = find(p < 0);
@@ -317,6 +326,6 @@ double backtrackinglinesearch (double f, const arma::mat& L,
     y = (y - x)/2 + x;
   }
   if (j == 12)
-    Rcpp::stop("Step size is too small; consider relaxing convergence criteria");
+    Rcpp::stop("Step size is too small; consider increasing \"eps\", or relaxing convergence criteria");
   return j;
 }

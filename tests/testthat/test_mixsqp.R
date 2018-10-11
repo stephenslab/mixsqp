@@ -7,13 +7,30 @@ test_that("Version number in mixsqp with verbose = TRUE is correct",{
   expect_equal(packageDescription("mixsqp")$Version,x)
 })
 
-# TO DO: Implement this test.
-# test_that(paste("mix-SQP reports error when initial estimate does not",
-#                  "satisfy L*x > 0"),{
-#   e <- 1e-8
-#   L <- rbind(c(1,1,e),
-#              c(1,1,1))
-# })
+test_that(paste("mix-SQP reports error when initial estimate does not",
+                "satisfy L*x > 0"),{
+  L <- rbind(c(1,1,0),
+             c(1,1,1))
+  expect_error(mixsqp(L,x0 = c(0,0,1)))
+})
+
+test_that(paste("mix-SQP converges to correct solution even when initial",
+                "estimate is very poor"),{
+  e <- 1e-8
+  L <- rbind(c(1,1,e),
+             c(1,2,1))
+  capture.output(out1 <- mixsqp(L))
+  capture.output(out2 <- mixsqp(L,x0 = c(0,0,1)))
+  expect_equal(out1$value,out2$value,tol = 1e-8)
+
+  # This second example is particularly challenging because two of the
+  # columns of the likelihood matrix are identical.
+  L <- rbind(c(1,1,e),
+             c(1,1,1))
+  capture.output(out1 <- mixsqp(L))
+  capture.output(out2 <- mixsqp(L,x0 = c(0,0,1)))
+  expect_equal(out1$value,out2$value,tol = 1e-8)
+})
 
 test_that(paste("mix-SQP gives correct solutions for 2 x 2 and",
                 "2 x 3 likelihood matrices"),{
@@ -126,7 +143,7 @@ test_that(paste("mix-SQP gives correct solution for Beckett & Diaconis",
 
   # The mix-SQP solution should be very close to the KWDual solution
   # and, more importantly, the quality of the mix-SQP solution should
-  # be higher.
+  # be as good or greater.
   expect_equal(out$status,mixsqp:::mixsqp.status.converged)
   expect_equal(tacks$x,out$x,tolerance = 5e-4)
   expect_lte(out$value,mixobjective(L,tacks$x,w))
@@ -180,11 +197,12 @@ test_that(paste("mix-SQP converges, and outputs correct solution, for example",
 
   # Here we also check convergence for the case when no numerical
   # stability measure is used for the active-set linear systems (i.e.,
-  # delta = 0). Also, when convtol.sqp = 0, the mix-SQP algorithm
-  # should report that it failed to converge in this example.
-  capture.output(out1 <- mixsqp(L,convtol.sqp = 0,maxiter.sqp = 20))
+  # eps = 0, delta = 0). Also, when convtol.sqp = 0, the mix-SQP
+  # algorithm should report that it failed to converge in this
+  # example.
+  capture.output(out1 <- mixsqp(L,eps = 0,convtol.sqp = 0,maxiter.sqp = 20))
   capture.output(out2 <- mixsqp(L))
-  capture.output(out3 <- mixsqp(L,delta = 0))
+  capture.output(out3 <- mixsqp(L,eps = 0,delta = 0))
   expect_equal(out1$status,"exceeded maximum number of iterations")
   expect_equal(out2$status,mixsqp:::mixsqp.status.converged)
   expect_equal(out3$status,mixsqp:::mixsqp.status.converged)
