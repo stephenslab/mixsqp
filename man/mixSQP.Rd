@@ -7,7 +7,7 @@
 mixsqp(L, w = rep(1, nrow(L)), x0 = rep(1, ncol(L)),
   convtol.sqp = 1e-08, convtol.activeset = 1e-10,
   zero.threshold.solution = 1e-06, zero.threshold.searchdir = 1e-08,
-  eps = 1e-08, delta = 1e-10, maxiter.sqp = 1000,
+  eps = 1e-10, delta = 1e-10, maxiter.sqp = 1000,
   maxiter.activeset = 100, verbose = TRUE)
 }
 \arguments{

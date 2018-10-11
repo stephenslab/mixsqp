@@ -7,10 +7,12 @@ test_that("Version number in mixsqp with verbose = TRUE is correct",{
   expect_equal(packageDescription("mixsqp")$Version,x)
 })
 
-test_that(paste("mix-SQP reports error when initial estimate does not",
-                "satisfy L*x > 0"),{
+test_that(paste("mix-SQP allows zero likelihoods, but reports an error",
+                "when initial estimate does not satisfy L*x > 0"),{
   L <- rbind(c(1,1,0),
              c(1,1,1))
+  capture.output(out <- mixsqp(L))
+  expect_equal(out$status,mixsqp:::mixsqp.status.converged)
   expect_error(mixsqp(L,x0 = c(0,0,1)))
 })
 
