@@ -126,8 +126,8 @@ test_that(paste("mix-SQP returns the same solution regardless whether",
   w  <- w/sum(w)
 
   # Apply mix-SQP to normalized and unnormalized data sets.
-  capture.output(out1 <- mixsqp(L1,w))
-  capture.output(out2 <- mixsqp(L2,w))
+  capture.output(out1 <- mixsqp(L1,w,eps = 0))
+  capture.output(out2 <- mixsqp(L2,w,eps = 0))
 
   # The outputted solutions should be nearly identical (although the
   # values of the objectives will be different).
@@ -141,7 +141,7 @@ test_that(paste("mix-SQP gives correct solution for Beckett & Diaconis",
   data(tacks)
   L <- tacks$L
   w <- tacks$w
-  capture.output(out <- mixsqp(L,w))
+  capture.output(out <- mixsqp(L,w,eps = 0))
 
   # The mix-SQP solution should be very close to the KWDual solution
   # and, more importantly, the quality of the mix-SQP solution should
@@ -202,7 +202,7 @@ test_that(paste("mix-SQP converges, and outputs correct solution, for example",
   # eps = 0, delta = 0). Also, when convtol.sqp = 0, the mix-SQP
   # algorithm should report that it failed to converge in this
   # example.
-  capture.output(out1 <- mixsqp(L,eps = 0,convtol.sqp = 0,maxiter.sqp = 20))
+  capture.output(out1 <- mixsqp(L,eps = 0,convtol.sqp = 0,maxiter.sqp = 10))
   capture.output(out2 <- mixsqp(L))
   capture.output(out3 <- mixsqp(L,eps = 0,delta = 0))
   expect_equal(out1$status,"exceeded maximum number of iterations")
@@ -215,6 +215,6 @@ test_that(paste("mix-SQP converges, and outputs correct solution, for example",
   out4 <- mixkwdual(L)
   expect_equal(out2$x,out4$x,tolerance = 1e-7)
   expect_equal(out3$x,out4$x,tolerance = 1e-7)
-  expect_equal(out1$value,out2$value,tolerance = 1e-8)
-  expect_equal(out1$value,out3$value,tolerance = 1e-8)
+  expect_equal(out2$value,out4$value,tolerance = 1e-8)
+  expect_equal(out3$value,out4$value,tolerance = 1e-8)
 })
