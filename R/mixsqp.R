@@ -190,7 +190,7 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
                     convtol.sqp = 1e-8, convtol.activeset = 1e-10,
                     zero.threshold.solution = 1e-6,
-                    zero.threshold.searchdir = 1e-8, eps = 1e-10,
+                    zero.threshold.searchdir = 1e-8, eps = 1e-8,
                     delta = 1e-10, maxiter.sqp = 1000,
                     maxiter.activeset = 100, verbose = TRUE) {
     
