@@ -50,7 +50,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP algorithm 0.1-59 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP algorithm 0.1-60 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):     %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set):    %0.1e\n",convtolactiveset);
     Rprintf("zero threshold (solution):  %0.1e\n",zerothresholdsolution);
@@ -152,6 +152,11 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
       break;
     }
 
+    // This is also a good point to check for a user interrupt; if the
+    // user requests an interrupt, then an exception is thrown and
+    // control is returned to the R console.
+    Rcpp::checkUserInterrupt();
+    
     // SOLVE QUADRATIC SUBPROBLEM
     // --------------------------
     nqp[i] = activesetqp(H,g,y,t,maxiteractiveset,zerothresholdsearchdir,
