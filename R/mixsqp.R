@@ -9,22 +9,22 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #'   estimates of mixture proportions in a (finite) mixture model. More
 #'   generally, \code{mixsqp} solves the corresponding constrained,
 #'   convex optimization problem, which is given below (see
-#'   "Details"). See "References" for more details about the SQP
-#'   algorithm.
+#'   \sQuote{Details}). See \sQuote{References} for more details about
+#'   the SQP algorithm.
 #'
 #' @details \code{mixsqp} solves the following optimization problem.
 #'   Let \eqn{L} be a matrix with \eqn{n} rows and \eqn{m} columns
 #'   containing only non-negative entries, and let \eqn{w = (w_1,
 #'   \ldots, w_n)} be a vector of non-negative "weights". \code{mixsqp}
 #'   computes the value of vector \eqn{x = (x_1, \ldots, x_m)}
-#'   minimizing the following objective function, \deqn{f(x) =
-#'   -\sum_{j=1}^n w_j log (\sum_{k=1}^m L_{jk} x_k),} subject to the
-#'   constraint that \eqn{x} lie within the simplex; that is, the
-#'   entries of \eqn{x} are non-negative and sum to 1. Implicitly, there
-#'   is an additional constraint \eqn{L*x > 0} in order to ensure that
-#'   the objective has a finite value. In practice, this constraint only
-#'   needs to be checked for the initial estimate to ensure that it
-#'   holds for all subsequent iterates.
+#'   minimizing the following objective function,
+#'   \deqn{f(x) = -\sum_{j=1}^n w_j log (\sum_{k=1}^m L_{jk} x_k),}
+#'   subject to the constraint that \eqn{x} lie within the simplex;
+#'   that is, the entries of \eqn{x} are non-negative and sum to 1.
+#'   Implicitly, there is an additional constraint \eqn{L*x > 0} in
+#'   order to ensure that the objective has a finite value. In practice,
+#'   this constraint only needs to be checked for the initial estimate
+#'   to ensure that it holds for all subsequent iterates.
 #'   
 #'   If all weights are equal, solving this optimization problem
 #'   corresponds to finding the maximum-likelihood estimate of the
@@ -42,6 +42,84 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #'   multithreaded matrix computations to speed up \code{mixsqp} for
 #'   large \code{L} matrices, but only when R has been configured with a
 #'   multithreaded BLAS/LAPACK library (e.g., OpenBLAS).
+#'
+#'   The \code{control} argument is a list in which any of the
+#'   following named components will override the default optimization
+#'   algorithm settings (as they are defined by
+#'   \code{mixsqp_control_defaults}):
+#' 
+#'   \describe{
+#' 
+#'     \item{\code{convtol.sqp}}{A small, non-negative number
+#'       specifying the convergence tolerance for SQP algorithm; convergence
+#'       is reached when the maximum dual residual in the Karush-Kuhn-Tucker
+#'       (KKT) optimality conditions is less than or equal to
+#'       \code{convtol.sqp}. Smaller values will result in more stringent
+#'       convergence criteria and more accurate solutions, at the expense of
+#'       greater computation time. Note that changes to this tolerance
+#'       parameter may require respective changes to
+#'       \code{convtol.activeset} and/or \code{zero.threshold.searchdir} to
+#'       obtain reliable convergence.}
+#'
+#'     \item{\code{convtol.activeset}}{A small, non-negative number
+#'       specifying the convergence tolerance for the active-set
+#'       step. Smaller values will result in higher quality search
+#'       directions for the SQP algorithm but possibly a greater
+#'       per-iteration computational cost. Note that changes to this
+#'       tolerance parameter can affect how reliably the SQP convergence
+#'       criterion is satisfied, as determined by \code{convtol.sqp}.}
+#' 
+#'     \item{\code{zero.threshold.solution}}{A small, non-negative
+#'       number used to determine the "active set"; that is, it determines
+#'       which entries of the solution are exactly zero. Any entries that
+#'       are less than or equal to \code{zero.threshold.solution} are
+#'       considered to be exactly zero. Larger values of
+#'       \code{zero.threshold.solution} may lead to speedups for matrices
+#'       with many columns, at the (slight) risk of prematurely zeroing some
+#'       co-ordinates.}
+#'
+#'     \item{\code{zero.threshold.searchdir}}{A small, non-negative
+#'       number used to determine when the search direction in the
+#'       active-set step is considered "small enough". Note that changes to
+#'       this tolerance parameter can affect how reliably the SQP
+#'       convergence criterion is satisfied, as determined by
+#'       \code{convtol.sqp}, so choose this parameter carefully.}
+#' 
+#'     \item{\code{eps}}{A small, non-negative number added to the
+#'       terms inside the logarithms to sidestep computing logarithms of
+#'       zero. This prevents numerical problems at the cost of introducing a
+#'       small inaccuracy in the solution. Increasing this number may lead
+#'       to faster convergence but possibly a less accurate solution.}
+#'
+#'     \item{\code{delta}}{A small, non-negative number added to the
+#'       diagonal of the Hessian to improve numerical stability (and
+#'       possibly the speed) when computing the search directions in the
+#'       active-set step.}
+#'  
+#'     \item{\code{maxiter.sqp}}{Maximum number of SQP iterations to
+#'       run before reporting a convergence failure; that is, the maximum
+#'       number of quadratic subproblems that will be solved by the
+#'       active-set method.}
+#' 
+#'     \item{\code{maxiter.activeset}}{Maximum number of active-set
+#'       iterations taken to solve each of the quadratic subproblems.}
+#' 
+#'     \item{\code{verbose}}{If \code{verbose = TRUE}, the algorithm's
+#'       progress and a summary of the optimization settings are printed to
+#'       the console. The algorithm's progress is displayed in a table with
+#'       one row per SQP (outer loop) iteration, and with the following
+#'       columns: "iter", the (outer loop) SQP iteration; "objective", the
+#'       value of the objective function (see \eqn{f(x)}) at the current
+#'       estimate of the solution, \eqn{x}; "max(rdual)", the maximum "dual
+#'       residual" in the Karush-Kuhn-Tucker (KKT) conditions, which is used
+#'       to monitor convergence (see \code{convtol.sqp}); "nnz", the number
+#'       of non-zero co-ordinates in the current estimate, as determined by
+#'       \code{zero.threshold.solution}; "max.diff", the maximum difference
+#'       in the estimates between two successive iterations; "nqp", the
+#'       number of (inner loop) active-set iterations taken to solve the
+#'       quadratic subproblem; "nls", the number of iterations in the
+#'       backtracking line search.}
+#'   }
 #'
 #' @param L Matrix specifying the optimization problem to be solved.
 #'   In the context of mixture-model fitting, \code{L[j,k]} should be
@@ -66,72 +144,9 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #'   objective evaluates to a finite value at \code{x0}). The vector
 #'   will be normalized to sum to 1. By default, \code{x0} is the vector
 #'   with all equal values.
-#' 
-#' @param convtol.sqp A small, non-negative number specifying the
-#'   convergence tolerance for SQP algorithm; convergence is reached
-#'   when the maximum dual residual in the Karush-Kuhn-Tucker optimality
-#'   conditions is less than or equal to \code{convtol.sqp}. Smaller
-#'   values will result in more stringent convergence criteria and more
-#'   accurate solutions, at the expense of greater computation
-#'   time. Note that changes to this tolerance parameter may require
-#'   respective changes to \code{convtol.activeset} and/or
-#'   \code{zero.threshold.searchdir} to obtain reliable convergence.
 #'
-#' @param convtol.activeset Small, non-negative number specifying the
-#'   convergence tolerance for the active-set step. Smaller values will
-#'   result in higher quality search directions for the SQP algorithm
-#'   but possibly a greater per-iteration computational cost. Note that
-#'   changes to this tolerance parameter can affect how reliably the SQP
-#'   convergence criterion is satisfied, as determined by
-#'   \code{convtol.sqp}.
-#' 
-#' @param zero.threshold.solution A small, non-negative number used to
-#'   determine the "active set"; that is, it determines which entries of
-#'   the solution are exactly zero. Any entries that are less than or
-#'   equal to \code{zero.threshold.solution} are considered to be
-#'   exactly zero. Larger values of \code{zero.threshold.solution} may
-#'   lead to speedups for matrices with many columns, at the (slight)
-#'   risk of prematurely zeroing some co-ordinates.
-#'
-#' @param zero.threshold.searchdir A small, non-negative number used
-#'   to determine when the search direction in the active-set step is
-#'   considered "small enough". Note that changes to this tolerance
-#'   parameter can affect how reliably the SQP convergence criterion is
-#'   satisfied, as determined by \code{convtol.sqp}, so choose this
-#'   parameter carefully.
-#' 
-#' @param eps A small, non-negative number added to the terms inside the
-#'   logarithms to sidestep computing logarithms of zero. This prevents
-#'   numerical problems at the cost of introducing a small inaccuracy in
-#'   the solution. Increasing this number may lead to faster convergence
-#'   but possibly a less accurate solution.
-#'
-#' @param delta A small, non-negative number added to the diagonal of the
-#'   Hessian to improve numerical stability (and possibly the speed)
-#'   when computing the search directions in the active-set step. 
-#'  
-#' @param maxiter.sqp Maximum number of SQP iterations to run before
-#' reporting a convergence failure; that is, the maximum number of
-#' quadratic subproblems that will be solved by the active-set method.
-#' 
-#' @param maxiter.activeset Maximum number of active-set iterations
-#'   taken to solve each of the quadratic subproblems.
-#' 
-#' @param verbose If \code{verbose = TRUE}, the algorithm's progress
-#'   and a summary of the optimization settings are printed to the
-#'   console. The algorithm's progress is displayed in a table with one
-#'   row per SQP (outer loop) iteration, and with the following columns:
-#'   "iter", the (outer loop) SQP iteration; "objective", the value of
-#'   the objective function (see \eqn{f(x)} in "Details") at the current
-#'   estimate of the solution, \eqn{x}; "max(rdual)", the maximum "dual
-#'   residual" in the Karush-Kuhn-Tucker (KKT) conditions, which is used
-#'   to monitor convergence (see \code{convtol.sqp}); "nnz", the number
-#'   of non-zero co-ordinates in the current estimate, as determined by
-#'   \code{zero.threshold.solution}; "max.diff", the maximum difference
-#'   in the estimates between two successive iterations; "nqp", the
-#'   number of (inner loop) active-set iterations taken to solve the
-#'   quadratic subproblem; "nls", the number of iterations in the
-#'   backtracking line search.
+#' @param control A list of parameters controlling the behaviour of
+#'   the optimization algorithm. See \sQuote{Details}.
 #' 
 #' @return A list object with the following elements:
 #'
@@ -146,16 +161,17 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #' \item{data}{A data frame containing more detailed information about
 #'   the algorithm's progress. The data frame has one row per SQP
 #'   iteration. For an explanation of the columns, see the description
-#'   of the \code{verbose} argument above. Missing values (NA's) in the
-#'   last row indicate that these quantities were not computed because
-#'   convergence was reached before computing them. Also note that the
-#'   association of these quantities is slightly different than the
-#'   console output when \code{verbose = TRUE} as the console output
-#'   shows some quantities that were computed after the convergence
-#'   check in the previous iteration. The last entries of max.diff, nqp
-#'   and nls may not have been assigned if the SQP algorithm converged
-#'   successfully (as indicated by negative values), in which case we
-#'   should more appropriately assign them missing values (NA).}
+#'   of the \code{verbose} control paramter in \sQuote{Details}. Missing
+#'   values (NA's) in the last row indicate that these quantities were
+#'   not computed because convergence was reached before computing
+#'   them. Also note that the association of these quantities is
+#'   slightly different than the console output when \code{verbose =
+#'   TRUE} as the console output shows some quantities that were
+#'   computed after the convergence check in the previous iteration. The
+#'   last entries of max.diff, nqp and nls may not have been assigned if
+#'   the SQP algorithm converged successfully (as indicated by negative
+#'   values), in which case we should more appropriately assign them
+#'   missing values (NA).}
 #'
 #' @references
 #'   Y. Kim, P. Carbonetto, M. Stephens and M. Anitescu (2018). A fast
@@ -167,10 +183,10 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #' 
 #' @examples
 #' set.seed(1)
-#' n  <- 1e5
-#' m  <- 10
-#' w  <- rep(1,n)/n
-#' L  <- simulatemixdata(n,m)$L
+#' n <- 1e5
+#' m <- 10
+#' w <- rep(1,n)/n
+#' L <- simulatemixdata(n,m)$L
 #' out.mixsqp <- mixsqp(L,w)
 #' print(mixobjective(L,out.mixsqp$x,w),digits = 16)
 #' 
@@ -182,18 +198,15 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #' print(mixobjective(L,out.kwdual$x,w),digits = 16)
 #' 
 #' @useDynLib mixsqp
-#' 
+#'
+#' @importFrom utils modifyList
 #' @importFrom Rcpp evalCpp
 #' 
 #' @export
 #' 
 mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
-                    convtol.sqp = 1e-8, convtol.activeset = 1e-10,
-                    zero.threshold.solution = 1e-6,
-                    zero.threshold.searchdir = 1e-8, eps = 1e-8,
-                    delta = 1e-10, maxiter.sqp = 1000,
-                    maxiter.activeset = 100, verbose = TRUE) {
-    
+                    control = list()) {
+  
   # CHECK & PROCESS INPUTS
   # ----------------------
   # Check the likelihood matrix and, if necessary, coerce the
@@ -218,6 +231,10 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
     stop(paste("Input \"x0\" is not a valid initial estimate; all entries",
                "of the matrix-vector product L %*% x0 should be positive"))
 
+  # Get the optimization algorithm settings.
+  browser()
+  control <- modifyList(control,mixsqp_control_default())
+  
   # Input arguments "maxiter.sqp" and "maxiter.activeset" should be
   # scalars that are integers greater than zero.
   verify.maxiter.arg(maxiter.sqp)
@@ -291,3 +308,18 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
                                   nqp       = out$nqp,
                                   nls       = out$nls)))
 }
+
+#' @rdname mixsqp
+#'
+#' @export
+#' 
+mixsqp_control_default <- function()
+  list(convtol.sqp              = 1e-8,
+       convtol.activeset        = 1e-10,
+       zero.threshold.solution  = 1e-6,
+       zero.threshold.searchdir = 1e-8,
+       eps                      = 1e-8,
+       delta                    = 1e-10,
+       maxiter.sqp              = 1000,
+       maxiter.activeset        = 100,
+       verbose                  = TRUE)
