@@ -7,7 +7,7 @@ verify.logical.arg <- function (x, arg.name = deparse(substitute(x))) {
         all(!missing(x)) &
         all(is.finite(x)) &
         all(x == TRUE | x == FALSE)))
-    stop("Argument",arg.name,"should be TRUE or FALSE")
+    stop(paste("Argument",arg.name,"should be TRUE or FALSE"))
   return(TRUE)
 }
 
@@ -20,7 +20,7 @@ verify.nonneg.scalar.arg <- function (x, arg.name = deparse(substitute(x))) {
         all(!missing(x)) &
         all(is.finite(x)) &
         all(x >= 0)))
-    stop("Argument",arg.name,"should be a non-negative number")
+    stop(paste("Argument",arg.name,"should be a non-negative number"))
   return(TRUE)
 }
 
@@ -105,8 +105,8 @@ verify.weights <- function (L, w) {
 # initial estimate (coerced to double-precision) is returned.
 verify.estimate <- function (x, L, arg.name = deparse(substitute(x))) {
   arg.name <- sprintf("\"%s\"",arg.name)
-  msg <- paste("Argument",arg.name,"should be a numeric vector with only",
-               "non-negative, finite and non-missing entries, with one",
+  msg <- paste("Argument",arg.name,"should be a numeric vector with",
+               "only non-negative, finite and non-missing entries, with one",
                "entry per column of L")
   if (!(is.atomic(x) &
         is.numeric(x)))
