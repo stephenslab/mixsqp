@@ -232,8 +232,16 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
                "of the matrix-vector product L %*% x0 should be positive"))
 
   # Get the optimization algorithm settings.
-  browser()
-  control <- modifyList(control,mixsqp_control_default())
+  #
+  # TO DO: Check that "control" is a list.
+  #
+  # TO DO: What happens when "control" includes names of invalid
+  # parameters? See "optim" for illustration.
+  #
+  control <- modifyList(mixsqp_control_default(),control,keep.null = TRUE)
+  maxiter.sqp       <- control$maxiter.sqp
+  maxiter.activeset <- control$maxiter.activeset
+  convtol.sqp       <- control$convtol.sqp
   
   # Input arguments "maxiter.sqp" and "maxiter.activeset" should be
   # scalars that are integers greater than zero.
