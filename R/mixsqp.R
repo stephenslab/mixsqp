@@ -188,7 +188,8 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #' w <- rep(1,n)/n
 #' L <- simulatemixdata(n,m)$L
 #' out.mixsqp <- mixsqp(L,w)
-#' print(mixobjective(L,out.mixsqp$x,w),digits = 16)
+#' f <- mixobjective(L,out.mixsqp$x,w)
+#' print(f,digits = 16)
 #' 
 #' # We can also compare this result with solution found from an
 #' # interior-point approach called via the "KWDual" function from the
@@ -232,17 +233,22 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
                "of the matrix-vector product L %*% x0 should be positive"))
 
   # Get the optimization algorithm settings.
-  #
-  # TO DO: Check that "control" is a list.
-  #
-  # TO DO: What happens when "control" includes names of invalid
-  # parameters? See "optim" for illustration.
-  #
-  control <- modifyList(mixsqp_control_default(),control,keep.null = TRUE)
-  maxiter.sqp       <- control$maxiter.sqp
-  maxiter.activeset <- control$maxiter.activeset
-  convtol.sqp       <- control$convtol.sqp
-  
+  if (!is.list(control))
+    stop("Argument \"control\" should be a list")
+  control0 <- mixsqp_control_default()
+  if (any(!is.element(names(control),names(control0))))
+    stop("Argument \"control\" contains unknown parameter names")
+  control <- modifyList(control0,control,keep.null = TRUE)
+  convtol.sqp              <- control$convtol.sqp
+  convtol.activeset        <- control$convtol.activeset
+  zero.threshold.solution  <- control$zero.threshold.solution
+  zero.threshold.searchdir <- control$zero.threshold.searchdir
+  eps                      <- control$eps
+  delta                    <- control$delta
+  maxiter.sqp              <- control$maxiter.sqp
+  maxiter.activeset        <- control$maxiter.activeset
+  verbose                  <- control$verbose
+
   # Input arguments "maxiter.sqp" and "maxiter.activeset" should be
   # scalars that are integers greater than zero.
   verify.maxiter.arg(maxiter.sqp)
