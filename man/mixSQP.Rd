@@ -190,7 +190,8 @@ m <- 10
 w <- rep(1,n)/n
 L <- simulatemixdata(n,m)$L
 out.mixsqp <- mixsqp(L,w)
-print(mixobjective(L,out.mixsqp$x,w),digits = 16)
+f <- mixobjective(L,out.mixsqp$x,w)
+print(f,digits = 16)
 
 # We can also compare this result with solution found from an
 # interior-point approach called via the "KWDual" function from the

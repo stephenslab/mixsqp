@@ -126,8 +126,8 @@ test_that(paste("mix-SQP returns the same solution regardless whether",
   w  <- w/sum(w)
 
   # Apply mix-SQP to normalized and unnormalized data sets.
-  capture.output(out1 <- mixsqp(L1,w,eps = 0))
-  capture.output(out2 <- mixsqp(L2,w,eps = 0))
+  capture.output(out1 <- mixsqp(L1,w,control = list(eps = 0)))
+  capture.output(out2 <- mixsqp(L2,w,control = list(eps = 0)))
 
   # The outputted solutions should be nearly identical (although the
   # values of the objectives will be different).
@@ -141,7 +141,7 @@ test_that(paste("mix-SQP gives correct solution for Beckett & Diaconis",
   data(tacks)
   L <- tacks$L
   w <- tacks$w
-  capture.output(out <- mixsqp(L,w,eps = 0))
+  capture.output(out <- mixsqp(L,w,control = list(eps = 0)))
 
   # The mix-SQP solution should be very close to the KWDual solution
   # and, more importantly, the quality of the mix-SQP solution should
@@ -158,7 +158,8 @@ test_that("mix-SQP does not report an error with convergence failure",{
   e <- 1e-8
   L <- rbind(c(1,1,e),
              c(1,1,1))
-  capture_output(out <- mixsqp(L,x0 = c(0,1,1),maxiter.sqp = 3))
+  capture_output(out <- mixsqp(L,x0 = c(0,1,1),
+                               control = list(maxiter.sqp = 3)))
   expect_equal(out$status,mixsqp.status.didnotconverge)
   expect_equal(dim(out$data),c(3,6))
 })
@@ -170,7 +171,7 @@ test_that(paste("mix-SQP gives correct solution for \"short and fat\" matrix,",
   set.seed(1)
   L    <- matrix(rgamma(1000,1,1),nrow = 10)
   capture.output(out1 <- mixsqp(L))
-  capture.output(out2 <- mixsqp(L,delta = 0))
+  capture.output(out2 <- mixsqp(L,control = list(delta = 0)))
   expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
   expect_equal(out2$status,mixsqp:::mixsqp.status.converged)
 
@@ -202,9 +203,10 @@ test_that(paste("mix-SQP converges, and outputs correct solution, for example",
   # eps = 0, delta = 0). Also, when convtol.sqp = 0, the mix-SQP
   # algorithm should report that it failed to converge in this
   # example.
-  capture.output(out1 <- mixsqp(L,eps = 0,convtol.sqp = 0,maxiter.sqp = 10))
+  capture.output(out1 <- mixsqp(L,control = list(eps = 0,convtol.sqp = 0,
+                                                 maxiter.sqp = 10)))
   capture.output(out2 <- mixsqp(L))
-  capture.output(out3 <- mixsqp(L,eps = 0,delta = 0))
+  capture.output(out3 <- mixsqp(L,control = list(eps = 0,delta = 0)))
   expect_equal(out1$status,"exceeded maximum number of iterations")
   expect_equal(out2$status,mixsqp:::mixsqp.status.converged)
   expect_equal(out3$status,mixsqp:::mixsqp.status.converged)
