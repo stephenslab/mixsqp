@@ -7,13 +7,14 @@
 using namespace Rcpp;
 
 // mixsqp_rcpp
-List mixsqp_rcpp(const arma::mat& L, const arma::vec& w, const arma::vec& x0, double convtolsqp, double convtolactiveset, double zerothresholdsolution, double zerothresholdsearchdir, double eps, double delta, int maxitersqp, int maxiteractiveset, bool verbose);
-RcppExport SEXP _mixsqp_mixsqp_rcpp(SEXP LSEXP, SEXP wSEXP, SEXP x0SEXP, SEXP convtolsqpSEXP, SEXP convtolactivesetSEXP, SEXP zerothresholdsolutionSEXP, SEXP zerothresholdsearchdirSEXP, SEXP epsSEXP, SEXP deltaSEXP, SEXP maxitersqpSEXP, SEXP maxiteractivesetSEXP, SEXP verboseSEXP) {
+List mixsqp_rcpp(const arma::mat& L, const arma::vec& w, const arma::vec& z, const arma::vec& x0, double convtolsqp, double convtolactiveset, double zerothresholdsolution, double zerothresholdsearchdir, double eps, double delta, int maxitersqp, int maxiteractiveset, bool normalizedrows, bool verbose);
+RcppExport SEXP _mixsqp_mixsqp_rcpp(SEXP LSEXP, SEXP wSEXP, SEXP zSEXP, SEXP x0SEXP, SEXP convtolsqpSEXP, SEXP convtolactivesetSEXP, SEXP zerothresholdsolutionSEXP, SEXP zerothresholdsearchdirSEXP, SEXP epsSEXP, SEXP deltaSEXP, SEXP maxitersqpSEXP, SEXP maxiteractivesetSEXP, SEXP normalizedrowsSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::mat& >::type L(LSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type w(wSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type z(zSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type x0(x0SEXP);
     Rcpp::traits::input_parameter< double >::type convtolsqp(convtolsqpSEXP);
     Rcpp::traits::input_parameter< double >::type convtolactiveset(convtolactivesetSEXP);
@@ -23,14 +24,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type delta(deltaSEXP);
     Rcpp::traits::input_parameter< int >::type maxitersqp(maxitersqpSEXP);
     Rcpp::traits::input_parameter< int >::type maxiteractiveset(maxiteractivesetSEXP);
+    Rcpp::traits::input_parameter< bool >::type normalizedrows(normalizedrowsSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(mixsqp_rcpp(L, w, x0, convtolsqp, convtolactiveset, zerothresholdsolution, zerothresholdsearchdir, eps, delta, maxitersqp, maxiteractiveset, verbose));
+    rcpp_result_gen = Rcpp::wrap(mixsqp_rcpp(L, w, z, x0, convtolsqp, convtolactiveset, zerothresholdsolution, zerothresholdsearchdir, eps, delta, maxitersqp, maxiteractiveset, normalizedrows, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_mixsqp_mixsqp_rcpp", (DL_FUNC) &_mixsqp_mixsqp_rcpp, 12},
+    {"_mixsqp_mixsqp_rcpp", (DL_FUNC) &_mixsqp_mixsqp_rcpp, 14},
     {NULL, NULL, 0}
 };
 

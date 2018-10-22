@@ -37,11 +37,12 @@ double backtrackinglinesearch (double f, const arma::mat& L,
 // mixsqp_rcpp is called inside the mixsqp function.
 // 
 // [[Rcpp::export]]
-List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0, 
-                  double convtolsqp, double convtolactiveset,
-		  double zerothresholdsolution, double zerothresholdsearchdir,
-		  double eps, double delta, int maxitersqp, 
-		  int maxiteractiveset, bool verbose) {
+List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& z,
+		  const arma::vec& x0, double convtolsqp, 
+		  double convtolactiveset, double zerothresholdsolution, 
+		  double zerothresholdsearchdir, double eps, double delta, 
+		  int maxitersqp, int maxiteractiveset, bool normalizedrows, 
+		  bool verbose) {
   
   // Get the number of rows (n) and columns (m) of the conditional
   // likelihood matrix.
@@ -50,7 +51,11 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP algorithm 0.1-62 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP algorithm 0.1-63 on %d x %d ",n,m);
+    if (normalizedrows)
+      Rprintf("(normalized) matrix\n");
+    else
+      Rprintf("matrix\n");
     Rprintf("convergence tol. (SQP):     %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set):    %0.1e\n",convtolactiveset);
     Rprintf("zero threshold (solution):  %0.1e\n",zerothresholdsolution);

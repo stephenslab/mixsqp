@@ -72,8 +72,7 @@ simulatemixdata <- function (n, m, simtype = c("n","nt"),
   simtype <- match.arg(simtype)
 
   # Input argument normalize.rows should be TRUE or FALSE.
-  if (!(is.logical(normalize.rows) & length(normalize.rows) == 1))
-    stop("Argument \"normalize.rows\" should be TRUE or FALSE")
+  verify.logical.arg(normalize.rows)
   
   # SIMULATE DATA FROM MIXTURE
   # --------------------------
