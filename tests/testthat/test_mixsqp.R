@@ -7,6 +7,28 @@ test_that("Version number in mixsqp with verbose = TRUE is correct",{
   expect_equal(packageDescription("mixsqp")$Version,x)
 })
 
+test_that("Computing objective for L before normalization is done correctly",{
+  set.seed(1)
+  n <- 50
+  m <- 8
+  w <- runif(n)
+  x <- runif(m)
+  x <- x/sum(x)
+  L <- simulatemixdata(n,m,normalize.rows = FALSE)$L
+
+  # Normalize the rows of L so that the maximum entry in each row is 1.
+  z    <- apply(L,1,max)
+  Lhat <- L / z
+  z    <- log(z)
+
+  # We should be able to recover the objective computed with the
+  # matrix *before* normalization by setting the "z" argument
+  # appropriately.
+  expect_equal(mixsqp:::mixobj(L,w,x),mixsqp:::mixobj(Lhat,w,x,z))
+})
+
+mixobj <- function (L, w, x, z = rep(0,length(w)), e = 0)
+    
 test_that(paste("mix-SQP allows zero likelihoods, but reports an error",
                 "when initial estimate does not satisfy L*x > 0"),{
   L <- rbind(c(1,1,0),
@@ -171,7 +193,7 @@ test_that(paste("mix-SQP gives correct solution for \"short and fat\" matrix,",
   set.seed(1)
   L    <- matrix(rgamma(1000,1,1),nrow = 10)
   capture.output(out1 <- mixsqp(L))
-  capture.output(out2 <- mixsqp(L,control = list(delta = 0)))
+  capture.output(out2 <- mixsqp(L,control = list(eps = 0,delta = 0)))
   expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
   expect_equal(out2$status,mixsqp:::mixsqp.status.converged)
 
@@ -219,4 +241,10 @@ test_that(paste("mix-SQP converges, and outputs correct solution, for example",
   expect_equal(out3$x,out4$x,tolerance = 1e-7)
   expect_equal(out2$value,out4$value,tolerance = 1e-8)
   expect_equal(out3$value,out4$value,tolerance = 1e-8)
+})
+
+test_that(paste("mix-SQP outputs same solution when normalize.rows = FALSE",
+                "and when normalize.rows = TRUE"),{
+
+  # TO DO: Implement this test.                
 })
