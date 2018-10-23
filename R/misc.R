@@ -4,7 +4,7 @@ verify.logical.arg <- function (x, arg.name = deparse(substitute(x))) {
   if (!(is.atomic(x) &
         is.logical(x) &
         length(x) == 1 &
-        all(!missing(x)) &
+        all(!is.na(x)) &
         all(is.finite(x)) &
         all(x == TRUE | x == FALSE)))
     stop(paste("Argument",arg.name,"should be TRUE or FALSE"))
@@ -17,7 +17,7 @@ verify.nonneg.scalar.arg <- function (x, arg.name = deparse(substitute(x))) {
   if (!(is.atomic(x) &
         is.numeric(x) &
         length(x) == 1 &
-        all(!missing(x)) &
+        all(!is.na(x)) &
         all(is.finite(x)) &
         all(x >= 0)))
     stop(paste("Argument",arg.name,"should be a non-negative number"))
@@ -32,7 +32,7 @@ verify.maxiter.arg <- function (x, arg.name = deparse(substitute(x))) {
   if (!(is.atomic(x) &
         is.numeric(x) &
         length(x) == 1 &
-        all(!missing(x)) &
+        all(!is.na(x)) &
         all(is.finite(x)) &
         all(x > 0) &
         all(round(x) == x)))
@@ -59,7 +59,7 @@ verify.likelihood.matrix <- function (L) {
     stop(msg)
   else if (!(all(L >= 0) &
              all(is.finite(L)) &
-             !any(missing(L)) &
+             !any(is.na(L)) &
              all(apply(L,2,max) > 0)))
     stop(msg)
   return(TRUE)
@@ -86,7 +86,7 @@ verify.weights <- function (L, w) {
     stop(msg)
   else if (!(all(w >= 0) &
              all(is.finite(w)) &
-             !any(missing(w)) &
+             !any(is.na(w)) &
              length(w) == nrow(L)))
     stop(msg)
   storage.mode(w) <- "double"
@@ -113,7 +113,7 @@ verify.estimate <- function (x, L, arg.name = deparse(substitute(x))) {
     stop(msg)
   if (!(all(x >= 0) &
         all(is.finite(x)) &
-        !any(missing(x)) &
+        !any(is.na(x)) &
         length(x) == ncol(L)))
     stop(msg)
   storage.mode(x) <- "double"
