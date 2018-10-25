@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create likelihood matrix from simulated data set — simulatemixdata • mixsqp</title>
+<title>Compute objective optimized by mixsqp. — mixobjective • mixsqp</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -27,12 +27,10 @@
 <script src="../pkgdown.js"></script>
   
   
-<meta property="og:title" content="Create likelihood matrix from simulated data set — simulatemixdata" />
+<meta property="og:title" content="Compute objective optimized by mixsqp. — mixobjective" />
 
-<meta property="og:description" content="Simulate a data set, then compute the conditional
-  likelihood matrix under a univariate normal likelihood and a
-  mixture-of-normals prior. This models a simple nonparametric
-  Empirical Bayes method applied to simulated data." />
+<meta property="og:description" content="See mixsqp for a full description of the
+  objective function optimized by the mix-SQP algorithm." />
 <meta name="twitter:card" content="summary" />
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
@@ -86,75 +84,58 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Create likelihood matrix from simulated data set</h1>
+    <h1>Compute objective optimized by mixsqp.</h1>
     </div>
 
     
-    <p>Simulate a data set, then compute the conditional
-  likelihood matrix under a univariate normal likelihood and a
-  mixture-of-normals prior. This models a simple nonparametric
-  Empirical Bayes method applied to simulated data.</p>
+    <p>See <code><a href='mixsqp.html'>mixsqp</a></code> for a full description of the
+  objective function optimized by the mix-SQP algorithm.</p>
     
 
-    <pre class="usage"><span class='fu'>simulatemixdata</span>(<span class='no'>n</span>, <span class='no'>m</span>, <span class='kw'>simtype</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"n"</span>, <span class='st'>"nt"</span>), <span class='kw'>normalize.rows</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>mixobjective</span>(<span class='no'>L</span>, <span class='no'>x</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>n</th>
-      <td><p>Positive integer specifying the number of samples to
-generate and, consequently, the number of rows of the likelihood
-matrix L.</p></td>
+      <th>L</th>
+      <td><p>Matrix specifying the optimization problem to be solved.
+In the context of mixture-model fitting, <code>L[j,k]</code> should be
+the value of the kth mixture component density at the jth data
+point. <code>L</code> should be a numeric matrix with at least two
+columns, with all entries being non-negative and finite (and not
+missing). Further, no column should be entirely zeros. For large
+matrices, it is preferrable that the matrix is stored in
+double-precision; see <code>storage.mode</code>.</p></td>
     </tr>
     <tr>
-      <th>m</th>
-      <td><p>Integer 2 or greater specifying the number of mixture
-components.</p></td>
+      <th>x</th>
+      <td><p>The point at which the objective is evaluated in
+<code>mixobjective</code>; see argument <code>x0</code> in <code><a href='mixsqp.html'>mixsqp</a></code>
+for details.</p></td>
     </tr>
     <tr>
-      <th>simtype</th>
-      <td><p>The type of data to simulate. If <code>simtype =
-"n"</code>, simulate <code>n</code> random numbers from a mixture of three
-univariate normals with mean zero and standard deviation 1, 3 and
-6. If <code>simtype = "nt"</code>, simulate from a mixture of three
-univariate normals (with zero mean and standard deviations 1, 3 and
-5), and a t-distribution with 2 degrees of freedom.</p></td>
-    </tr>
-    <tr>
-      <th>normalize.rows</th>
-      <td><p>If <code>normalize.rows = TRUE</code>, normalize
-the rows of the likelihood matrix so that the largest entry in each
-row is 1. The maximum-likelihood estimate of the mixture weights
-should be invariant to this normalization, and can improve the
-numerical stability of the optimization.</p></td>
+      <th>w</th>
+      <td><p>An optional numeric vector, with one entry for each row of
+<code>L</code>, specifying the "weights" associated with the rows of
+<code>L</code>. All weights must be finite, non-negative and not
+missing. Internally, the weights are normalized to sum to 1,
+which does not change the problem, but does change the value of the
+objective function reported. By default, all weights are equal.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>simulatemixdata</code> returns a list with three list
-elements:</p>
-<dt>x</dt><dd><p>The vector of simulated random numbers (it has length n).</p></dd>
+    <p>The value of the objective at <code>x</code>. If any entry of
+  <code>L %*% x</code> is less than or equal to zero, <code>Inf</code> is
+  returned.</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-<dt>s</dt><dd><p>The standard deviations of the mixture components in the
-  mixture-of-normals prior. The rules for selecting the standard
-  deviations are based on the <code>autoselect.mixsd</code> function from
-  the <code>ashr</code> package.</p></dd>
-
-<dt>L</dt><dd><p>The n x m conditional likelihood matrix, in which
-  individual entries (i,j) of the likelihood matrix are given by the
-  normal density function with mean zero and variance <code>1 +
-  s[j]^2</code>.</p></dd>
-
+    <p><code><a href='mixsqp.html'>mixsqp</a></code></p>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='co'># Generate the likelihood matrix for a data set with 1,000 samples</span>
-<span class='co'># and a nonparametric Empirical Bayes model with 20 mixture</span>
-<span class='co'># components.</span>
-<span class='no'>dat</span> <span class='kw'>&lt;-</span> <span class='fu'>simulatemixdata</span>(<span class='fl'>1000</span>,<span class='fl'>20</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -162,9 +143,9 @@ elements:</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+
+      <li><a href="#see-also">See also</a></li>
+          </ul>
 
   </div>
 </div>

@@ -168,7 +168,7 @@ This project was developed by [Youngseok Kim][youngseok] at the
 [sqp]: https://neos-guide.org/content/sequential-quadratic-programming
 [arxiv-paper]: https://arxiv.org/abs/1806.01412
 [mixsqp-julia]: https://github.com/stephenslab/mixsqp-paper
-[issues]: https://github.com/youngseok-kim/mixsqp/issues
+[issues]: https://github.com/stephenslab/mixsqp/issues
 [rebayes]: https://cran.r-project.org/package=REBayes
 [mosek]: https://www.mosek.com
 [mosek-docs]: https://www.mosek.com/documentation

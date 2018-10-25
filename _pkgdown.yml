@@ -8,7 +8,7 @@ navbar:
       href: reference/index.html
   right:
     - text: "Source"
-      href: https://github.com/youngseok-kim/mixsqp
+      href: https://github.com/stephenslab/mixsqp
 articles:
   - title: "Vignettes"
     desc: >

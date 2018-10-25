@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Add title here. — mixKWDual • mixSQP</title>
+<title>Maximum-likelihood estimation of mixture proportions using MOSEK — mixkwdual • mixsqp</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -27,11 +27,12 @@
 <script src="../pkgdown.js"></script>
   
   
-<meta property="og:title" content="Add title here. — mixKWDual" />
+<meta property="og:title" content="Maximum-likelihood estimation of mixture proportions using MOSEK — mixkwdual" />
 
-<meta property="og:description" content="Add more detailed description here. Explain that this
-  solves the dual problem formulation using the MOSEK interior-point
-  solver (see text from manuscript)." />
+<meta property="og:description" content="This function is simply a wrapper to
+  KWDual with a similar interface to
+  mixsqp for solving the same problem as mixsqp. See
+  mixsqp and KWDual for details." />
 <meta name="twitter:card" content="summary" />
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
@@ -55,12 +56,15 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">mixSQP</a>
+      <a class="navbar-brand" href="../index.html">mixsqp</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">Home</a>
+</li>
+<li>
+  <a href="../articles/index.html">Vignettes</a>
 </li>
 <li>
   <a href="../reference/index.html">Functions</a>
@@ -69,7 +73,7 @@
       
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/youngseok-kim/mixsqp">Source</a>
+  <a href="https://github.com/stephenslab/mixsqp">Source</a>
 </li>
       </ul>
     </div><!--/.nav-collapse -->
@@ -82,57 +86,65 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Add title here.</h1>
+    <h1>Maximum-likelihood estimation of mixture proportions using MOSEK</h1>
     </div>
 
     
-    <p>Add more detailed description here. Explain that this
-  solves the dual problem formulation using the MOSEK interior-point
-  solver (see text from manuscript).</p>
+    <p>This function is simply a wrapper to
+  <code><a href='http://www.rdocumentation.org/packages/REBayes/topics/KWDual'>KWDual</a></code> with a similar interface to
+  <code>mixsqp</code> for solving the same problem as <code>mixsqp</code>. See
+  <code><a href='mixsqp.html'>mixsqp</a></code> and <code><a href='http://www.rdocumentation.org/packages/REBayes/topics/KWDual'>KWDual</a></code> for details.</p>
     
 
-    <pre class="usage"><span class='fu'>mixKWDual</span>(<span class='no'>L</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)), <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>mixkwdual</span>(<span class='no'>L</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)), <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>L</th>
-      <td><p>Matrix specifying the optimization problem to be
-solved. It should be a numeric matrix with positive entries, and
-ideally double-precision.</p></td>
+      <td><p>Matrix specifying the optimization problem to be solved.
+In the context of mixture-model fitting, <code>L[j,k]</code> should be
+the value of the kth mixture component density at the jth data
+point. <code>L</code> should be a numeric matrix with at least two
+columns, with all entries being non-negative and finite (and not
+missing). Further, no column should be entirely zeros. For large
+matrices, it is preferrable that the matrix is stored in
+double-precision; see <code>storage.mode</code>.</p></td>
     </tr>
     <tr>
       <th>w</th>
-      <td><p>A numeric vector, with one entry for each row of <code>L</code>,
-specifying the "weights" associated with the rows of <code>L</code>. All
-weights must be positive. It is assumed the weights sum to 1; if
-not, they will automatically be normalized to sum to 1. By default,
-all rows of <code>L</code> are assigned the same weight.</p></td>
+      <td><p>An optional numeric vector, with one entry for each row of
+<code>L</code>, specifying the "weights" associated with the rows of
+<code>L</code>. All weights must be finite, non-negative and not
+missing. Internally, the weights are normalized to sum to 1,
+which does not change the problem, but does change the value of the
+objective function reported. By default, all weights are equal.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Additional optimization parameters passed to MOSEK. See
-<code><a href='http://www.rdocumentation.org/packages/REBayes/topics/KWDual'>KWDual</a></code> for details.</p></td>
+      <td><p>Additional arguments passed to <code><a href='http://www.rdocumentation.org/packages/REBayes/topics/KWDual'>KWDual</a></code>.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>mixKWDual</code> returns a list with two components:</p>
-<dt>x</dt><dd><p>The solution to the optimization problem, as provided by 
-  MOSEK.</p></dd>
+    <p>A list object with the following elements:</p>
+<dt>x</dt><dd><p>The estimated solution to the convex optimization problem.</p></dd>
 
-<dt>value</dt><dd><p>The value of the objective at <code>x</code>.</p></dd>
+<dt>value</dt><dd><p>The value of the objective function at <code>x</code>.</p></dd>
 
-<dt>status</dt><dd><p>The MOSEK convergence status.</p></dd>
+<dt>status</dt><dd><p>The return status from MOSEK.</p></dd>
+
+For more information on this output, see
+<a href='http://www.rdocumentation.org/packages/REBayes/topics/KWDual'>KWDual</a> and <a href='http://www.rdocumentation.org/packages/Rmosek/topics/mosek'>mosek</a>.
 
     
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'># Add example here.
+    <p><code><a href='mixsqp.html'>mixsqp</a></code>, <code><a href='http://www.rdocumentation.org/packages/REBayes/topics/KWDual'>KWDual</a></code></p>
+    
 
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -140,9 +152,9 @@ all rows of <code>L</code> are assigned the same weight.</p></td>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+
+      <li><a href="#see-also">See also</a></li>
+          </ul>
 
   </div>
 </div>
