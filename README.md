@@ -38,8 +38,7 @@ Copyright (c) 2017-2018, Youngseok Kim, Peter Carbonetto, Matthew
 Stephens and Mihai Anitescu.
 
 All source code and software in this repository are made available
-under the terms of the
-[MIT license][mit-license]. See
+under the terms of the [MIT license][mit-license]. See
 file [LICENSE](LICENSE) for the full text of the license.
 
 ## Quick Start
