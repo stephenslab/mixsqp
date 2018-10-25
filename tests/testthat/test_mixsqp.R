@@ -7,26 +7,6 @@ test_that("Version number in mixsqp with verbose = TRUE is correct",{
   expect_equal(packageDescription("mixsqp")$Version,x)
 })
 
-test_that("Computing objective for L before normalization is done correctly",{
-  set.seed(1)
-  n <- 50
-  m <- 8
-  w <- runif(n)
-  x <- runif(m)
-  x <- x/sum(x)
-  L <- simulatemixdata(n,m,normalize.rows = FALSE)$L
-
-  # Normalize the rows of L so that the maximum entry in each row is 1.
-  z    <- apply(L,1,max)
-  Lhat <- L / z
-  z    <- log(z)
-
-  # We should be able to recover the objective computed with the
-  # matrix *before* normalization by setting the "z" argument
-  # appropriately.
-  expect_equal(mixsqp:::mixobj(L,w,x),mixsqp:::mixobj(Lhat,w,x,z))
-})
-
 test_that(paste("mix-SQP allows zero likelihoods, but reports an error",
                 "when initial estimate does not satisfy L*x > 0"),{
   L <- rbind(c(1,1,0),
@@ -181,7 +161,7 @@ test_that("mix-SQP does not report an error with convergence failure",{
   capture_output(out <- mixsqp(L,x0 = c(0,1,1),
                                control = list(maxiter.sqp = 3)))
   expect_equal(out$status,mixsqp.status.didnotconverge)
-  expect_equal(dim(out$data),c(3,7))
+  expect_equal(dim(out$data),c(3,6))
 })
 
 # This test comes from Issue #3.
@@ -239,28 +219,4 @@ test_that(paste("mix-SQP converges, and outputs correct solution, for example",
   expect_equal(out3$x,out4$x,tolerance = 1e-7)
   expect_equal(out2$value,out4$value,tolerance = 1e-8)
   expect_equal(out3$value,out4$value,tolerance = 1e-8)
-})
-
-test_that(paste("mix-SQP outputs same solution when normalize.rows = FALSE",
-                "and when normalize.rows = TRUE"),{
-  set.seed(1)
-
-  # Simulate a 1,000 x 10 likelihood matrix.
-  n <- 1000
-  m <- 10
-  w <- runif(n)
-  L <- simulatemixdata(n,m,normalize.rows = FALSE)$L
-
-  # Compare the solutions and the calculation of the normalized and
-  # unnormalized objective values.
-  capture.output(out1 <- mixsqp(L,w,control = list(normalize.rows = FALSE)))
-  capture.output(out2 <- mixsqp(L,w,control = list(normalize.rows = TRUE)))
-  capture.output(out3 <- mixsqp(100*L,w,control = list(normalize.rows = TRUE)))
-  expect_equal(out1$x,out2$x,tolerance = 1e-6)
-  expect_equal(out1$x,out3$x,tolerance = 1e-6)
-  expect_equal(out1$value,out2$value,tolerance = 1e-6)
-  expect_equal(out1$value,tail(out2$data$objective,n = 1),tolerance = 1e-6)
-  expect_equal(tail(out2$data$objective.normalized,n = 1),
-               tail(out3$data$objective.normalized,n = 1),
-               tolerance = 1e-6)  
 })

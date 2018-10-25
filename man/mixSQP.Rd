@@ -112,16 +112,6 @@ The \code{mixsqp} function uses a Sequential Quadratic
 
   \describe{
 
-    \item{\code{normalized.rows}}{Explain here what this
-optimization parameter does, and why it is important to normalize
-the rows when the matrix L has "poorly scaled" rows. For an
-illustration, consider the case when all entries in a row are very
-small (e.g., smaller than 1e)-10. Note that normalizing the rows of
-L will create a copy of L in memory, which may be a problem in
-cases where L takes up a large amount of memory. When the rows of L
-are already well-scaled, the normalization step can be skipped (and
-saving memory) by setting \code{normalize.rows = FALSE}.}
-
     \item{\code{convtol.sqp}}{A small, non-negative number
       specifying the convergence tolerance for SQP algorithm; convergence
       is reached when the maximum dual residual in the Karush-Kuhn-Tucker
