@@ -49,16 +49,6 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #'   \code{mixsqp_control_defaults}):
 #' 
 #'   \describe{
-#'
-#'     \item{\code{normalized.rows}}{Explain here what this
-#' optimization parameter does, and why it is important to normalize
-#' the rows when the matrix L has "poorly scaled" rows. For an
-#' illustration, consider the case when all entries in a row are very
-#' small (e.g., smaller than 1e)-10. Note that normalizing the rows of
-#' L will create a copy of L in memory, which may be a problem in
-#' cases where L takes up a large amount of memory. When the rows of L
-#' are already well-scaled, the normalization step can be skipped (and
-#' saving memory) by setting \code{normalize.rows = FALSE}.}
 #' 
 #'     \item{\code{convtol.sqp}}{A small, non-negative number
 #'       specifying the convergence tolerance for SQP algorithm; convergence
@@ -249,7 +239,6 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   if (any(!is.element(names(control),names(control0))))
     stop("Argument \"control\" contains unknown parameter names")
   control <- modifyList(control0,control,keep.null = TRUE)
-  normalize.rows           <- control$normalize.rows
   convtol.sqp              <- control$convtol.sqp
   convtol.activeset        <- control$convtol.activeset
   zero.threshold.solution  <- control$zero.threshold.solution
@@ -280,25 +269,14 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
     stop(paste("Behavior of algorithm will be unpredictable if",
                "zero.threshold > 1/m, where m = ncol(X)"))
   
-  # Input arguments "normalize.rows" and "verbose" should each be
-  # TRUE or FALSE.
-  verify.logical.arg(normalize.rows)
+  # Input argument "verbose" should be TRUE or FALSE.
   verify.logical.arg(verbose)
-
-  # If desired, normalize the rows of the matrix L.
-  if (normalize.rows) {
-    z <- apply(L,1,max)
-    L <- L / z
-    z <- log(z)
-  } else
-    z <- rep(0,n)
   
   # SOLVE OPTIMIZATION PROBLEM USING mix-SQP
   # ----------------------------------------
-  out <- mixsqp_rcpp(L,w,z,x0,convtol.sqp,convtol.activeset,
+  out <- mixsqp_rcpp(L,w,x0,convtol.sqp,convtol.activeset,
                      zero.threshold.solution,zero.threshold.searchdir,
-                     eps,delta,maxiter.sqp,maxiter.activeset,normalize.rows,
-                     verbose)
+                     eps,delta,maxiter.sqp,maxiter.activeset,verbose)
   
   # Get the algorithm convergence status. The convention is that
   # status = 0 means that the algorithm has successfully converged to
@@ -334,26 +312,15 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 
   # CONSTRUCT OUTPUT
   # ----------------
-  if (normalize.rows)
-    dat <- data.frame(objective = out$objective,
-                      objective.normalized = out$objective.normalized,
-                      max.rdual = out$max.rdual,
-                      nnz       = out$nnz,
-                      max.diff  = out$max.diff,
-                      nqp       = out$nqp,
-                      nls       = out$nls)
-  else
-    dat <- data.frame(objective = out$objective,
-                      objective.normalized = NA,
-                      max.rdual = out$max.rdual,
-                      nnz       = out$nnz,
-                      max.diff  = out$max.diff,
-                      nqp       = out$nqp,
-                      nls       = out$nls)
   return(list(x      = x,
               status = status,
-              value  = mixobj(L,w,x,z),
-              data   = dat))
+              value  = mixobj(L,w,x),
+              data   = data.frame(objective = out$objective,
+                                  max.rdual = out$max.rdual,
+                                  nnz       = out$nnz,
+                                  max.diff  = out$max.diff,
+                                  nqp       = out$nqp,
+                                  nls       = out$nls)))
 }
 
 #' @rdname mixsqp
@@ -361,8 +328,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 #' @export
 #' 
 mixsqp_control_default <- function()
-  list(normalize.rows           = TRUE,
-       convtol.sqp              = 1e-8,
+  list(convtol.sqp              = 1e-8,
        convtol.activeset        = 1e-10,
        zero.threshold.solution  = 1e-6,
        zero.threshold.searchdir = 1e-8,
