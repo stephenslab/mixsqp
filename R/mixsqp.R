@@ -334,15 +334,26 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 
   # CONSTRUCT OUTPUT
   # ----------------
+  if (normalize.rows)
+    dat <- data.frame(objective = out$objective,
+                      objective.normalized = out$objective.normalized,
+                      max.rdual = out$max.rdual,
+                      nnz       = out$nnz,
+                      max.diff  = out$max.diff,
+                      nqp       = out$nqp,
+                      nls       = out$nls)
+  else
+    dat <- data.frame(objective = out$objective,
+                      objective.normalized = NA,
+                      max.rdual = out$max.rdual,
+                      nnz       = out$nnz,
+                      max.diff  = out$max.diff,
+                      nqp       = out$nqp,
+                      nls       = out$nls)
   return(list(x      = x,
               status = status,
               value  = mixobj(L,w,x,z),
-              data   = data.frame(objective = out$objective,
-                                  max.rdual = out$max.rdual,
-                                  nnz       = out$nnz,
-                                  max.diff  = out$max.diff,
-                                  nqp       = out$nqp,
-                                  nls       = out$nls)))
+              data   = dat))
 }
 
 #' @rdname mixsqp

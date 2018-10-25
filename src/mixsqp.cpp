@@ -14,8 +14,9 @@ using namespace Rcpp;
 
 // FUNCTION DECLARATIONS
 // ---------------------
-double mixobjective (const arma::mat& L, const arma::vec& w,
-		     const arma::vec& x, double e, arma::vec& u);
+double mixobjective (const arma::mat& L, const arma::vec& w, 
+		     const arma::vec& x, double e, arma::vec& u, 
+		     const arma::vec& z, bool use_z);
 void   computegrad  (const arma::mat& L, const arma::vec& w,
 		     const arma::vec& x, double e, arma::vec& g,
 		     arma::mat& H, arma::vec& u, arma::mat& Z,
@@ -51,7 +52,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& z,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP algorithm 0.1-63 on %d x %d ",n,m);
+    Rprintf("Running mix-SQP algorithm 0.1-64 on %d x %d ",n,m);
     if (normalizedrows)
       Rprintf("(normalized) matrix\n");
     else
@@ -67,13 +68,15 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& z,
   // PREPARE DATA STRUCTURES
   // -----------------------
   // Initialize storage for the outputs obj, gmin, nnz, nqp and dmax.
-  arma::vec obj(maxitersqp);
+  arma::vec objorig(maxitersqp);
+  arma::vec objnorm(maxitersqp);
   arma::vec gmin(maxitersqp);
   arma::vec nnz(maxitersqp);
   arma::vec nqp(maxitersqp);
   arma::vec nls(maxitersqp);
   arma::vec dmax(maxitersqp);
-  obj.zeros();
+  objorig.zeros();
+  objnorm.zeros();
   gmin.zeros();
   nnz.zeros();
   nqp.fill(-1);
@@ -106,15 +109,25 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& z,
   int i = 0; 
   
   // Print the column labels for reporting the algorithm's progress.
-  if (verbose)
-    Rprintf("iter    objective max(rdual) nnz max.diff nqp nls\n");
-  
+  if (verbose) {
+    if (normalizedrows) {
+      Rprintf("iter original.obj  normalized max(rdual) nnz max.diff nqp ");
+      Rprintf("nls\n");
+    } else
+      Rprintf("iter    objective max(rdual) nnz max.diff nqp nls\n");
+  }
   // Repeat until the convergence criterion is met, or until we reach
   // the maximum number of (outer loop) iterations.
   for (i = 0; i < maxitersqp; i++) {
 
-    // Compute the value of the objective at x (obj).
-    obj[i] = mixobjective(L,w,x,eps,u);
+    // Compute the value of the objective at x. If normalizedrows =
+    // TRUE, also compute the value of the objective prior to
+    // normalizing the rows of L.
+    objnorm[i] = mixobjective(L,w,x,eps,u,z,FALSE);
+    if (normalizedrows)
+      objorig[i] = mixobjective(L,w,x,eps,u,z,TRUE);
+    else
+      objorig[i] = objnorm[i];
 
     // COMPUTE GRADIENT AND HESSIAN
     // ----------------------------
@@ -132,13 +145,20 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& z,
     gmin[i] = 1 + g.min();
     nnz[i]  = sum(t);
     if (verbose) {
-      if (i == 0)
-        Rprintf("%4d %+0.5e %+0.3e%4d       NA  NA  NA\n",i + 1,obj[i],
-		-gmin[i],int(nnz[i]));
+      if (i == 0) {
+	if (normalizedrows)
+	  Rprintf("%4d %+0.5e %0.5e %+0.3e%4d       NA  NA  NA\n",i + 1,
+		  objorig[i],objnorm[i],-gmin[i],int(nnz[i]));
+	else
+	  Rprintf("%4d %+0.5e %+0.3e%4d       NA  NA  NA\n",
+		  i + 1,objorig[i],-gmin[i],int(nnz[i]));
+      } else if (normalizedrows)
+        Rprintf("%4d %+0.5e %0.5e %+0.3e%4d %0.2e %3d %3d\n",i + 1,
+		objorig[i],objnorm[i],-gmin[i],int(nnz[i]),dmax[i-1],
+		int(nqp[i-1]),int(nls[i-1]));
       else
-        Rprintf("%4d %+0.5e %+0.3e%4d %0.2e %3d %3d\n",i + 1,obj[i],
-		-gmin[i],int(nnz[i]),dmax[i-1],int(nqp[i-1]),
-		int(nls[i-1]));
+        Rprintf("%4d %+0.5e %+0.3e%4d %0.2e %3d %3d\n",i + 1,objorig[i],
+		-gmin[i],int(nnz[i]),dmax[i-1],int(nqp[i-1]),int(nls[i-1]));
     }
     
     // CHECK CONVERGENCE
@@ -169,7 +189,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& z,
     
     // BACKTRACKING LINE SEARCH
     // ------------------------
-    nls[i] = backtrackinglinesearch(obj[i],L,w,g,x,y,eps);
+    nls[i] = backtrackinglinesearch(objnorm[i],L,w,g,x,y,eps);
     
     // UPDATE THE SOLUTION
     // -------------------
@@ -182,7 +202,8 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& z,
   // ----------------
   return List::create(Named("x")         = x,
 		      Named("status")    = status,
-		      Named("objective") = obj.head(i),
+		      Named("objective") = objorig.head(i),
+		      Named("objective.normalized") = objnorm.head(i),
 		      Named("max.rdual") = -gmin.head(i),
 		      Named("nnz")       = nnz.head(i),
 		      Named("max.diff")  = dmax.head(i),
@@ -192,15 +213,25 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& z,
 
 // Compute the value of the (unmodified) objective at x, assuming x is
 // (primal) feasible; arguments L and w specify the objective, and e
-// is an additional positive constant near zero. Input argument u is a
-// vector of length n used to store an intermediate result used in the
+// is an additional positive constant near zero. Argument z is an
+// additional "normalization factor" used to recover the objective
+// with the unnormalized L after normalizing the rows of L; setting
+// z[i] to a value different than zero is equivalent to multiplying
+// the ith row of L by exp(z[i]). Input argument u is a vector of
+// length n used to store an intermediate result used in the
 // calculation of the objective.
-double mixobjective (const arma::mat& L, const arma::vec& w,
-		     const arma::vec& x, double e, arma::vec& u) {
+double mixobjective (const arma::mat& L, const arma::vec& w, 
+		     const arma::vec& x, double e, arma::vec& u, 
+		     const arma::vec& z, bool use_z) {
+  double y;
   u = L*x + e;
   if (u.min() <= 0)
     Rcpp::stop("Halting because the objective function has a non-finite value (logarithms of numbers less than or equal to zero) at the current estimate of the solution");
-  return -sum(w % log(u));
+  if (use_z)
+    y = -sum(w % (z + log(u)));
+  else
+    y = -sum(w % log(u));
+  return y;
 }
 
 // Compute the gradient and Hessian of the (unmodified) objective at
