@@ -63,7 +63,7 @@ mixobjective <- function (L, x, w = rep(1,nrow(L))) {
 mixobj <- function (L, w, x, z = rep(0,length(w)), e = 0) {
  y <- drop(L %*% x) + e
  if (all(y > 0))
-   return(-sum(w * (log(y) + z)))
+   return(-sum(w * (z + log(y))))
  else
    return(Inf)
 }

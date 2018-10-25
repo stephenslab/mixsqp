@@ -27,8 +27,6 @@ test_that("Computing objective for L before normalization is done correctly",{
   expect_equal(mixsqp:::mixobj(L,w,x),mixsqp:::mixobj(Lhat,w,x,z))
 })
 
-mixobj <- function (L, w, x, z = rep(0,length(w)), e = 0)
-    
 test_that(paste("mix-SQP allows zero likelihoods, but reports an error",
                 "when initial estimate does not satisfy L*x > 0"),{
   L <- rbind(c(1,1,0),
@@ -183,7 +181,7 @@ test_that("mix-SQP does not report an error with convergence failure",{
   capture_output(out <- mixsqp(L,x0 = c(0,1,1),
                                control = list(maxiter.sqp = 3)))
   expect_equal(out$status,mixsqp.status.didnotconverge)
-  expect_equal(dim(out$data),c(3,6))
+  expect_equal(dim(out$data),c(3,7))
 })
 
 # This test comes from Issue #3.
@@ -245,6 +243,24 @@ test_that(paste("mix-SQP converges, and outputs correct solution, for example",
 
 test_that(paste("mix-SQP outputs same solution when normalize.rows = FALSE",
                 "and when normalize.rows = TRUE"),{
+  set.seed(1)
 
-  # TO DO: Implement this test.                
+  # Simulate a 1,000 x 10 likelihood matrix.
+  n <- 1000
+  m <- 10
+  w <- runif(n)
+  L <- simulatemixdata(n,m,normalize.rows = FALSE)$L
+
+  # Compare the solutions and the calculation of the normalized and
+  # unnormalized objective values.
+  capture.output(out1 <- mixsqp(L,w,control = list(normalize.rows = FALSE)))
+  capture.output(out2 <- mixsqp(L,w,control = list(normalize.rows = TRUE)))
+  capture.output(out3 <- mixsqp(100*L,w,control = list(normalize.rows = TRUE)))
+  expect_equal(out1$x,out2$x,tolerance = 1e-6)
+  expect_equal(out1$x,out3$x,tolerance = 1e-6)
+  expect_equal(out1$value,out2$value,tolerance = 1e-6)
+  expect_equal(out1$value,tail(out2$data$objective,n = 1),tolerance = 1e-6)
+  expect_equal(tail(out2$data$objective.normalized,n = 1),
+               tail(out3$data$objective.normalized,n = 1),
+               tolerance = 1e-6)  
 })
