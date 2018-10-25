@@ -38,9 +38,8 @@ Copyright (c) 2017-2018, Youngseok Kim, Peter Carbonetto, Matthew
 Stephens and Mihai Anitescu.
 
 All source code and software in this repository are made available
-under the terms of the
-[MIT license][mit-license]. See
-file [LICENSE](LICENSE) for the full text of the license.
+under the terms of the [MIT license][mit-license]. See file
+[LICENSE](LICENSE) for the full text of the license.
 
 ## Quick Start
 
@@ -65,9 +64,9 @@ Next, run the small example provided with the mixsqp function:
 example("mixsqp")
 ```
 
-For a more detailed illustration of the SQP algorithm applied to
-the problem of computing maximum-likelihood estimates for a mixture
-model, work through the introductory vignette:
+For a more detailed illustration of the SQP algorithm applied to the
+problem of computing maximum-likelihood estimates for a mixture model,
+work through the introductory vignette:
 
 ```R
 vignette("mixsqp-intro")
@@ -96,9 +95,9 @@ This command should automatically install all required packages if
 they are not installed already.
 
 Alternatively, if you have cloned the repository locally, you can
-install the package with the `install_local` function from
-devtools. Assuming your working directory contains the mixsqp
-repository, run this code to install the package:
+install the package with the `install_local` function from devtools.
+Assuming your working directory contains the mixsqp repository, run
+this code to install the package:
 
 ```R
 library(devtools)
@@ -109,17 +108,16 @@ install_local("mixsqp",build_vignettes = TRUE,upgrade_dependencies = FALSE)
 ### Additional setup notes
 
 + Compiling the mixsqp package from source will require a C++ compiler
-setup that is appropriate for the the R installed on your
-computer. For details, refer to the [CRAN documentation][cran]. For
-Mac computers, see [these notes][compiling-macos].
+setup that is appropriate for the the R installed on your computer.
+For details, refer to the [CRAN documentation][cran]. For Mac
+computers, see [these notes][compiling-macos].
 
 + To use the (optional) alternative solver, "mixkwdual", you will need
 to install the [REBayes][rebayes] package which, in turn, requires the
-[Rmosek][mosek] package. Refer to the
-[MOSEK documentation][mosek-docs] for instructions on installing the
-Rmosek package. Once you have followed these steps, you can run
-[this example](inst/code/test.rmosek.R) to verify that Rmosek is
-correctly installed.
+[Rmosek][mosek] package. Refer to the [MOSEK documentation][mosek-docs]
+for instructions on installing the Rmosek package. Once you have
+followed these steps, you can run [this example](inst/code/test.rmosek.R)
+to verify that Rmosek is correctly installed.
 
 ## Developer notes
 
