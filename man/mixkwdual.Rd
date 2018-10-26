@@ -39,9 +39,9 @@ For more information on this output, see
 }
 \description{
 This function is simply a wrapper to
-  \code{\link[REBayes]{KWDual}} with a similar interface to
-  \code{mixsqp} for solving the same problem as \code{mixsqp}. See
-  \code{\link{mixsqp}} and \code{\link[REBayes]{KWDual}} for details.
+\code{\link[REBayes]{KWDual}} with a similar interface to
+\code{mixsqp} for solving the same problem as \code{mixsqp}. See
+\code{\link{mixsqp}} and \code{\link[REBayes]{KWDual}} for details.
 }
 \seealso{
 \code{\link{mixsqp}}, \code{\link[REBayes]{KWDual}}

@@ -30,12 +30,12 @@
 <meta property="og:title" content="Maximum-likelihood estimation of mixture proportions using SQP — mixsqp" />
 
 <meta property="og:description" content="The mixsqp function uses a Sequential Quadratic
-  Programming (SQP) algorithm to find the maximum likelihood
-  estimates of mixture proportions in a (finite) mixture model. More
-  generally, mixsqp solves the corresponding constrained,
-  convex optimization problem, which is given below (see
-  &#8216;Details&#8217;). See &#8216;References&#8217; for more details about
-  the SQP algorithm." />
+Programming (SQP) algorithm to find the maximum likelihood
+estimates of mixture proportions in a (finite) mixture model. More
+generally, mixsqp solves the corresponding constrained,
+convex optimization problem, which is given below (see
+&#8216;Details&#8217;). See &#8216;References&#8217; for more details about
+the SQP algorithm." />
 <meta name="twitter:card" content="summary" />
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
@@ -94,12 +94,12 @@
 
     
     <p>The <code>mixsqp</code> function uses a Sequential Quadratic
-  Programming (SQP) algorithm to find the maximum likelihood
-  estimates of mixture proportions in a (finite) mixture model. More
-  generally, <code>mixsqp</code> solves the corresponding constrained,
-  convex optimization problem, which is given below (see
-  &#8216;Details&#8217;). See &#8216;References&#8217; for more details about
-  the SQP algorithm.</p>
+Programming (SQP) algorithm to find the maximum likelihood
+estimates of mixture proportions in a (finite) mixture model. More
+generally, <code>mixsqp</code> solves the corresponding constrained,
+convex optimization problem, which is given below (see
+&#8216;Details&#8217;). See &#8216;References&#8217; for more details about
+the SQP algorithm.</p>
     
 
     <pre class="usage"><span class='fu'>mixsqp</span>(<span class='no'>L</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)), <span class='kw'>x0</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>ncol</span>(<span class='no'>L</span>)),
@@ -153,130 +153,156 @@ the optimization algorithm. See &#8216;Details&#8217;.</p></td>
 <dt>x</dt><dd><p>The solution to the convex optimization problem.</p></dd>
 
 <dt>value</dt><dd><p>The value of the objective function, \(f(x)\), at
-  <code>x</code>.</p></dd>
+<code>x</code>.</p></dd>
 
 <dt>status</dt><dd><p>A character string giving the status of the algorithm
-  upon termination.</p></dd>
+upon termination.</p></dd>
 
 <dt>data</dt><dd><p>A data frame containing more detailed information about
-  the algorithm's progress. The data frame has one row per SQP
-  iteration. For an explanation of the columns, see the description
-  of the <code>verbose</code> control paramter in &#8216;Details&#8217;. Missing
-  values (NA's) in the last row indicate that these quantities were
-  not computed because convergence was reached before computing
-  them. Also note that the association of these quantities is
-  slightly different than the console output when <code>verbose =
-  TRUE</code> as the console output shows some quantities that were
-  computed after the convergence check in the previous iteration. The
-  last entries of max.diff, nqp and nls may not have been assigned if
-  the SQP algorithm converged successfully (as indicated by negative
-  values), in which case we should more appropriately assign them
-  missing values (NA).</p></dd>
+the algorithm's progress. The data frame has one row per SQP
+iteration. For an explanation of the columns, see the description
+of the <code>verbose</code> control paramter in &#8216;Details&#8217;. Missing
+values (NA's) in the last row indicate that these quantities were
+not computed because convergence was reached before computing
+them. Also note that the association of these quantities is
+slightly different than the console output when <code>verbose =
+TRUE</code> as the console output shows some quantities that were
+computed after the convergence check in the previous iteration. The
+last entries of max.diff, nqp and nls may not have been assigned if
+the SQP algorithm converged successfully (as indicated by negative
+values), in which case we should more appropriately assign them
+missing values (NA).</p></dd>
 
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p><code>mixsqp</code> solves the following optimization problem.
-  Let \(L\) be a matrix with \(n\) rows and \(m\) columns
-  containing only non-negative entries, and let \(w = (w_1,
-  \ldots, w_n)\) be a vector of non-negative "weights". <code>mixsqp</code>
-  computes the value of vector \(x = (x_1, \ldots, x_m)\)
-  minimizing the following objective function,
-  $$f(x) = -\sum_{j=1}^n w_j log (\sum_{k=1}^m L_{jk} x_k),$$
-  subject to the constraint that \(x\) lie within the simplex;
-  that is, the entries of \(x\) are non-negative and sum to 1.
-  Implicitly, there is an additional constraint \(L*x &gt; 0\) in
-  order to ensure that the objective has a finite value. In practice,
-  this constraint only needs to be checked for the initial estimate
-  to ensure that it holds for all subsequent iterates.</p>  
+Let \(L\) be a matrix with \(n\) rows and \(m\) columns
+containing only non-negative entries, and let \(w = (w_1,
+\ldots, w_n)\) be a vector of non-negative "weights". <code>mixsqp</code>
+computes the value of vector \(x = (x_1, \ldots, x_m)\)
+minimizing the following objective function,
+$$f(x) = -\sum_{j=1}^n w_j \log (\sum_{k=1}^m L_{jk} x_k),$$
+subject to the constraint that \(x\) lie within the simplex;
+that is, the entries of \(x\) are non-negative and sum to 1.
+Implicitly, there is an additional constraint \(L*x &gt; 0\) in
+order to ensure that the objective has a finite value. In practice,
+this constraint only needs to be checked for the initial estimate
+to ensure that it holds for all subsequent iterates.</p>
 <p>If all weights are equal, solving this optimization problem
-  corresponds to finding the maximum-likelihood estimate of the
-  mixture proportions \(x\) given \(n\) independent data points
-  drawn from a mixture model with \(m\) components.  In this case,
-  \(L_{jk}\) is the likelihood for mixture component \(k\) and
-  data point \(j\).</p>    
+corresponds to finding the maximum-likelihood estimate of the
+mixture proportions \(x\) given \(n\) independent data points
+drawn from a mixture model with \(m\) components.  In this case,
+\(L_{jk}\) is the likelihood for mixture component \(k\) and
+data point \(j\).</p>
 <p>The Expectation Maximization (EM) algorithm can be used to solve
-  this optimization problem, but it is intolerably slow in many
-  interesting cases, and mixsqp is much faster.</p>
-<p><code>mixsqp</code> is implemented using the Armadillo C++ linear
-  algebra library, which can automatically take advantage of
-  multithreaded matrix computations to speed up <code>mixsqp</code> for
-  large <code>L</code> matrices, but only when R has been configured with a
-  multithreaded BLAS/LAPACK library (e.g., OpenBLAS).</p>
+this optimization problem, but it is intolerably slow in many
+interesting cases, and mixsqp is much faster.</p>
+<p>A special feature of this optimization problem is that the gradient
+of the objective does not change with re-scaling; for example, if
+all the entries of matrix <code>L</code> are multiplied by 100, the
+gradient does not change. A practical benefit of this property is
+that the optimization algorithm will behave similarly irrespective
+of the scale of <code>L</code>; for example, the same value for the
+convergence tolerance <code>convtol.sqp</code> will have the same effect
+at different scales. The one exception is the <code>eps</code> control
+parameter, which should be adjusted appropriately to reflect the
+scale of <code>L</code>, or set to zero; see the description of this
+parameter below for more details.</p>
+<p>A related feature is that the solution to the optimization problem
+is invariant to rescaling the rows of <code>L</code>; for example, the
+solution will remain the same after all the entries in a row of
+<code>L</code> are multiplied by 10. A simple normalization scheme
+divides each row by the largest entry in the row so that all
+entries of <code>L</code> are at most 1: <code>L &lt;- L / apply(L,1,max)</code>
+Occasionally, it is helpful to normalize the rows when some of the
+entries are unusually large or unusually small, which can help to
+avoid numerical overflow/underflow errors.</p>
+<p>The SQP algorithm is implemented using the Armadillo C++ linear
+algebra library, which can automatically take advantage of
+multithreaded matrix computations to speed up <code>mixsqp</code> for
+large <code>L</code> matrices, but only when R has been configured with a
+multithreaded BLAS/LAPACK library (e.g., OpenBLAS).</p>
 <p>The <code>control</code> argument is a list in which any of the
-  following named components will override the default optimization
-  algorithm settings (as they are defined by
-  <code>mixsqp_control_defaults</code>):</p>
-<p></p><dl class='dl-horizontal'>
+following named components will override the default optimization
+algorithm settings (as they are defined by
+<code>mixsqp_control_defaults</code>):</p><dl class='dl-horizontal'>
     <dt><code>convtol.sqp</code></dt><dd><p>A small, non-negative number
-      specifying the convergence tolerance for SQP algorithm; convergence
-      is reached when the maximum dual residual in the Karush-Kuhn-Tucker
-      (KKT) optimality conditions is less than or equal to
-      <code>convtol.sqp</code>. Smaller values will result in more stringent
-      convergence criteria and more accurate solutions, at the expense of
-      greater computation time. Note that changes to this tolerance
-      parameter may require respective changes to
-      <code>convtol.activeset</code> and/or <code>zero.threshold.searchdir</code> to
-      obtain reliable convergence.</p></dd>
+specifying the convergence tolerance for SQP algorithm; convergence
+is reached when the maximum dual residual in the Karush-Kuhn-Tucker
+(KKT) optimality conditions is less than or equal to
+<code>convtol.sqp</code>. Smaller values will result in more stringent
+convergence criteria and more accurate solutions, at the expense of
+greater computation time. Note that changes to this tolerance
+parameter may require respective changes to
+<code>convtol.activeset</code> and/or <code>zero.threshold.searchdir</code> to
+obtain reliable convergence.</p></dd>
     <dt><code>convtol.activeset</code></dt><dd><p>A small, non-negative number
-      specifying the convergence tolerance for the active-set
-      step. Smaller values will result in higher quality search
-      directions for the SQP algorithm but possibly a greater
-      per-iteration computational cost. Note that changes to this
-      tolerance parameter can affect how reliably the SQP convergence
-      criterion is satisfied, as determined by <code>convtol.sqp</code>.</p></dd>
+specifying the convergence tolerance for the active-set
+step. Smaller values will result in higher quality search
+directions for the SQP algorithm but possibly a greater
+per-iteration computational cost. Note that changes to this
+tolerance parameter can affect how reliably the SQP convergence
+criterion is satisfied, as determined by <code>convtol.sqp</code>.</p></dd>
     <dt><code>zero.threshold.solution</code></dt><dd><p>A small, non-negative
-      number used to determine the "active set"; that is, it determines
-      which entries of the solution are exactly zero. Any entries that
-      are less than or equal to <code>zero.threshold.solution</code> are
-      considered to be exactly zero. Larger values of
-      <code>zero.threshold.solution</code> may lead to speedups for matrices
-      with many columns, at the (slight) risk of prematurely zeroing some
-      co-ordinates.</p></dd>
+number used to determine the "active set"; that is, it determines
+which entries of the solution are exactly zero. Any entries that
+are less than or equal to <code>zero.threshold.solution</code> are
+considered to be exactly zero. Larger values of
+<code>zero.threshold.solution</code> may lead to speedups for matrices
+with many columns, at the (slight) risk of prematurely zeroing some
+co-ordinates.</p></dd>
     <dt><code>zero.threshold.searchdir</code></dt><dd><p>A small, non-negative
-      number used to determine when the search direction in the
-      active-set step is considered "small enough". Note that changes to
-      this tolerance parameter can affect how reliably the SQP
-      convergence criterion is satisfied, as determined by
-      <code>convtol.sqp</code>, so choose this parameter carefully.</p></dd>
+number used to determine when the search direction in the
+active-set step is considered "small enough". Note that changes to
+this tolerance parameter can affect how reliably the SQP
+convergence criterion is satisfied, as determined by
+<code>convtol.sqp</code>, so choose this parameter carefully.</p></dd>
     <dt><code>eps</code></dt><dd><p>A small, non-negative number added to the
-      terms inside the logarithms to sidestep computing logarithms of
-      zero. This prevents numerical problems at the cost of introducing a
-      small inaccuracy in the solution. Increasing this number may lead
-      to faster convergence but possibly a less accurate solution.</p></dd>
+terms inside the logarithms to sidestep computing logarithms of
+zero. This prevents numerical problems at the cost of introducing a
+small inaccuracy in the solution. Increasing this number may lead
+to faster convergence but possibly a less accurate solution. Note
+that an appropriate value of <code>eps</code> will depend on the "scale"
+of <code>L</code>; for example, if the largest entry in the matrix is
+<code>1e-10</code>, setting <code>eps = 1e-8</code> will dominate the
+logarithm terms in the objective, leading to inaccurate solutions.
+In such situations, <code>eps</code> should be increased or decreased
+appropriately (or set to zero), or the rows of <code>L</code> can
+normalized beforehand (see above).</p></dd>
     <dt><code>delta</code></dt><dd><p>A small, non-negative number added to the
-      diagonal of the Hessian to improve numerical stability (and
-      possibly the speed) when computing the search directions in the
-      active-set step.</p></dd>
+diagonal of the Hessian to improve numerical stability (and
+possibly the speed) when computing the search directions in the
+active-set step.</p></dd>
     <dt><code>maxiter.sqp</code></dt><dd><p>Maximum number of SQP iterations to
-      run before reporting a convergence failure; that is, the maximum
-      number of quadratic subproblems that will be solved by the
-      active-set method.</p></dd>
+run before reporting a convergence failure; that is, the maximum
+number of quadratic subproblems that will be solved by the
+active-set method.</p></dd>
     <dt><code>maxiter.activeset</code></dt><dd><p>Maximum number of active-set
-      iterations taken to solve each of the quadratic subproblems.</p></dd>
+iterations taken to solve each of the quadratic subproblems.</p></dd>
     <dt><code>verbose</code></dt><dd><p>If <code>verbose = TRUE</code>, the algorithm's
-      progress and a summary of the optimization settings are printed to
-      the console. The algorithm's progress is displayed in a table with
-      one row per SQP (outer loop) iteration, and with the following
-      columns: "iter", the (outer loop) SQP iteration; "objective", the
-      value of the objective function (see \(f(x)\)) at the current
-      estimate of the solution, \(x\); "max(rdual)", the maximum "dual
-      residual" in the Karush-Kuhn-Tucker (KKT) conditions, which is used
-      to monitor convergence (see <code>convtol.sqp</code>); "nnz", the number
-      of non-zero co-ordinates in the current estimate, as determined by
-      <code>zero.threshold.solution</code>; "max.diff", the maximum difference
-      in the estimates between two successive iterations; "nqp", the
-      number of (inner loop) active-set iterations taken to solve the
-      quadratic subproblem; "nls", the number of iterations in the
-      backtracking line search.</p></dd>
-  </dl>
+progress and a summary of the optimization settings are printed to
+the console. The algorithm's progress is displayed in a table with
+one row per SQP (outer loop) iteration, and with the following
+columns: "iter", the (outer loop) SQP iteration; "objective", the
+value of the objective function (see \(f(x)\)) at the current
+estimate of the solution, \(x\); "max(rdual)", the maximum "dual
+residual" in the Karush-Kuhn-Tucker (KKT) conditions, which is used
+to monitor convergence (see <code>convtol.sqp</code>); "nnz", the number
+of non-zero co-ordinates in the current estimate, as determined by
+<code>zero.threshold.solution</code>; "max.diff", the maximum difference
+in the estimates between two successive iterations; "nqp", the
+number of (inner loop) active-set iterations taken to solve the
+quadratic subproblem; "nls", the number of iterations in the
+backtracking line search.</p></dd>
+</dl>
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Y. Kim, P. Carbonetto, M. Stephens and M. Anitescu (2018). A fast
-  algorithm for maximum likelihood estimation of mixture proportions
-  using sequential quadratic programming. arXiv:1806.01412
-  <a href='https://arxiv.org/abs/1806.01412'>https://arxiv.org/abs/1806.01412</a>.</p>
+algorithm for maximum likelihood estimation of mixture proportions
+using sequential quadratic programming. arXiv:1806.01412
+<a href='https://arxiv.org/abs/1806.01412'>https://arxiv.org/abs/1806.01412</a>.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
@@ -289,7 +315,7 @@ the optimization algorithm. See &#8216;Details&#8217;.</p></td>
 <span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fl'>10</span>
 <span class='no'>w</span> <span class='kw'>&lt;-</span> <span class='fu'>rep</span>(<span class='fl'>1</span>,<span class='no'>n</span>)/<span class='no'>n</span>
 <span class='no'>L</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='simulatemixdata.html'>simulatemixdata</a></span>(<span class='no'>n</span>,<span class='no'>m</span>)$<span class='no'>L</span>
-<span class='no'>out.mixsqp</span> <span class='kw'>&lt;-</span> <span class='fu'>mixsqp</span>(<span class='no'>L</span>,<span class='no'>w</span>)</div><div class='output co'>#&gt; Running mix-SQP algorithm 0.1-65 on 100000 x 10 matrix
+<span class='no'>out.mixsqp</span> <span class='kw'>&lt;-</span> <span class='fu'>mixsqp</span>(<span class='no'>L</span>,<span class='no'>w</span>)</div><div class='output co'>#&gt; Running mix-SQP algorithm 0.1-68 on 100000 x 10 matrix
 #&gt; convergence tol. (SQP):     1.0e-08
 #&gt; conv. tol. (active-set):    1.0e-10
 #&gt; zero threshold (solution):  1.0e-06

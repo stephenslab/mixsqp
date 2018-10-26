@@ -1,29 +1,29 @@
 #' @title Create likelihood matrix from simulated data set
 #' 
 #' @description Simulate a data set, then compute the conditional
-#'   likelihood matrix under a univariate normal likelihood and a
-#'   mixture-of-normals prior. This models a simple nonparametric
-#'   Empirical Bayes method applied to simulated data.
+#' likelihood matrix under a univariate normal likelihood and a
+#' mixture-of-normals prior. This models a simple nonparametric
+#' Empirical Bayes method applied to simulated data.
 #' 
 #' @param n Positive integer specifying the number of samples to
-#'   generate and, consequently, the number of rows of the likelihood
-#'   matrix L.
+#' generate and, consequently, the number of rows of the likelihood
+#' matrix L.
 #' 
 #' @param m Integer 2 or greater specifying the number of mixture
-#'   components.
+#' components.
 #'
 #' @param simtype The type of data to simulate. If \code{simtype =
-#'   "n"}, simulate \code{n} random numbers from a mixture of three
-#'   univariate normals with mean zero and standard deviation 1, 3 and
-#'   6. If \code{simtype = "nt"}, simulate from a mixture of three
-#'   univariate normals (with zero mean and standard deviations 1, 3 and
-#'   5), and a t-distribution with 2 degrees of freedom.
+#' "n"}, simulate \code{n} random numbers from a mixture of three
+#' univariate normals with mean zero and standard deviation 1, 3 and
+#' 6. If \code{simtype = "nt"}, simulate from a mixture of three
+#' univariate normals (with zero mean and standard deviations 1, 3 and
+#' 5), and a t-distribution with 2 degrees of freedom.
 #'
 #' @param normalize.rows If \code{normalize.rows = TRUE}, normalize
-#'   the rows of the likelihood matrix so that the largest entry in each
-#'   row is 1. The maximum-likelihood estimate of the mixture weights
-#'   should be invariant to this normalization, and can improve the
-#'   numerical stability of the optimization.
+#' the rows of the likelihood matrix so that the largest entry in each
+#' row is 1. The maximum-likelihood estimate of the mixture weights
+#' should be invariant to this normalization, and can improve the
+#' numerical stability of the optimization.
 #' 
 #' @return \code{simulatemixdata} returns a list with three list
 #' elements:
@@ -31,14 +31,14 @@
 #' \item{x}{The vector of simulated random numbers (it has length n).}
 #'
 #' \item{s}{The standard deviations of the mixture components in the
-#'   mixture-of-normals prior. The rules for selecting the standard
-#'   deviations are based on the \code{autoselect.mixsd} function from
-#'   the \code{ashr} package.}
+#' mixture-of-normals prior. The rules for selecting the standard
+#' deviations are based on the \code{autoselect.mixsd} function from
+#' the \code{ashr} package.}
 #'
 #' \item{L}{The n x m conditional likelihood matrix, in which
-#'   individual entries (i,j) of the likelihood matrix are given by the
-#'   normal density function with mean zero and variance \code{1 +
-#'   s[j]^2}.}
+#' individual entries (i,j) of the likelihood matrix are given by the
+#' normal density function with mean zero and variance \code{1 +
+#' s[j]^2}.}
 #' 
 #' @examples
 #' 
