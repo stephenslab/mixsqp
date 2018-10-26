@@ -1,25 +1,25 @@
 #' @title Maximum-likelihood estimation of mixture proportions using MOSEK
 #' 
 #' @description This function is simply a wrapper to
-#'   \code{\link[REBayes]{KWDual}} with a similar interface to
-#'   \code{mixsqp} for solving the same problem as \code{mixsqp}. See
-#'   \code{\link{mixsqp}} and \code{\link[REBayes]{KWDual}} for details.
+#' \code{\link[REBayes]{KWDual}} with a similar interface to
+#' \code{mixsqp} for solving the same problem as \code{mixsqp}. See
+#' \code{\link{mixsqp}} and \code{\link[REBayes]{KWDual}} for details.
 #'
 #' @param L Matrix specifying the optimization problem to be solved.
-#'   In the context of mixture-model fitting, \code{L[j,k]} should be
-#'   the value of the kth mixture component density at the jth data
-#'   point. \code{L} should be a numeric matrix with at least two
-#'   columns, with all entries being non-negative and finite (and not
-#'   missing). Further, no column should be entirely zeros. For large
-#'   matrices, it is preferrable that the matrix is stored in
-#'   double-precision; see \code{\link{storage.mode}}.
+#' In the context of mixture-model fitting, \code{L[j,k]} should be
+#' the value of the kth mixture component density at the jth data
+#' point. \code{L} should be a numeric matrix with at least two
+#' columns, with all entries being non-negative and finite (and not
+#' missing). Further, no column should be entirely zeros. For large
+#' matrices, it is preferrable that the matrix is stored in
+#' double-precision; see \code{\link{storage.mode}}.
 #'
 #' @param w An optional numeric vector, with one entry for each row of
-#'   \code{L}, specifying the "weights" associated with the rows of
-#'   \code{L}. All weights must be finite, non-negative and not
-#'   missing. Internally, the weights are normalized to sum to 1,
-#'   which does not change the problem, but does change the value of the
-#'   objective function reported. By default, all weights are equal.
+#' \code{L}, specifying the "weights" associated with the rows of
+#' \code{L}. All weights must be finite, non-negative and not
+#' missing. Internally, the weights are normalized to sum to 1,
+#' which does not change the problem, but does change the value of the
+#' objective function reported. By default, all weights are equal.
 #' 
 #' @param ... Additional arguments passed to \code{\link[REBayes]{KWDual}}.
 #'

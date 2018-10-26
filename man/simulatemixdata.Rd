@@ -34,20 +34,20 @@ elements:
 \item{x}{The vector of simulated random numbers (it has length n).}
 
 \item{s}{The standard deviations of the mixture components in the
-  mixture-of-normals prior. The rules for selecting the standard
-  deviations are based on the \code{autoselect.mixsd} function from
-  the \code{ashr} package.}
+mixture-of-normals prior. The rules for selecting the standard
+deviations are based on the \code{autoselect.mixsd} function from
+the \code{ashr} package.}
 
 \item{L}{The n x m conditional likelihood matrix, in which
-  individual entries (i,j) of the likelihood matrix are given by the
-  normal density function with mean zero and variance \code{1 +
-  s[j]^2}.}
+individual entries (i,j) of the likelihood matrix are given by the
+normal density function with mean zero and variance \code{1 +
+s[j]^2}.}
 }
 \description{
 Simulate a data set, then compute the conditional
-  likelihood matrix under a univariate normal likelihood and a
-  mixture-of-normals prior. This models a simple nonparametric
-  Empirical Bayes method applied to simulated data.
+likelihood matrix under a univariate normal likelihood and a
+mixture-of-normals prior. This models a simple nonparametric
+Empirical Bayes method applied to simulated data.
 }
 \examples{
 

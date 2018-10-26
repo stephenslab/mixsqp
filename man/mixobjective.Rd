@@ -29,12 +29,12 @@ objective function reported. By default, all weights are equal.}
 }
 \value{
 The value of the objective at \code{x}. If any entry of
-  \code{L \%*\% x} is less than or equal to zero, \code{Inf} is
-  returned.
+\code{L \%*\% x} is less than or equal to zero, \code{Inf} is
+returned.
 }
 \description{
 See \code{\link{mixsqp}} for a full description of the
-  objective function optimized by the mix-SQP algorithm.
+objective function optimized by the mix-SQP algorithm.
 }
 \seealso{
 \code{\link{mixsqp}}
