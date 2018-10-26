@@ -1,5 +1,5 @@
 ---
-title: "Illustration of mix-SQP solver applied to a smaller data set, and a larger one"
+title: "Illustration of mix-SQP solver applied to a small data set, and a large one"
 author: "Youngseok Kim and Peter Carbonetto"
 date: "`r Sys.Date()`"
 output:
@@ -19,16 +19,15 @@ knitr::opts_chunk$set(collapse = TRUE,results = "hold",comment = "#",
                       fig.cap = "&nbsp;",dpi = 120)
 ```
 
-In this vignette, we compare the runtime and accuracy of the mix-SQP
+In this vignette, we compare the runtime and accuracy of the SQP
 algorithm against an interior-point (IP) solver implemented by the
-[MOSEK][mosek] commercial software, and called via the "KWDual"
+[MOSEK][mosek] commercial software, and called by the "KWDual"
 function in the [REBayes package][rebayes].
 
 ## Environment set-up
 
 We begin by loading the mixsqp and Rmosek packages. (The Rmosek
-package is only needed to check the version of MOSEK solver being
-used.)
+package is only used to check the version of MOSEK.)
 
 ```{r load-pkgs, message=FALSE}
 library(mixsqp)
@@ -41,42 +40,60 @@ Next, initialize the sequence of pseudorandom numbers.
 set.seed(1)
 ```
 
-## Generate a smaller data set
+## Generate a small data set
 
-Let's begin with a smaller example with $n=$ 50,000 samples.
+We begin with a small example to show how the SQP method works.
 
-```{r sim-data-smaller}
-L <- simulatemixdata(5e4,10)$L
+```{r sim-data-small}
+L <- simulatemixdata(1000,20)$L
 dim(L)
 ```
 
 This call to `simulatemixdata` created an $n \times k$ conditional
 likelihood matrix for a mixture of zero-centered normals, with $m =
-10$. Note that the rows of the likelihood matrix are normalized by
-default so that the maximum entry in each row is 1.
-
-[mosek]: https://www.mosek.com
-[rebayes]: https://cran.r-project.org/package=REBayes
+20$. By default, `simulatemixdata` normalizes the rows of the
+likelihood matrix so that the maximum entry in each row is 1.
 
 ## Fit mixture model
 
-First, we fit the mixture model using the mix-SQP solver.
+Now we fit the mixture model using the SQP solver:
 
-```{r fit-model-mixsqp-smaller}
-timing.sqp <- system.time(fit.sqp <- mixsqp(L))
-cat(sprintf("Computation took %0.2f seconds.\n",timing.sqp["elapsed"]))
+```{r fit-model-mixsqp-small}
+fit.sqp <- mixsqp(L)
 ```
 
-Next, we fit the same mixture model using the IP solver.
+In this example, the SQP solver converged to a solution in a small
+number of iterations.
 
-```{r fit-model-kwdual-smaller}
-timing.ip <- system.time(fit.ip <- mixkwdual(L))
-cat(sprintf("Computation took %0.2f seconds.\n",timing.ip["elapsed"]))
+By default, `mixsqp` gives information on its progress toward the
+solution. First, it summarizes the optimization problem, and the
+algorithm settings being used.
+
+After that, it outputs, at each iteration, information about the
+current solution such as the value of the objective and the number of
+nonzeros ("nnz").
+
+To monitor convergence toward the solution, the most important column
+is "max(rdual)", which gives the maximum value of the "dual residual",
+which is the exact quantity used to determine when to stop the
+algorithm; the SQP solver terminates when the maximum dual residual is
+less than `conv.tol`, which by default is $10^{-8}$. In this example,
+the dual residual shinks rapidly toward zero.
+
+Another useful indicator of convergence to the solution is the
+"max.diff" column---it reports the maximum difference between the
+estimates at two successive iterations, and we expect these
+differences to shrink as we approach the solution, as we see here in
+this example.
+
+To assess the accuracy of the SQP solution, let's compare against the
+IP solver:
+
+```{r fit-model-kwdual-small}
+fit.ip <- mixkwdual(L)
 ```
 
-The runtime of the mix-SQP algorithm is about the same, or slightly
-less than, the IP method, and the quality of the IP and SQP solutions
-is very similar.
+The IP and SQP solutions are very similar for this small example:
 
 ```{r compare-solutions-smaller}
 cat(sprintf("Objective at SQP solution: %0.16f\n",fit.sqp$value,digits = 16))
@@ -136,3 +153,6 @@ MOSEK that was used.
 ```{r mosek-info}
 mosek_version()
 ```
+
+[mosek]: https://www.mosek.com
+[rebayes]: https://cran.r-project.org/package=REBayes
