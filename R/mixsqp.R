@@ -89,7 +89,14 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #'       terms inside the logarithms to sidestep computing logarithms of
 #'       zero. This prevents numerical problems at the cost of introducing a
 #'       small inaccuracy in the solution. Increasing this number may lead
-#'       to faster convergence but possibly a less accurate solution.}
+#'       to faster convergence but possibly a less accurate solution. Note
+#'       that an appropriate value of \code{eps} will depend on the "scale"
+#'       of \code{L}; for example, if the largest entry in the matrix is
+#'       \code{1e-10}, setting \code{eps = 1e-8} will dominate the
+#'       logarithm terms in the objective, leading to inaccurate solutions.
+#'       In such situations, \code{eps} should be increased or decreased
+#'       appropriately (or set to zero), or the rows of \code{L} can
+#'       normalized beforehand (see above).}
 #'
 #'     \item{\code{delta}}{A small, non-negative number added to the
 #'       diagonal of the Hessian to improve numerical stability (and
