@@ -19,15 +19,16 @@ knitr::opts_chunk$set(collapse = TRUE,results = "hold",comment = "#",
                       fig.cap = "&nbsp;",dpi = 120)
 ```
 
-In this vignette, we compare the runtime and accuracy of the SQP
-algorithm against an interior-point (IP) solver implemented by the
-[MOSEK][mosek] commercial software, and called by the "KWDual"
-function in the [REBayes package][rebayes].
+In this vignette, we illustrate the use of the sequential quadratic
+programming (SQP) algorithm, and compare its runtime and accuracy
+against an interior-point (IP) solver implemented by the
+[MOSEK][mosek] commercial software (and called by the "KWDual"
+function in the [REBayes package][rebayes]).
 
 ## Environment set-up
 
-We begin by loading the mixsqp and Rmosek packages. (The Rmosek
-package is only used to check the version of MOSEK.)
+Load the mixsqp and Rmosek packages. (The Rmosek package is only
+used to check the version of MOSEK.)
 
 ```{r load-pkgs, message=FALSE}
 library(mixsqp)
@@ -49,51 +50,52 @@ L <- simulatemixdata(1000,20)$L
 dim(L)
 ```
 
-This call to `simulatemixdata` created an $n \times k$ conditional
-likelihood matrix for a mixture of zero-centered normals, with $m =
-20$. By default, `simulatemixdata` normalizes the rows of the
-likelihood matrix so that the maximum entry in each row is 1.
+This call to `simulatemixdata` created an $n \times m$ conditional
+likelihood matrix for a mixture of zero-centered normals, with $n =
+1000$ and $m = 20$. By default, `simulatemixdata` normalizes the rows
+of the likelihood matrix so that the maximum entry in each row is 1.
 
 ## Fit mixture model
 
-Now we fit the mixture model using the SQP solver:
+Now we fit the mixture model using the SQP algorithm:
 
 ```{r fit-model-mixsqp-small}
 fit.sqp <- mixsqp(L)
 ```
 
-In this example, the SQP solver converged to a solution in a small
+In this example, the SQP algorithm converged to a solution in a small
 number of iterations.
 
-By default, `mixsqp` gives information on its progress toward the
-solution. First, it summarizes the optimization problem, and the
-algorithm settings being used.
+By default, `mixsqp` outputs information on its progress. It begins by
+summarizing the optimization problem and the algorithm settings used.
+(Since we did not change these settings in the `mixsqp` call, all the
+settings shown here are the default settings.)
 
 After that, it outputs, at each iteration, information about the
-current solution such as the value of the objective and the number of
-nonzeros ("nnz").
+current solution, such as the value of the objective ("objective") and
+the number of nonzeros ("nnz").
 
-To monitor convergence toward the solution, the most important column
-is "max(rdual)", which gives the maximum value of the "dual residual",
-which is the exact quantity used to determine when to stop the
-algorithm; the SQP solver terminates when the maximum dual residual is
-less than `conv.tol`, which by default is $10^{-8}$. In this example,
-the dual residual shinks rapidly toward zero.
+The "max(rdual)" column shows the quantity used to assess convergence.
+It reports the maximum value of the "dual residual"; the SQP solver
+terminates when the maximum dual residual is less than `conv.tol`,
+which by default is $10^{-8}$. In this example, we see that the dual
+residual shrinks rapidly toward zero.
 
-Another useful indicator of convergence to the solution is the
-"max.diff" column---it reports the maximum difference between the
-estimates at two successive iterations, and we expect these
-differences to shrink as we approach the solution, as we see here in
-this example.
+Another useful indicator of convergence is the "max.diff" column---it
+reports the maximum difference between the solution estimates at two
+successive iterations. We normally expect these differences to shrink
+as we approach the solution, which is precisely what we see in this
+example.
 
-To assess the accuracy of the SQP solution, let's compare against the
-IP solver:
+To assess the accuracy of the SQP solution, we use the IP solution as
+a point of comparison:
 
 ```{r fit-model-kwdual-small}
 fit.ip <- mixkwdual(L)
 ```
 
-The IP and SQP solutions are very similar for this small example:
+In this example, the IP and SQP solutions achieve nearly the same
+objective value:
 
 ```{r compare-solutions-smaller}
 cat(sprintf("Objective at SQP solution: %0.16f\n",fit.sqp$value,digits = 16))
@@ -103,33 +105,36 @@ cat(sprintf("Difference in objectives:  %0.4e\n",fit.sqp$value - fit.ip$value))
 
 ## Comparison using a larger data set
 
-Next, let's see what happens when we apply the IP and SQP methods
-algorithms to a considerably larger data set.
+We observed that the SQP and IP methods achieve nearly the solution in
+the example above. Here, we explore the computational properties of
+the SQP and IP algorithms by applying them to a large data set.
 
 As before, we compute the $n \times m$ likelihood matrix for a mixture
-of zero-centered normals. This time, we use a finer grid of $m = 50$
+of zero-centered normals. This time, we use a finer grid of $m = 100$
 normal densities, as well as more samples.
 
-```{r sim-data-larger}
-L <- simulatemixdata(1e5,50)$L
+```{r sim-data-large}
+L <- simulatemixdata(1e5,100)$L
 dim(L)
 ```
 
-Now we fit the model using the two fitting algorithms.
+Now we fit the model using the SQP algorithm,
 
-```{r fit-model-larger}
-timing.ip  <- system.time(fit.ip  <- mixkwdual(L))
-timing.sqp <- system.time(fit.sqp <- mixsqp(L))
+```{r fit-model-sqp-large}
+timing <- system.time(fit.sqp <- mixsqp(L))
+cat(sprintf("Computation took %0.2f seconds\n",timing["elapsed"]))
 ```
 
-The mix-SQP algorithm is noticeably faster than the IP solver.
+and using the IP method,
 
-```{r timing-fit-larger}
-cat(sprintf("Runtime of IP solver:  %0.2f\n",timing.ip["elapsed"]))
-cat(sprintf("Runtime of SQP solver: %0.2f\n",timing.sqp["elapsed"]))
+```{r fit-model-ip-large}
+timing <- system.time(fit.ip  <- mixkwdual(L))
+cat(sprintf("Computation took %0.2f seconds\n",timing["elapsed"]))
 ```
 
-Further, the quality of the IP and SQP solutions remains very similar:
+The SQP algorithm was considerably faster than the IP solver, and it
+converged to a solution with nearly the same objective value as the IP
+solution:
 
 ```{r compare-solutions-larger}
 cat(sprintf("Objective at SQP solution: %0.16f\n",fit.sqp$value,digits = 16))
