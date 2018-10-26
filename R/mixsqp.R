@@ -259,7 +259,9 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # Input arguments "convtol.sqp", "convtol.activeset",
   # "zero.threshold.solution", "zero.threshold.searchdir", and "eps"
   # should be non-negative scalars.  Additionally,
-  # "zero.threshold.solution" should be less than 1/m.
+  # "zero.threshold.solution" should be less than 1/m. Also, post a
+  # warning if eps is within range of the largest value in one of the
+  # rows of the matrix L.
   verify.nonneg.scalar.arg(convtol.sqp)
   verify.nonneg.scalar.arg(convtol.activeset)
   verify.nonneg.scalar.arg(zero.threshold.solution)
@@ -268,6 +270,11 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   if (zero.threshold.solution >= 1/m)
     stop(paste("Behavior of algorithm will be unpredictable if",
                "zero.threshold > 1/m, where m = ncol(X)"))
+  if (1e3*eps > min(apply(L,1,max)))
+    warning(paste("Argument \"eps\" is within range of the largest element",
+                  "in one or more rows of \"L\", and may result in a poor",
+                  "estimate of the solution; consider decreasing \"eps\"",
+                  "or normalizing the rows of \"L\""))
   
   # Input argument "verbose" should be TRUE or FALSE.
   verify.logical.arg(verbose)

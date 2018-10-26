@@ -16,6 +16,14 @@ test_that(paste("mix-SQP allows zero likelihoods, but reports an error",
   expect_error(mixsqp(L,x0 = c(0,0,1)))
 })
 
+test_that("mix-SQP gives a warning when eps is large w.r.t. to L",{
+  set.seed(1)
+  n   <- 1000
+  m   <- 10
+  L   <- simulatemixdata(n,m)$L
+  expect_warning(capture.output(mixsqp(L/1e6)))
+})
+
 test_that(paste("mix-SQP converges to correct solution even when initial",
                 "estimate is very poor"),{
   e <- 1e-8
