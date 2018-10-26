@@ -215,9 +215,9 @@ solution will remain the same after all the entries in a row of
 <code>L</code> are multiplied by 10. A simple normalization scheme
 divides each row by the largest entry in the row so that all
 entries of <code>L</code> are at most 1: <code>L &lt;- L / apply(L,1,max)</code>
-Occasionally, it is helpful to normalize the rows when some of the
-entries are unusually large or unusually small, which can help to
-avoid numerical overflow/underflow errors.</p>
+Occasionally, it can be helpful to normalize the rows when some of
+the entries are unusually large or unusually small. This can help
+to avoid numerical overflow or underflow errors.</p>
 <p>The SQP algorithm is implemented using the Armadillo C++ linear
 algebra library, which can automatically take advantage of
 multithreaded matrix computations to speed up <code>mixsqp</code> for
