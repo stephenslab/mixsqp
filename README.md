@@ -43,14 +43,16 @@ file [LICENSE](LICENSE) for the full text of the license.
 
 ## Quick Start
 
-Install the latest version of the mixsqp package from GitHub. (See
-"Setup" below for more detailed package installation instructions.)
+Install the latest version of the mixsqp package from GitHub:
 
 ```R
 devtools::install_github("stephenslab/mixsqp",
                          build_vignettes = TRUE,
                          upgrade_dependencies = FALSE)
 ```
+
+For more detailed installation instructions, see the "Setup" section
+below.
 
 Once you have installed the package, load the package in R:
 

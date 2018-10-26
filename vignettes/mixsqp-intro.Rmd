@@ -14,9 +14,7 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(collapse = TRUE,results = "hold",comment = "#",
-                      fig.width = 5,fig.height = 3,fig.align = "center",
-                      fig.cap = "&nbsp;",dpi = 120)
+knitr::opts_chunk$set(collapse = TRUE,results = "hold",comment = "#")
 ```
 
 In this vignette, we illustrate the use of the sequential quadratic
@@ -87,6 +85,17 @@ successive iterations. We normally expect these differences to shrink
 as we approach the solution, which is precisely what we see in this
 example.
 
+This information is also provided in the return value, which we can
+use, for example, to create a plot of the objective value at each
+iteration of the SQP algorithm:
+
+```{r plot-sqp-progress, fig.height=5,fig.width=7, fig.align="center"}
+numiter <- nrow(fit.sqp$data)
+plot(1:numiter,fit.sqp$data$objective,type = "b",
+     pch = 20,lwd = 2,xlab = "SQP iteration",
+     ylab = "objective",xaxp = c(1,numiter,numiter - 1))
+```
+
 To assess the accuracy of the SQP solution, we use the IP solution as
 a point of comparison:
 
@@ -103,15 +112,16 @@ cat(sprintf("Objective at IP solution:  %0.16f\n",fit.ip$value,digits = 16))
 cat(sprintf("Difference in objectives:  %0.4e\n",fit.sqp$value - fit.ip$value))
 ```
 
-## Comparison using a larger data set
+## Comparing the SQP and IP solvers in a large data set
 
-We observed that the SQP and IP methods achieve nearly the solution in
-the example above. Here, we explore the computational properties of
-the SQP and IP algorithms by applying them to a large data set.
+We observed that the SQP and IP methods achieve nearly the same
+solution quality in the example above. Here, we explore the
+computational properties of the SQP and IP algorithms in a larger data
+set.
 
 As before, we compute the $n \times m$ likelihood matrix for a mixture
 of zero-centered normals. This time, we use a finer grid of $m = 100$
-normal densities, as well as more samples.
+normal densities, as well as many more samples.
 
 ```{r sim-data-large}
 L <- simulatemixdata(1e5,100)$L
@@ -136,7 +146,7 @@ The SQP algorithm was considerably faster than the IP solver, and it
 converged to a solution with nearly the same objective value as the IP
 solution:
 
-```{r compare-solutions-larger}
+```{r compare-solutions-large}
 cat(sprintf("Objective at SQP solution: %0.16f\n",fit.sqp$value,digits = 16))
 cat(sprintf("Objective at IP solution:  %0.16f\n",fit.ip$value,digits = 16))
 cat(sprintf("Difference in objectives:  %0.4e\n",fit.sqp$value - fit.ip$value))
