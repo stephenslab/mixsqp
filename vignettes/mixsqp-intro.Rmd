@@ -1,6 +1,6 @@
 ---
-title: "Illustration of `mixsqp` applied to a small data set, and a large one"
-author: "Youngseok Kim and Peter Carbonetto"
+title: "Illustration of mixsqp applied to a small data set, and a large one"
+author: "Youngseok Kim, Peter Carbonetto and Matthew Stephens"
 date: "`r Sys.Date()`"
 output:
   rmarkdown::html_document:
@@ -162,7 +162,7 @@ version of R and the packages used.
 sessionInfo()
 ```
 
-Since we used 'Rmosek', it is also helpful to record the version of
+Since we used `Rmosek`, it is also helpful to record the version of
 MOSEK that was used.
 
 ```{r mosek-info}
