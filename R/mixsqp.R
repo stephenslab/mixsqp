@@ -29,7 +29,7 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #' If all weights are equal, solving this optimization problem
 #' corresponds to finding the maximum-likelihood estimate of the
 #' mixture proportions \eqn{x} given \eqn{n} independent data points
-#' drawn from a mixture model with \eqn{m} components.  In this case,
+#' drawn from a mixture model with \eqn{m} components. In this case,
 #' \eqn{L_{jk}} is the likelihood for mixture component \eqn{k} and
 #' data point \eqn{j}.
 #' 
@@ -187,8 +187,8 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #' \item{status}{A character string giving the status of the algorithm
 #' upon termination.}
 #'
-#' \item{data}{A data frame containing more detailed information about
-#' the algorithm's progress. The data frame has one row per SQP
+#' \item{progress}{A data frame containing more detailed information
+#' about the algorithm's progress. The data frame has one row per SQP
 #' iteration. For an explanation of the columns, see the description
 #' of the \code{verbose} control paramter in \sQuote{Details}. Missing
 #' values (NA's) in the last row indicate that these quantities were
@@ -350,15 +350,15 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 
   # CONSTRUCT OUTPUT
   # ----------------
-  return(list(x      = x,
-              status = status,
-              value  = mixobj(L,w,x),
-              data   = data.frame(objective = out$objective,
-                                  max.rdual = out$max.rdual,
-                                  nnz       = out$nnz,
-                                  max.diff  = out$max.diff,
-                                  nqp       = out$nqp,
-                                  nls       = out$nls)))
+  return(list(x        = x,
+              status   = status,
+              value    = mixobj(L,w,x),
+              progress = data.frame(objective = out$objective,
+                                    max.rdual = out$max.rdual,
+                                    nnz       = out$nnz,
+                                    max.diff  = out$max.diff,
+                                    nqp       = out$nqp,
+                                    nls       = out$nls)))
 }
 
 #' @rdname mixsqp

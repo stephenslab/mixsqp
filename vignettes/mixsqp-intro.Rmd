@@ -90,8 +90,8 @@ use, for example, to create a plot of the objective value at each
 iteration of the SQP algorithm:
 
 ```{r plot-sqp-progress, fig.height=5,fig.width=7, fig.align="center"}
-numiter <- nrow(fit.sqp$data)
-plot(1:numiter,fit.sqp$data$objective,type = "b",
+numiter <- nrow(fit.sqp$progress)
+plot(1:numiter,fit.sqp$progress$objective,type = "b",
      pch = 20,lwd = 2,xlab = "SQP iteration",
      ylab = "objective",xaxp = c(1,numiter,numiter - 1))
 ```
