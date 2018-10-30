@@ -14,7 +14,10 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(collapse = TRUE,results = "hold",comment = "#")
+knitr::opts_chunk$set(collapse = TRUE,results = "hold",comment = "#",
+                      fig.align="center")
+if (!requireNamespace("REBayes",quietly = TRUE))
+  knitr::opts_chunk$set(eval = FALSE)
 ```
 
 In this vignette, we illustrate the use of the sequential quadratic
@@ -28,17 +31,22 @@ computer, you may skip over these steps in the vignette.
 
 ## Environment set-up
 
-Load the `mixsqp` package and, optionally, the `Rmosek` package. (The
-Rmosek package is only used to check the version of MOSEK.)
+Load the `mixsqp` package.
 
-```{r load-pkgs, message=FALSE}
+```{r load-pkgs, eval=TRUE, message=FALSE}
 library(mixsqp)
+```
+
+Optionally, load the `Rmosek` package. (The Rmosek package is only
+used to check the version of MOSEK.)
+
+```{r load-rmosek, message=FALSE}
 library(Rmosek)
 ```
 
 Next, initialize the sequence of pseudorandom numbers.
 
-```{r set-seed}
+```{r set-seed, eval=TRUE}
 set.seed(1)
 ```
 
@@ -46,7 +54,7 @@ set.seed(1)
 
 We begin with a small example to show how `mixsqp` works.
 
-```{r sim-data-small}
+```{r sim-data-small, eval=TRUE}
 L <- simulatemixdata(1000,20)$L
 dim(L)
 ```
@@ -60,7 +68,7 @@ of the likelihood matrix so that the maximum entry in each row is 1.
 
 Now we fit the mixture model using the SQP algorithm:
 
-```{r fit-model-mixsqp-small}
+```{r fit-model-mixsqp-small, eval=TRUE}
 fit.sqp <- mixsqp(L)
 ```
 
@@ -92,7 +100,7 @@ This information is also provided in the return value, which we can
 use, for example, to create a plot of the objective value at each
 iteration of the SQP algorithm:
 
-```{r plot-sqp-progress, fig.height=5,fig.width=7, fig.align="center"}
+```{r plot-sqp-progress, eval=TRUE, fig.height=5, fig.width=7}
 numiter <- nrow(fit.sqp$progress)
 plot(1:numiter,fit.sqp$progress$objective,type = "b",
      pch = 20,lwd = 2,xlab = "SQP iteration",
@@ -107,8 +115,8 @@ package installed, you can skip this step.)
 fit.ip <- mixkwdual(L)
 ```
 
-In this example, the IP and SQP solutions achieve nearly the same
-objective value:
+If you run the IP algorithm, you should see that the IP and SQP
+solutions achieve nearly the same objective value.
 
 ```{r compare-solutions-smaller}
 cat(sprintf("Objective at SQP solution: %0.16f\n",fit.sqp$value,digits = 16))
@@ -127,14 +135,14 @@ As before, we compute the $n \times m$ likelihood matrix for a mixture
 of zero-centered normals. This time, we use a finer grid of $m = 100$
 normal densities, as well as many more samples.
 
-```{r sim-data-large}
+```{r sim-data-large, eval=TRUE}
 L <- simulatemixdata(1e5,100)$L
 dim(L)
 ```
 
 Now we fit the model using the SQP algorithm:
 
-```{r fit-model-sqp-large}
+```{r fit-model-sqp-large, eval=TRUE}
 timing <- system.time(fit.sqp <- mixsqp(L))
 cat(sprintf("Computation took %0.2f seconds\n",timing["elapsed"]))
 ```
@@ -146,9 +154,9 @@ timing <- system.time(fit.ip  <- mixkwdual(L))
 cat(sprintf("Computation took %0.2f seconds\n",timing["elapsed"]))
 ```
 
-The SQP algorithm was considerably faster than the IP solver, and it
-converged to a solution with nearly the same objective value as the IP
-solution:
+If you run the IP algorithm, you should find that the SQP algorithm was
+considerably faster than the IP solver, and it converged to a solution
+with nearly the same objective value as the IP solution.
 
 ```{r compare-solutions-large}
 cat(sprintf("Objective at SQP solution: %0.16f\n",fit.sqp$value,digits = 16))
@@ -162,12 +170,12 @@ This next code chunk gives information about the computing environment
 used to generate the results contained in this vignette, including the
 version of R and the packages used.
 
-```{r session-info}
+```{r session-info, eval=TRUE}
 sessionInfo()
 ```
 
-Since we used `Rmosek`, it is also helpful to record the version of
-MOSEK that was used.
+If you used `REBayes` and `Rmosek` above, it is also helpful to record
+the version of MOSEK that was used.
 
 ```{r mosek-info}
 mosek_version()
