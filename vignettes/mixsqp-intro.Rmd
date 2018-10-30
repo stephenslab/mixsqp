@@ -3,10 +3,9 @@ title: "Illustration of mixsqp applied to a small data set, and a large one"
 author: "Youngseok Kim, Peter Carbonetto and Matthew Stephens"
 date: "`r Sys.Date()`"
 output:
-  rmarkdown::html_document:
-    theme: readable
-    before_body: header.html
-    after_body: footer.html
+  prettydoc::html_pretty:
+    theme: leonids
+    highlight: github
 vignette: >
   %\VignetteIndexEntry{mixsqp-intro}
   %\VignetteEngine{knitr::rmarkdown}
