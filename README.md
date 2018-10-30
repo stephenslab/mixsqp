@@ -16,8 +16,9 @@ solutions much more quickly in large data sets.
 For more details on the SQP algorithm, please see [our paper on
 arXiv][arxiv-paper].
 
-See also the [Julia implementation][mixsqp-julia], which at time of writing is 
-faster than the R implementation, particularly for large data sets.
+See also the [Julia implementation][mixsqp-julia], which, at time of
+writing, is faster than the R implementation, particularly for large
+data sets.
 
 If you find a bug, or you have a question or feedback on our work,
 please post an [issue][issues].
@@ -114,10 +115,10 @@ setup that is appropriate for the the R installed on your
 computer. For details, refer to the [CRAN documentation][cran]. For
 Mac computers, see [these notes][compiling-macos].
 
-+ To use the (optional) alternative solver, "mixkwdual" -- mostly useful for comparisons 
-of the different optimization methods -- you will need
-to install the [REBayes][rebayes] package which, in turn, requires the
-[Rmosek][mosek] package. Refer to the
++ To use the (optional) alternative solver, "mixkwdual", which is
+mostly useful for comparisons of the different optimization methods,
+you will need to install the [REBayes][rebayes] package. The REBayes
+package, in turn, requires the [Rmosek][mosek] package. Refer to the
 [MOSEK documentation][mosek-docs] for instructions on installing the
 Rmosek package. Once you have followed these steps, you can run
 [this example](inst/code/test.rmosek.R) to verify that Rmosek is
