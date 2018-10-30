@@ -158,20 +158,17 @@ the optimization algorithm. See &#8216;Details&#8217;.</p></td>
 <dt>status</dt><dd><p>A character string giving the status of the algorithm
 upon termination.</p></dd>
 
-<dt>data</dt><dd><p>A data frame containing more detailed information about
-the algorithm's progress. The data frame has one row per SQP
+<dt>progress</dt><dd><p>A data frame containing more detailed information
+about the algorithm's progress. The data frame has one row per SQP
 iteration. For an explanation of the columns, see the description
 of the <code>verbose</code> control paramter in &#8216;Details&#8217;. Missing
-values (NA's) in the last row indicate that these quantities were
+values (<code>NA</code>'s) in the last row indicate that these quantities were
 not computed because convergence was reached before computing
-them. Also note that the association of these quantities is
-slightly different than the console output when <code>verbose =
-TRUE</code> as the console output shows some quantities that were
-computed after the convergence check in the previous iteration. The
-last entries of max.diff, nqp and nls may not have been assigned if
-the SQP algorithm converged successfully (as indicated by negative
-values), in which case we should more appropriately assign them
-missing values (NA).</p></dd>
+them. Also note that the storage of these quantities in the
+<code>progress</code> data frame is slightly different than in the console
+output (when <code>verbose = TRUE</code>) as the console output shows some
+quantities that were computed after the convergence check in the
+previous iteration.</p></dd>
 
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
@@ -192,7 +189,7 @@ to ensure that it holds for all subsequent iterates.</p>
 <p>If all weights are equal, solving this optimization problem
 corresponds to finding the maximum-likelihood estimate of the
 mixture proportions \(x\) given \(n\) independent data points
-drawn from a mixture model with \(m\) components.  In this case,
+drawn from a mixture model with \(m\) components. In this case,
 \(L_{jk}\) is the likelihood for mixture component \(k\) and
 data point \(j\).</p>
 <p>The Expectation Maximization (EM) algorithm can be used to solve
@@ -315,7 +312,7 @@ using sequential quadratic programming. arXiv:1806.01412
 <span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fl'>10</span>
 <span class='no'>w</span> <span class='kw'>&lt;-</span> <span class='fu'>rep</span>(<span class='fl'>1</span>,<span class='no'>n</span>)/<span class='no'>n</span>
 <span class='no'>L</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='simulatemixdata.html'>simulatemixdata</a></span>(<span class='no'>n</span>,<span class='no'>m</span>)$<span class='no'>L</span>
-<span class='no'>out.mixsqp</span> <span class='kw'>&lt;-</span> <span class='fu'>mixsqp</span>(<span class='no'>L</span>,<span class='no'>w</span>)</div><div class='output co'>#&gt; Running mix-SQP algorithm 0.1-70 on 100000 x 10 matrix
+<span class='no'>out.mixsqp</span> <span class='kw'>&lt;-</span> <span class='fu'>mixsqp</span>(<span class='no'>L</span>,<span class='no'>w</span>)</div><div class='output co'>#&gt; Running mix-SQP algorithm 0.1-72 on 100000 x 10 matrix
 #&gt; convergence tol. (SQP):     1.0e-08
 #&gt; conv. tol. (active-set):    1.0e-10
 #&gt; zero threshold (solution):  1.0e-06

@@ -5,11 +5,11 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Illustration of <code>mixsqp</code> applied to a small data set, and a large one • mixsqp</title>
+<title>Illustration of mixsqp applied to a small data set, and a large one • mixsqp</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script><script src="../pkgdown.js"></script><meta property="og:title" content="Illustration of &lt;code&gt;mixsqp&lt;/code&gt; applied to a small data set, and a large one">
+<script src="../jquery.sticky-kit.min.js"></script><script src="../pkgdown.js"></script><meta property="og:title" content="Illustration of mixsqp applied to a small data set, and a large one">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
@@ -57,8 +57,8 @@
       </header><div class="row">
   <div class="col-md-9">
     <div class="page-header toc-ignore">
-      <h1>Illustration of <code>mixsqp</code> applied to a small data set, and a large one</h1>
-                        <h4 class="author">Youngseok Kim and Peter Carbonetto</h4>
+      <h1>Illustration of mixsqp applied to a small data set, and a large one</h1>
+                        <h4 class="author">Youngseok Kim, Peter Carbonetto and Matthew Stephens</h4>
             
             <h4 class="date">2018-10-30</h4>
           </div>
@@ -66,11 +66,12 @@
     
     
 <div class="contents">
-<p>In this vignette, we illustrate the use of the sequential quadratic programming (SQP) algorithm implemented in <code>mixsqp</code>, and compare its runtime and accuracy against an interior-point (IP) solver implemented by the <a href="https://www.mosek.com">MOSEK</a> commercial software (called by the “KWDual” function in the <a href="https://cran.r-project.org/package=REBayes">REBayes package</a>).</p>
+<p>In this vignette, we illustrate the use of the sequential quadratic programming (SQP) algorithm implemented in <code>mixsqp</code>, and we compare its runtime and accuracy against an interior-point (IP) solver implemented by the <a href="https://www.mosek.com">MOSEK</a> commercial software (it is called by the “KWDual” function in the <a href="https://cran.r-project.org/package=REBayes">REBayes package</a>).</p>
+<p>If you do not have the Rmosek and REBayes packages installed on your computer, you may skip over these steps in the vignette.</p>
 <div id="environment-set-up" class="section level2">
 <h2 class="hasAnchor">
 <a href="#environment-set-up" class="anchor"></a>Environment set-up</h2>
-<p>Load the <code>mixsqp</code> and <code>Rmosek</code> packages. (The Rmosek package is only used to check the version of MOSEK.)</p>
+<p>Load the <code>mixsqp</code> package and, optionally, the <code>Rmosek</code> package. (The Rmosek package is only used to check the version of MOSEK.)</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(mixsqp)
 <span class="kw">library</span>(Rmosek)</code></pre></div>
 <p>Next, initialize the sequence of pseudorandom numbers.</p>
@@ -90,7 +91,7 @@
 <a href="#fit-mixture-model" class="anchor"></a>Fit mixture model</h2>
 <p>Now we fit the mixture model using the SQP algorithm:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit.sqp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixsqp.html">mixsqp</a></span>(L)
-<span class="co"># Running mix-SQP algorithm 0.1-69 on 1000 x 20 matrix</span>
+<span class="co"># Running mix-SQP algorithm 0.1-72 on 1000 x 20 matrix</span>
 <span class="co"># convergence tol. (SQP):     1.0e-08</span>
 <span class="co"># conv. tol. (active-set):    1.0e-10</span>
 <span class="co"># zero threshold (solution):  1.0e-06</span>
@@ -114,12 +115,12 @@
 <p>The “max(rdual)” column shows the quantity used to assess convergence. It reports the maximum value of the “dual residual”; the SQP solver terminates when the maximum dual residual is less than <code>conv.tol</code>, which by default is <span class="math inline">\(10^{-8}\)</span>. In this example, we see that the dual residual shrinks rapidly toward zero.</p>
 <p>Another useful indicator of convergence is the “max.diff” column—it reports the maximum difference between the solution estimates at two successive iterations. We normally expect these differences to shrink as we approach the solution, which is precisely what we see in this example.</p>
 <p>This information is also provided in the return value, which we can use, for example, to create a plot of the objective value at each iteration of the SQP algorithm:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">numiter &lt;-<span class="st"> </span><span class="kw">nrow</span>(fit.sqp<span class="op">$</span>data)
-<span class="kw">plot</span>(<span class="dv">1</span><span class="op">:</span>numiter,fit.sqp<span class="op">$</span>data<span class="op">$</span>objective,<span class="dt">type =</span> <span class="st">"b"</span>,
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">numiter &lt;-<span class="st"> </span><span class="kw">nrow</span>(fit.sqp<span class="op">$</span>progress)
+<span class="kw">plot</span>(<span class="dv">1</span><span class="op">:</span>numiter,fit.sqp<span class="op">$</span>progress<span class="op">$</span>objective,<span class="dt">type =</span> <span class="st">"b"</span>,
      <span class="dt">pch =</span> <span class="dv">20</span>,<span class="dt">lwd =</span> <span class="dv">2</span>,<span class="dt">xlab =</span> <span class="st">"SQP iteration"</span>,
      <span class="dt">ylab =</span> <span class="st">"objective"</span>,<span class="dt">xaxp =</span> <span class="kw">c</span>(<span class="dv">1</span>,numiter,numiter <span class="op">-</span><span class="st"> </span><span class="dv">1</span>))</code></pre></div>
 <p><img src="mixsqp-intro_files/figure-html/plot-sqp-progress-1.png" width="672" style="display: block; margin: auto;"></p>
-<p>To assess the accuracy of the SQP solution, we use the IP solution as a point of comparison:</p>
+<p>To assess the accuracy of the SQP solution, we can compare against the solution computed by the IP algorithm. (If you do not have the REBayes package installed, you can skip this step.)</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit.ip &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixkwdual.html">mixkwdual</a></span>(L)</code></pre></div>
 <p>In this example, the IP and SQP solutions achieve nearly the same objective value:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at SQP solution: %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.sqp<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))
@@ -137,10 +138,10 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">L &lt;-<span class="st"> </span><span class="kw"><a href="../reference/simulatemixdata.html">simulatemixdata</a></span>(<span class="fl">1e5</span>,<span class="dv">100</span>)<span class="op">$</span>L
 <span class="kw">dim</span>(L)
 <span class="co"># [1] 100000    100</span></code></pre></div>
-<p>Now we fit the model using the SQP algorithm,</p>
+<p>Now we fit the model using the SQP algorithm:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">timing &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.sqp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixsqp.html">mixsqp</a></span>(L))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Computation took %0.2f seconds</span><span class="ch">\n</span><span class="st">"</span>,timing[<span class="st">"elapsed"</span>]))
-<span class="co"># Running mix-SQP algorithm 0.1-69 on 100000 x 100 matrix</span>
+<span class="co"># Running mix-SQP algorithm 0.1-72 on 100000 x 100 matrix</span>
 <span class="co"># convergence tol. (SQP):     1.0e-08</span>
 <span class="co"># conv. tol. (active-set):    1.0e-10</span>
 <span class="co"># zero threshold (solution):  1.0e-06</span>
@@ -160,11 +161,11 @@
 <span class="co">#   10 +6.15052e-01 +9.288e-07   7 9.53e-04   2   1</span>
 <span class="co">#   11 +6.15052e-01 -1.543e-08   7 1.14e-05   2   1</span>
 <span class="co"># Convergence criteria met---optimal solution found.</span>
-<span class="co"># Computation took 7.61 seconds</span></code></pre></div>
-<p>and using the IP method,</p>
+<span class="co"># Computation took 7.78 seconds</span></code></pre></div>
+<p>If you have the REBayes package, you can also run the IP method:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">timing &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.ip  &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixkwdual.html">mixkwdual</a></span>(L))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Computation took %0.2f seconds</span><span class="ch">\n</span><span class="st">"</span>,timing[<span class="st">"elapsed"</span>]))
-<span class="co"># Computation took 14.28 seconds</span></code></pre></div>
+<span class="co"># Computation took 14.05 seconds</span></code></pre></div>
 <p>The SQP algorithm was considerably faster than the IP solver, and it converged to a solution with nearly the same objective value as the IP solution:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at SQP solution: %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.sqp<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at IP solution:  %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.ip<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))
@@ -193,7 +194,7 @@
 <span class="co"># [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
 <span class="co"># </span>
 <span class="co"># other attached packages:</span>
-<span class="co"># [1] Rmosek_8.0.69 Matrix_1.2-12 mixsqp_0.1-69</span>
+<span class="co"># [1] Rmosek_8.0.69 Matrix_1.2-12 mixsqp_0.1-72</span>
 <span class="co"># </span>
 <span class="co"># loaded via a namespace (and not attached):</span>
 <span class="co">#  [1] Rcpp_0.12.19    lattice_0.20-35 digest_0.6.17   rprojroot_1.3-2</span>
