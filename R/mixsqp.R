@@ -220,13 +220,15 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #' f <- mixobjective(L,out.mixsqp$x,w)
 #' print(f,digits = 16)
 #' 
-#' # We can also compare this result with solution found from an
-#' # interior-point approach called via the "KWDual" function from the
-#' # REBayes package. (This requires installation of the MOSEK
-#' # optimization library as well as the REBayes package.)
+#' # We can also compare this result with solution found from an 
+#' # interior-point approach called via the "KWDual" function from the 
+#' # REBayes package. (This requires installation of the MOSEK 
+#' # optimization library as well as the REBayes package, so we have
+#' # made this step optional.)
+#' \dontrun{ 
 #' out.kwdual <- mixkwdual(L,w)
 #' print(mixobjective(L,out.kwdual$x,w),digits = 16)
-#' 
+#' }
 #' @useDynLib mixsqp
 #'
 #' @importFrom utils modifyList
