@@ -1,7 +1,7 @@
 Encoding: UTF-8
 Type: Package
 Package: mixsqp
-Version: 0.1-70
+Version: 0.1-71
 Date: 2018-10-30
 Title: Sequential Quadratic Programming for Fast Maximum-Likelihood
     Estimation of Mixture Proportions
@@ -16,7 +16,7 @@ BugReports: https://github.com/stephenslab/mixsqp/issues
 SystemRequirements: C++11
 Depends: R (>= 3.3.0)
 Description: Provides optimization algorithms based on sequential
-  quadratic programming for maximum likelihood estimation of the
+  quadratic programming (SQP) for maximum likelihood estimation of the
   mixture proportions in a finite mixture model where the component
   densities are known. The SQP algorithm is expected to
   obtain solutions that are at least as accurate as the state-of-the-art
