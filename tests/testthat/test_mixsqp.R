@@ -169,7 +169,7 @@ test_that("mix-SQP does not report an error with convergence failure",{
   capture_output(out <- mixsqp(L,x0 = c(0,1,1),
                                control = list(maxiter.sqp = 3)))
   expect_equal(out$status,mixsqp.status.didnotconverge)
-  expect_equal(dim(out$data),c(3,6))
+  expect_equal(dim(out$progress),c(3,6))
 })
 
 # This test comes from Issue #3.

@@ -49,8 +49,8 @@ A list object with the following elements:
 \item{status}{A character string giving the status of the algorithm
 upon termination.}
 
-\item{data}{A data frame containing more detailed information about
-the algorithm's progress. The data frame has one row per SQP
+\item{progress}{A data frame containing more detailed information
+about the algorithm's progress. The data frame has one row per SQP
 iteration. For an explanation of the columns, see the description
 of the \code{verbose} control paramter in \sQuote{Details}. Missing
 values (NA's) in the last row indicate that these quantities were
@@ -91,7 +91,7 @@ to ensure that it holds for all subsequent iterates.
 If all weights are equal, solving this optimization problem
 corresponds to finding the maximum-likelihood estimate of the
 mixture proportions \eqn{x} given \eqn{n} independent data points
-drawn from a mixture model with \eqn{m} components.  In this case,
+drawn from a mixture model with \eqn{m} components. In this case,
 \eqn{L_{jk}} is the likelihood for mixture component \eqn{k} and
 data point \eqn{j}.
 
