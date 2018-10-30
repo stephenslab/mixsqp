@@ -48,7 +48,6 @@ Install the latest version of the mixsqp package from GitHub:
 
 ```R
 devtools::install_github("stephenslab/mixsqp",
-                         build_vignettes = TRUE,
                          upgrade_dependencies = FALSE)
 ```
 
@@ -67,16 +66,12 @@ Next, run the small example provided with the mixsqp function:
 example("mixsqp")
 ```
 
-For a more detailed illustration of the SQP algorithm applied to
-the problem of computing maximum-likelihood estimates for a mixture
-model, work through the introductory vignette:
+For a more detailed illustration of the SQP algorithm applied to the
+problem of computing maximum-likelihood estimates for a mixture model,
+read through the [introductory vignette][mixsqp-vignette].
 
-```R
-vignette("mixsqp-intro")
-```
-
-To learn more, visit the [package website][mixsqp-website], or view the
-"mixsqp" help page:
+To learn more, visit the [package website][mixsqp-website], or view
+the "mixsqp" help page:
 
 ```R
 help("mixsqp")
@@ -122,7 +117,16 @@ package, in turn, requires the [Rmosek][mosek] package. Refer to the
 [MOSEK documentation][mosek-docs] for instructions on installing the
 Rmosek package. Once you have followed these steps, you can run
 [this example](inst/code/test.rmosek.R) to verify that Rmosek is
-correctly installed.
+correctly installed. Installation of the REBayes package also allows
+you to build [the vignette][mixsqp-vignette] and view it locally:
+
+```R
+devtools::install_github("stephenslab/mixsqp",
+                         build_vignettes = TRUE,
+                         upgrade_dependencies = FALSE)
+library(mixsqp)
+vignette("mixsqp-intro")
+```
 
 ## Developer notes
 
@@ -169,6 +173,7 @@ This project was developed by [Youngseok Kim][youngseok] at the
 [Mihai Anitescu][mihai].
 
 [mixsqp-website]: https://stephenslab.github.io/mixsqp
+[mixsqp-vignette]: https://stephenslab.github.io/mixsqp/articles/mixsqp-intro.html
 [sqp]: https://neos-guide.org/content/sequential-quadratic-programming
 [arxiv-paper]: https://arxiv.org/abs/1806.01412
 [mixsqp-julia]: https://github.com/stephenslab/mixsqp-paper
