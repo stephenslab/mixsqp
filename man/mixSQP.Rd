@@ -53,16 +53,13 @@ upon termination.}
 about the algorithm's progress. The data frame has one row per SQP
 iteration. For an explanation of the columns, see the description
 of the \code{verbose} control paramter in \sQuote{Details}. Missing
-values (NA's) in the last row indicate that these quantities were
+values (\code{NA}'s) in the last row indicate that these quantities were
 not computed because convergence was reached before computing
-them. Also note that the association of these quantities is
-slightly different than the console output when \code{verbose =
-TRUE} as the console output shows some quantities that were
-computed after the convergence check in the previous iteration. The
-last entries of max.diff, nqp and nls may not have been assigned if
-the SQP algorithm converged successfully (as indicated by negative
-values), in which case we should more appropriately assign them
-missing values (NA).}
+them. Also note that the storage of these quantities in the
+\code{progress} data frame is slightly different than in the console
+output (when \code{verbose = TRUE}) as the console output shows some
+quantities that were computed after the convergence check in the
+previous iteration.}
 }
 \description{
 The \code{mixsqp} function uses a Sequential Quadratic
