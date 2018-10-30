@@ -50,7 +50,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP algorithm 0.1-72 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP algorithm 0.1-73 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):     %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set):    %0.1e\n",convtolactiveset);
     Rprintf("zero threshold (solution):  %0.1e\n",zerothresholdsolution);
@@ -261,9 +261,9 @@ double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
       
     // First check that the search direction is close to zero
     // (according to the "zerothresholdsearchdir" parameter).
-    if (p.max() <= zerothresholdsearchdir &
-	-p.min() <= zerothresholdsearchdir &
-        i0.n_elem > 0) {
+    if ((p.max() <= zerothresholdsearchdir) &
+	(-p.min() <= zerothresholdsearchdir) &
+        (i0.n_elem > 0)) {
         
       // If all the Lagrange multiplers in the working set (that is,
       // zeroed co-ordinates) are positive, or nearly positive, we
