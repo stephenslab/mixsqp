@@ -5,11 +5,11 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Illustration of mix-SQP solver applied to a small data set, and a large one • mixsqp</title>
+<title>Illustration of <code>mixsqp</code> applied to a small data set, and a large one • mixsqp</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script><script src="../pkgdown.js"></script><meta property="og:title" content="Illustration of mix-SQP solver applied to a small data set, and a large one">
+<script src="../jquery.sticky-kit.min.js"></script><script src="../pkgdown.js"></script><meta property="og:title" content="Illustration of &lt;code&gt;mixsqp&lt;/code&gt; applied to a small data set, and a large one">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
@@ -57,20 +57,20 @@
       </header><div class="row">
   <div class="col-md-9">
     <div class="page-header toc-ignore">
-      <h1>Illustration of mix-SQP solver applied to a small data set, and a large one</h1>
+      <h1>Illustration of <code>mixsqp</code> applied to a small data set, and a large one</h1>
                         <h4 class="author">Youngseok Kim and Peter Carbonetto</h4>
             
-            <h4 class="date">2018-10-26</h4>
+            <h4 class="date">2018-10-30</h4>
           </div>
 
     
     
 <div class="contents">
-<p>In this vignette, we illustrate the use of the sequential quadratic programming (SQP) algorithm, and compare its runtime and accuracy against an interior-point (IP) solver implemented by the <a href="https://www.mosek.com">MOSEK</a> commercial software (and called by the “KWDual” function in the <a href="https://cran.r-project.org/package=REBayes">REBayes package</a>).</p>
+<p>In this vignette, we illustrate the use of the sequential quadratic programming (SQP) algorithm implemented in <code>mixsqp</code>, and compare its runtime and accuracy against an interior-point (IP) solver implemented by the <a href="https://www.mosek.com">MOSEK</a> commercial software (called by the “KWDual” function in the <a href="https://cran.r-project.org/package=REBayes">REBayes package</a>).</p>
 <div id="environment-set-up" class="section level2">
 <h2 class="hasAnchor">
 <a href="#environment-set-up" class="anchor"></a>Environment set-up</h2>
-<p>Load the mixsqp and Rmosek packages. (The Rmosek package is only used to check the version of MOSEK.)</p>
+<p>Load the <code>mixsqp</code> and <code>Rmosek</code> packages. (The Rmosek package is only used to check the version of MOSEK.)</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(mixsqp)
 <span class="kw">library</span>(Rmosek)</code></pre></div>
 <p>Next, initialize the sequence of pseudorandom numbers.</p>
@@ -79,7 +79,7 @@
 <div id="generate-a-small-data-set" class="section level2">
 <h2 class="hasAnchor">
 <a href="#generate-a-small-data-set" class="anchor"></a>Generate a small data set</h2>
-<p>We begin with a small example to show how the SQP method works.</p>
+<p>We begin with a small example to show how <code>mixsqp</code> works.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">L &lt;-<span class="st"> </span><span class="kw"><a href="../reference/simulatemixdata.html">simulatemixdata</a></span>(<span class="dv">1000</span>,<span class="dv">20</span>)<span class="op">$</span>L
 <span class="kw">dim</span>(L)
 <span class="co"># [1] 1000   20</span></code></pre></div>
@@ -90,7 +90,7 @@
 <a href="#fit-mixture-model" class="anchor"></a>Fit mixture model</h2>
 <p>Now we fit the mixture model using the SQP algorithm:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit.sqp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixsqp.html">mixsqp</a></span>(L)
-<span class="co"># Running mix-SQP algorithm 0.1-68 on 1000 x 20 matrix</span>
+<span class="co"># Running mix-SQP algorithm 0.1-69 on 1000 x 20 matrix</span>
 <span class="co"># convergence tol. (SQP):     1.0e-08</span>
 <span class="co"># conv. tol. (active-set):    1.0e-10</span>
 <span class="co"># zero threshold (solution):  1.0e-06</span>
@@ -140,7 +140,7 @@
 <p>Now we fit the model using the SQP algorithm,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">timing &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.sqp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixsqp.html">mixsqp</a></span>(L))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Computation took %0.2f seconds</span><span class="ch">\n</span><span class="st">"</span>,timing[<span class="st">"elapsed"</span>]))
-<span class="co"># Running mix-SQP algorithm 0.1-68 on 100000 x 100 matrix</span>
+<span class="co"># Running mix-SQP algorithm 0.1-69 on 100000 x 100 matrix</span>
 <span class="co"># convergence tol. (SQP):     1.0e-08</span>
 <span class="co"># conv. tol. (active-set):    1.0e-10</span>
 <span class="co"># zero threshold (solution):  1.0e-06</span>
@@ -160,11 +160,11 @@
 <span class="co">#   10 +6.15052e-01 +9.288e-07   7 9.53e-04   2   1</span>
 <span class="co">#   11 +6.15052e-01 -1.543e-08   7 1.14e-05   2   1</span>
 <span class="co"># Convergence criteria met---optimal solution found.</span>
-<span class="co"># Computation took 8.66 seconds</span></code></pre></div>
+<span class="co"># Computation took 7.61 seconds</span></code></pre></div>
 <p>and using the IP method,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">timing &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.ip  &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixkwdual.html">mixkwdual</a></span>(L))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Computation took %0.2f seconds</span><span class="ch">\n</span><span class="st">"</span>,timing[<span class="st">"elapsed"</span>]))
-<span class="co"># Computation took 14.61 seconds</span></code></pre></div>
+<span class="co"># Computation took 14.28 seconds</span></code></pre></div>
 <p>The SQP algorithm was considerably faster than the IP solver, and it converged to a solution with nearly the same objective value as the IP solution:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at SQP solution: %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.sqp<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at IP solution:  %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.ip<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))
@@ -193,7 +193,7 @@
 <span class="co"># [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
 <span class="co"># </span>
 <span class="co"># other attached packages:</span>
-<span class="co"># [1] Rmosek_8.0.69 Matrix_1.2-12 mixsqp_0.1-68</span>
+<span class="co"># [1] Rmosek_8.0.69 Matrix_1.2-12 mixsqp_0.1-69</span>
 <span class="co"># </span>
 <span class="co"># loaded via a namespace (and not attached):</span>
 <span class="co">#  [1] Rcpp_0.12.19    lattice_0.20-35 digest_0.6.17   rprojroot_1.3-2</span>
@@ -201,7 +201,7 @@
 <span class="co">#  [9] stringi_1.2.4   rmarkdown_1.10  tools_3.4.3     stringr_1.3.1  </span>
 <span class="co"># [13] REBayes_1.3     yaml_2.2.0      compiler_3.4.3  htmltools_0.3.6</span>
 <span class="co"># [17] knitr_1.20</span></code></pre></div>
-<p>Since we used Rmosek, it is also helpful to record the version of MOSEK that was used.</p>
+<p>Since we used <code>Rmosek</code>, it is also helpful to record the version of MOSEK that was used.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="http://www.rdocumentation.org/packages/Rmosek/topics/mosek_version">mosek_version</a></span>()
 <span class="co"># [1] "MOSEK 8.1.0.27"</span></code></pre></div>
 </div>

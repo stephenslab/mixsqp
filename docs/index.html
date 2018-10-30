@@ -69,12 +69,12 @@
 
 <p>The mixsqp R package provides algorithms based on <a href="https://neos-guide.org/content/sequential-quadratic-programming">sequential quadratic programming</a> for maximum likelihood estimation of the mixture proportions in a finite mixture model where the component densities are known. The SQP algorithm is expected to obtain solutions that are at least as accurate as the state-of-the-art MOSEK interior-point solver (called via the “KWDual” function in the <a href="https://cran.r-project.org/package=REBayes">REBayes package</a>), and is expected to compute these solutions much more quickly in large data sets.</p>
 <p>For more details on the SQP algorithm, please see <a href="https://arxiv.org/abs/1806.01412">our paper on arXiv</a>.</p>
-<p>See also the <a href="https://github.com/stephenslab/mixsqp-paper">Julia implementation</a>, which is currently faster than the R implementation, particularly for large data sets.</p>
+<p>See also the <a href="https://github.com/stephenslab/mixsqp-paper">Julia implementation</a>, which, at time of writing, is faster than the R implementation, particularly for large data sets.</p>
 <p>If you find a bug, or you have a question or feedback on our work, please post an <a href="https://github.com/stephenslab/mixsqp/issues">issue</a>.</p>
 <div id="citing-this-work" class="section level2">
 <h2 class="hasAnchor">
 <a href="#citing-this-work" class="anchor"></a>Citing this work</h2>
-<p>If you find the mixsqp package or any of the source code in this repository useful for your work, please cite our paper:</p>
+<p>If you find the mixsqp package or any of the source code in this repository useful for your work, please cite:</p>
 <blockquote>
 <p>Youngseok Kim, Peter Carbonetto, Matthew Stephens and Mihai Anitescu. <em>A fast algorithm for maximum likelihood estimation of mixture proportions using sequential quadratic programming.</em> <a href="https://arxiv.org/abs/1806.01412">arXiv:1806.01412</a>.</p>
 </blockquote>
@@ -90,15 +90,13 @@
 <a href="#quick-start" class="anchor"></a>Quick Start</h2>
 <p>Install the latest version of the mixsqp package from GitHub:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"stephenslab/mixsqp"</span>,
-                         <span class="dt">build_vignettes =</span> <span class="ot">TRUE</span>,
                          <span class="dt">upgrade_dependencies =</span> <span class="ot">FALSE</span>)</code></pre></div>
 <p>For more detailed installation instructions, see the “Setup” section below.</p>
 <p>Once you have installed the package, load the package in R:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(mixsqp)</code></pre></div>
 <p>Next, run the small example provided with the mixsqp function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">example</span>(<span class="st">"mixsqp"</span>)</code></pre></div>
-<p>For a more detailed illustration of the SQP algorithm applied to the problem of computing maximum-likelihood estimates for a mixture model, work through the introductory vignette:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">vignette</span>(<span class="st">"mixsqp-intro"</span>)</code></pre></div>
+<p>For a more detailed illustration of the SQP algorithm applied to the problem of computing maximum-likelihood estimates for a mixture model, read through the <a href="https://stephenslab.github.io/mixsqp/articles/mixsqp-intro.html">introductory vignette</a>.</p>
 <p>To learn more, visit the <a href="https://stephenslab.github.io/mixsqp">package website</a>, or view the “mixsqp” help page:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">help</span>(<span class="st">"mixsqp"</span>)</code></pre></div>
 </div>
@@ -120,8 +118,13 @@
 <a href="#additional-setup-notes" class="anchor"></a>Additional setup notes</h3>
 <ul>
 <li><p>Compiling the mixsqp package from source will require a C++ compiler setup that is appropriate for the the R installed on your computer. For details, refer to the <a href="https://cran.r-project.org">CRAN documentation</a>. For Mac computers, see <a href="https://pcarbo.github.io/pcarbo/r-macos.html">these notes</a>.</p></li>
-<li><p>To use the (optional) alternative solver, “mixkwdual”, you will need to install the <a href="https://cran.r-project.org/package=REBayes">REBayes</a> package which, in turn, requires the <a href="https://www.mosek.com">Rmosek</a> package. Refer to the <a href="https://www.mosek.com/documentation">MOSEK documentation</a> for instructions on installing the Rmosek package. Once you have followed these steps, you can run <a href="inst/code/test.rmosek.R">this example</a> to verify that Rmosek is correctly installed.</p></li>
+<li><p>To use the (optional) alternative solver, “mixkwdual”, which is mostly useful for comparisons of the different optimization methods, you will need to install the <a href="https://cran.r-project.org/package=REBayes">REBayes</a> package. The REBayes package, in turn, requires the <a href="https://www.mosek.com">Rmosek</a> package. Refer to the <a href="https://www.mosek.com/documentation">MOSEK documentation</a> for instructions on installing the Rmosek package. Once you have followed these steps, you can run <a href="inst/code/test.rmosek.R">this example</a> to verify that Rmosek is correctly installed. Installation of the REBayes package also allows you to build <a href="https://stephenslab.github.io/mixsqp/articles/mixsqp-intro.html">the vignette</a> and view it locally:</p></li>
 </ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"stephenslab/mixsqp"</span>,
+                         <span class="dt">build_vignettes =</span> <span class="ot">TRUE</span>,
+                         <span class="dt">upgrade_dependencies =</span> <span class="ot">FALSE</span>)
+<span class="kw">library</span>(mixsqp)
+<span class="kw">vignette</span>(<span class="st">"mixsqp-intro"</span>)</code></pre></div>
 </div>
 </div>
 <div id="developer-notes" class="section level2">
@@ -132,8 +135,8 @@
 <a href="#testing-the-package" class="anchor"></a>Testing the package</h3>
 <p>To install and test the mixsqp R package, run the following commands in the shell:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">R</span> CMD build mixsqp
-<span class="ex">R</span> CMD INSTALL mixsqp_0.1-68.tar.gz
-<span class="ex">R</span> CMD check --as-cran mixsqp_0.1-68.tar.gz</code></pre></div>
+<span class="ex">R</span> CMD INSTALL mixsqp_0.1-70.tar.gz
+<span class="ex">R</span> CMD check --as-cran mixsqp_0.1-70.tar.gz</code></pre></div>
 <p>Note that these commands require that the dependencies have already been installed. See the <a href="DESCRIPTION" class="uri">DESCRIPTION</a> file for details.</p>
 </div>
 <div id="updating-the-c-source-and-documentation" class="section level3">
@@ -145,7 +148,7 @@
 <h3 class="hasAnchor">
 <a href="#updating-the-pkgdown-site" class="anchor"></a>Updating the pkgdown site</h3>
 <p>Run this line of R code to build the website (make sure you have an Internet connection while running the code):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pkgdown<span class="op">::</span><span class="kw"><a href="http://pkgdown.r-lib.org/reference/build_site.html">build_site</a></span>(<span class="dt">mathjax =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pkgdown<span class="op">::</span><span class="kw"><a href="https://pkgdown.r-lib.org/reference/build_site.html">build_site</a></span>(<span class="dt">mathjax =</span> <span class="ot">FALSE</span>)</code></pre></div>
 </div>
 <div id="other-developer-notes" class="section level3">
 <h3 class="hasAnchor">
