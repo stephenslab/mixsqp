@@ -50,7 +50,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP algorithm 0.1-68 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP algorithm 0.1-69 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):     %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set):    %0.1e\n",convtolactiveset);
     Rprintf("zero threshold (solution):  %0.1e\n",zerothresholdsolution);
@@ -323,14 +323,14 @@ double backtrackinglinesearch (double f, const arma::mat& L,
 			       double eps) {
   int n = L.n_rows;
   int j;
-  for (j = 0; j < 16; j++) {
+  for (j = 0; j < 24; j++) {
     if (f + sum(log(L*y + eps) % w) > dot(x - y,g)/(2*n)) {
       j++;
       break;
     }
     y = (y - x)/2 + x;
   }
-  if (j >= 16)
+  if (j >= 24)
     Rcpp::stop("Step size is too small; consider increasing \"eps\", or relaxing convergence criteria");
   return j;
 }
