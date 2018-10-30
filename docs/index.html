@@ -13,7 +13,7 @@
 <script src="jquery.sticky-kit.min.js"></script><script src="pkgdown.js"></script><meta property="og:title" content="Sequential Quadratic Programming for Fast Maximum-Likelihood
     Estimation of Mixture Proportions">
 <meta property="og:description" content="Provides optimization algorithms based on sequential
-  quadratic programming for maximum likelihood estimation of the
+  quadratic programming (SQP) for maximum likelihood estimation of the
   mixture proportions in a finite mixture model where the component
   densities are known. The SQP algorithm is expected to
   obtain solutions that are at least as accurate as the state-of-the-art
@@ -135,8 +135,8 @@
 <a href="#testing-the-package" class="anchor"></a>Testing the package</h3>
 <p>To install and test the mixsqp R package, run the following commands in the shell:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">R</span> CMD build mixsqp
-<span class="ex">R</span> CMD INSTALL mixsqp_0.1-70.tar.gz
-<span class="ex">R</span> CMD check --as-cran mixsqp_0.1-70.tar.gz</code></pre></div>
+<span class="ex">R</span> CMD INSTALL mixsqp_0.1-72.tar.gz
+<span class="ex">R</span> CMD check --as-cran mixsqp_0.1-72.tar.gz</code></pre></div>
 <p>Note that these commands require that the dependencies have already been installed. See the <a href="DESCRIPTION" class="uri">DESCRIPTION</a> file for details.</p>
 </div>
 <div id="updating-the-c-source-and-documentation" class="section level3">
