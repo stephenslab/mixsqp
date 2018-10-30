@@ -167,9 +167,9 @@ prevent commits that don't include a change to the package version.
 
 ## Credits
 
-This project was developed by [Youngseok Kim][youngseok] at the
-[University of Chicago][uchicago], with contributions from
-[Peter Carbonetto][peter], [Matthew Stephens][matthew] and
+The mixsqp R package was developed by [Youngseok Kim][youngseok] and
+[Peter Carbonetto][peter] at the [University of Chicago][uchicago],
+with contributions from [Matthew Stephens][matthew] and
 [Mihai Anitescu][mihai].
 
 [mixsqp-website]: https://stephenslab.github.io/mixsqp
