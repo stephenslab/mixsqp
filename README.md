@@ -16,7 +16,7 @@ solutions much more quickly in large data sets.
 For more details on the SQP algorithm, please see [our paper on
 arXiv][arxiv-paper].
 
-See also the [Julia implementation][mixsqp-julia], which is currently
+See also the [Julia implementation][mixsqp-julia], which at time of writing is 
 faster than the R implementation, particularly for large data sets.
 
 If you find a bug, or you have a question or feedback on our work,
@@ -25,7 +25,7 @@ please post an [issue][issues].
 ## Citing this work
 
 If you find the mixsqp package or any of the source code in this
-repository useful for your work, please cite our paper:
+repository useful for your work, please cite:
 
 > Youngseok Kim, Peter Carbonetto, Matthew Stephens and Mihai
 > Anitescu. *A fast algorithm for maximum likelihood estimation of
@@ -114,7 +114,8 @@ setup that is appropriate for the the R installed on your
 computer. For details, refer to the [CRAN documentation][cran]. For
 Mac computers, see [these notes][compiling-macos].
 
-+ To use the (optional) alternative solver, "mixkwdual", you will need
++ To use the (optional) alternative solver, "mixkwdual" -- mostly useful for comparisons 
+of the different optimization methods -- you will need
 to install the [REBayes][rebayes] package which, in turn, requires the
 [Rmosek][mosek] package. Refer to the
 [MOSEK documentation][mosek-docs] for instructions on installing the

@@ -1,5 +1,5 @@
 ---
-title: "Illustration of mix-SQP solver applied to a small data set, and a large one"
+title: "Illustration of `mixsqp` applied to a small data set, and a large one"
 author: "Youngseok Kim and Peter Carbonetto"
 date: "`r Sys.Date()`"
 output:
@@ -18,14 +18,14 @@ knitr::opts_chunk$set(collapse = TRUE,results = "hold",comment = "#")
 ```
 
 In this vignette, we illustrate the use of the sequential quadratic
-programming (SQP) algorithm, and compare its runtime and accuracy
+programming (SQP) algorithm implemented in `mixsqp`, and compare its runtime and accuracy
 against an interior-point (IP) solver implemented by the
-[MOSEK][mosek] commercial software (and called by the "KWDual"
+[MOSEK][mosek] commercial software (called by the "KWDual"
 function in the [REBayes package][rebayes]).
 
 ## Environment set-up
 
-Load the mixsqp and Rmosek packages. (The Rmosek package is only
+Load the `mixsqp` and `Rmosek` packages. (The Rmosek package is only
 used to check the version of MOSEK.)
 
 ```{r load-pkgs, message=FALSE}
@@ -41,7 +41,7 @@ set.seed(1)
 
 ## Generate a small data set
 
-We begin with a small example to show how the SQP method works.
+We begin with a small example to show how `mixsqp` works.
 
 ```{r sim-data-small}
 L <- simulatemixdata(1000,20)$L
@@ -162,7 +162,7 @@ version of R and the packages used.
 sessionInfo()
 ```
 
-Since we used Rmosek, it is also helpful to record the version of
+Since we used 'Rmosek', it is also helpful to record the version of
 MOSEK that was used.
 
 ```{r mosek-info}
