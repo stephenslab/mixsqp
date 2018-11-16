@@ -92,8 +92,7 @@ from GitHub, use [devtools][devtools]:
 ```R
 install.packages("devtools")
 library(devtools)
-install_github("stephenslab/mixsqp",build_vignettes = TRUE,
-               upgrade_dependencies = FALSE)
+install_github("stephenslab/mixsqp")
 ```
 
 This command should automatically install all required packages if
@@ -107,7 +106,7 @@ package:
 ```R
 library(devtools)
 list.files(pattern = "mixsqp") # Should output "mixsqp".
-install_local("mixsqp",build_vignettes = TRUE,upgrade_dependencies = FALSE)
+install_local("mixsqp")
 ```
 
 ### Additional setup notes
@@ -128,9 +127,7 @@ correctly installed. Installation of the REBayes package also allows
 you to build [the vignette][mixsqp-vignette] and view it locally:
 
 ```R
-devtools::install_github("stephenslab/mixsqp",
-                         build_vignettes = TRUE,
-                         upgrade_dependencies = FALSE)
+devtools::install_github("stephenslab/mixsqp",build_vignettes = TRUE)
 library(mixsqp)
 vignette("mixsqp-intro")
 ```
