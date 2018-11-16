@@ -80,8 +80,15 @@ help("mixsqp")
 
 ## Setup
 
-To install the latest version of the mixsqp package from GitHub,
-use [devtools][devtools]:
+To install mixsqp from [CRAN](http://www.r-pkg.org/pkg/varbvs), in R
+run:
+
+```R
+install.packages("mixsqp")
+```
+
+Alternatively, to install the latest version of the mixsqp package
+from GitHub, use [devtools][devtools]:
 
 ```R
 install.packages("devtools")
@@ -93,10 +100,10 @@ install_github("stephenslab/mixsqp",build_vignettes = TRUE,
 This command should automatically install all required packages if
 they are not installed already.
 
-Alternatively, if you have cloned the repository locally, you can
-install the package with the `install_local` function from
-devtools. Assuming your working directory contains the mixsqp
-repository, run this code to install the package:
+If you have cloned the repository locally, you can install the package
+with the `install_local` function from devtools. Assuming your working
+directory contains the mixsqp repository, run this code to install the
+package:
 
 ```R
 library(devtools)
