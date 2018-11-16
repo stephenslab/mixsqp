@@ -45,11 +45,10 @@ file [LICENSE](LICENSE) for the full text of the license.
 
 ## Quick Start
 
-Install the latest version of the mixsqp package from GitHub:
+Install mixsqp from [CRAN](http://www.r-pkg.org/pkg/varbvs):
 
 ```R
-devtools::install_github("stephenslab/mixsqp",
-                         upgrade_dependencies = FALSE)
+install.packages("mixsqp")
 ```
 
 For more detailed installation instructions, see the "Setup" section
