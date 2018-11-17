@@ -1,6 +1,6 @@
 # mixsqp: R package for fast maximum-likelihood estimation of mixture proportions using sequential quadratic programming
 
-[![CRAN status badge](http://www.r-pkg.org/badges/version/mixsqp)](https://cran.r-project.org/package=mixsqp)
+[![CRAN status badge](https://www.r-pkg.org/badges/version/mixsqp)](https://cran.r-project.org/package=mixsqp)
 [![Travis Build Status](https://travis-ci.org/stephenslab/mixsqp.svg?branch=master)](https://travis-ci.org/stephenslab/mixsqp)
 [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/i8744qet66w5uhe2?svg=true)](https://ci.appveyor.com/project/pcarbo/mixsqp)
 [![codecov](https://codecov.io/gh/stephenslab/mixsqp/branch/master/graph/badge.svg)](https://codecov.io/gh/stephenslab/mixsqp)
