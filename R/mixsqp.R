@@ -281,8 +281,8 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # scalars that are integers greater than zero.
   verify.maxiter.arg(maxiter.sqp)
   verify.maxiter.arg(maxiter.activeset)
-  maxiter.sqp       <- as.double(maxiter.sqp)
-  maxiter.activeset <- as.double(maxiter.activeset)
+  maxiter.sqp       <- as.integer(maxiter.sqp)
+  maxiter.activeset <- as.integer(maxiter.activeset)
 
   # Input arguments "convtol.sqp", "convtol.activeset",
   # "zero.threshold.solution", "zero.threshold.searchdir", and "eps"
