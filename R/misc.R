@@ -124,3 +124,11 @@ verify.estimate <- function (x, L, arg.name = deparse(substitute(x))) {
 # logarithmic scale. Note that x and y should be positive numbers.
 logspace <- function (x, y, n)
   2^seq(log2(x),log2(y),length = n)
+
+# Scale each column A[,i] by b[i].
+scale.cols <- function (A, b) {
+    
+  # TO DO: Modify this code to avoid the transpose of A, which could
+  # be a large matrix.
+  t(t(A) * b)
+}

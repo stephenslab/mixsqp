@@ -306,6 +306,10 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # Input argument "verbose" should be TRUE or FALSE.
   verify.logical.arg(verbose)
+
+  # RUN A FEW ITERATIONS OF EM
+  # --------------------------
+  # TO DO.
   
   # SOLVE OPTIMIZATION PROBLEM USING mix-SQP
   # ----------------------------------------
