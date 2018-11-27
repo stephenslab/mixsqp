@@ -15,11 +15,12 @@ using namespace Rcpp;
 // FUNCTION DECLARATIONS
 // ---------------------
 double mixobjective (const arma::mat& L, const arma::vec& w,
-		     const arma::vec& x, double e, arma::vec& u);
+		     const arma::vec& x, const arma::vec& e, 
+		     arma::vec& u);
 void   computegrad  (const arma::mat& L, const arma::vec& w,
-		     const arma::vec& x, double e, arma::vec& g,
-		     arma::mat& H, arma::vec& u, arma::mat& Z,
-		     const arma::mat& I);
+		     const arma::vec& x, const arma::vec& e, 
+		     arma::vec& g, arma::mat& H, arma::vec& u, 
+		     arma::mat& Z, const arma::mat& I);
 double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
 		    arma::uvec& t, int maxiteractiveset,
 		    double zerothresholdsearchdir, 
@@ -27,7 +28,7 @@ double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
 double backtrackinglinesearch (double f, const arma::mat& L,
 			       const arma::vec& w, const arma::vec& g,
 			       const arma::vec& x, arma::vec& y,
-			       double eps);
+			       const arma::vec& eps);
 
 // FUNCTION DEFINITIONS
 // --------------------
@@ -40,7 +41,7 @@ double backtrackinglinesearch (double f, const arma::mat& L,
 List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0, 
                   double convtolsqp, double convtolactiveset,
 		  double zerothresholdsolution, double zerothresholdsearchdir,
-		  double eps, double delta, int maxitersqp, 
+		  const arma::vec& eps, double delta, int maxitersqp, 
 		  int maxiteractiveset, bool verbose) {
   
   // Get the number of rows (n) and columns (m) of the conditional
@@ -50,7 +51,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP algorithm 0.1-84 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP algorithm 0.1-85 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):     %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set):    %0.1e\n",convtolactiveset);
     Rprintf("zero threshold (solution):  %0.1e\n",zerothresholdsolution);
@@ -191,7 +192,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 // vector of length n used to store an intermediate result used in the
 // calculation of the objective.
 double mixobjective (const arma::mat& L, const arma::vec& w,
-		     const arma::vec& x, double e, arma::vec& u) {
+		     const arma::vec& x, const arma::vec& e, arma::vec& u) {
   u = L*x + e;
   if (u.min() <= 0)
     Rcpp::stop("Halting because the objective function has a non-finite value (logarithms of numbers less than or equal to zero) at the current estimate of the solution");
@@ -206,7 +207,7 @@ double mixobjective (const arma::mat& L, const arma::vec& w,
 // in these calculations are stored in three variables: u, a vector of
 // length n; Z, an n x m matrix; and ZW, another n x m matrix.
 void computegrad (const arma::mat& L, const arma::vec& w, const arma::vec& x,
-		  double e, arma::vec& g, arma::mat& H, arma::vec& u,
+		  const arma::vec& e, arma::vec& g, arma::mat& H, arma::vec& u,
 		  arma::mat& Z, const arma::mat& I) {
    
   // Compute the gradient g = -L'*u where u = w./(L*x + e), and "./"
@@ -320,7 +321,7 @@ double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
 double backtrackinglinesearch (double f, const arma::mat& L,
 			       const arma::vec& w, const arma::vec& g,
 			       const arma::vec& x, arma::vec& y,
-			       double eps) {
+			       const arma::vec& eps) {
   int n = L.n_rows;
   int j;
   for (j = 0; j < 24; j++) {
@@ -331,6 +332,6 @@ double backtrackinglinesearch (double f, const arma::mat& L,
     y = (y - x)/2 + x;
   }
   if (j >= 24)
-    Rcpp::stop("Step size is too small; consider increasing \"eps\" and/or \"delta\", or relaxing convergence criteria");
+    Rcpp::stop("Step size is too small; consider increasing \"eps<\" and/or \"delta\", or relaxing convergence criteria");
   return j;
 }

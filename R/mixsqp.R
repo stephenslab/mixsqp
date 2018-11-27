@@ -46,9 +46,9 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' of the scale of \code{L}; for example, the same value for the
 #' convergence tolerance \code{convtol.sqp} will have the same effect
 #' at different scales. The one exception is the \code{eps} control
-#' parameter, which should be adjusted appropriately to reflect the
-#' scale of \code{L}, or set to zero; see the description of this
-#' parameter below for more details.
+#' parameter, and for this reason the effect of \code{eps} is
+#' automatically adjusted to reflect the scale of \code{L}; see the
+#' description of this parameter below for more details.
 #'
 #' A related feature is that the solution to the optimization problem
 #' is invariant to rescaling the rows of \code{L}; for example, the
@@ -108,18 +108,16 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' convergence criterion is satisfied, as determined by
 #' \code{convtol.sqp}, so choose this parameter carefully.}
 #' 
-#' \item{\code{eps}}{A small, non-negative number added to the
+#' \item{\code{eps}}{A small, non-negative number that is added to the
 #' terms inside the logarithms to sidestep computing logarithms of
 #' zero. This prevents numerical problems at the cost of introducing a
 #' small inaccuracy in the solution. Increasing this number may lead
-#' to faster convergence but possibly a less accurate solution. Note
-#' that an appropriate value of \code{eps} will depend on the "scale"
-#' of \code{L}; for example, if the largest entry in the matrix is
-#' \code{1e-10}, setting \code{eps = 1e-8} will dominate the
-#' logarithm terms in the objective, leading to inaccurate solutions.
-#' In such situations, \code{eps} should be increased or decreased
-#' appropriately (or set to zero), or the rows of \code{L} can
-#' normalized beforehand (see above).}
+#' to faster convergence but possibly a less accurate solution. Since
+#' an appropriate value of this number will depend on the "scale" of
+#' \code{L}, \code{eps} is automatically scaled separately for each
+#' row of \code{L}; specifically, the ith modified logarithm term
+#' becomes \code{log(L[i,]*x + ei)}, in which \code{ei} is set to
+#' {eps * max(L[i,])}.
 #'
 #' \item{\code{delta}}{A small, non-negative number added to the
 #' diagonal of the Hessian to improve numerical stability (and
@@ -298,11 +296,6 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   if (zero.threshold.solution >= 1/m)
     stop(paste("Behavior of algorithm will be unpredictable if",
                "zero.threshold > 1/m, where m = ncol(X)"))
-  if (1e3*eps > min(apply(L,1,max)))
-    warning(paste("Argument \"eps\" is within range of the largest element",
-                  "in one or more rows of \"L\", and may result in a poor",
-                  "estimate of the solution; consider decreasing \"eps\"",
-                  "or normalizing the rows of \"L\""))
   
   # Input argument "verbose" should be TRUE or FALSE.
   verify.logical.arg(verbose)
@@ -331,6 +324,9 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
     x0 <- x0[nonzero.cols]
     x0 <- x0/sum(x0)
   }
+
+  # Scale "eps" by the maximum value of each row of L.
+  eps <- eps * apply(L,1,max)
   
   # SOLVE OPTIMIZATION PROBLEM USING mix-SQP
   # ----------------------------------------
