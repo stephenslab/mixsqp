@@ -141,8 +141,8 @@ in the shell:
 
 ```bash
 R CMD build mixsqp
-R CMD INSTALL mixsqp_0.1-83.tar.gz
-R CMD check --as-cran mixsqp_0.1-83.tar.gz
+R CMD INSTALL mixsqp_0.1-84.tar.gz
+R CMD check --as-cran mixsqp_0.1-84.tar.gz
 ```
 
 Note that these commands require that the dependencies have already

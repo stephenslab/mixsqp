@@ -10,9 +10,8 @@
 #' the value of the kth mixture component density at the jth data
 #' point. \code{L} should be a numeric matrix with at least two
 #' columns, with all entries being non-negative and finite (and not
-#' missing). Further, no column should be entirely zeros. For large
-#' matrices, it is preferrable that the matrix is stored in
-#' double-precision; see \code{\link{storage.mode}}.
+#' missing). For large matrices, it is preferrable that the matrix is
+#' stored in double-precision; see \code{\link{storage.mode}}.
 #'
 #' @param w An optional numeric vector, with one entry for each row of
 #' \code{L}, specifying the "weights" associated with the rows of
@@ -55,12 +54,34 @@ mixkwdual <- function (L, w = rep(1,nrow(L)), ...)  {
   # Check and process the weights.
   w <- verify.weights(L,w)
 
+  # When all the entries of one or more columns are zero, the mixture
+  # weights associated with those columns are necessarily zero. Here
+  # we handle this situation.
+  nonzero.cols <- which(apply(L,2,max) > 0)
+  if (length(nonzero.cols) == 1) {
+    warning(paste("All columns of \"L\" are zeros except one; this",
+                  "corresponds to the trivial solution \"x\" in which",
+                  "x[i] = 1 for one column i, and all other entries of",
+                  "\"x\" are zero. No optimization algorithm was needed."))
+    x               <- rep(0,m)
+    x[nonzero.cols] <- 1
+    names(x)        <- colnames(L)
+    return(list(x      = x,
+                value  = mixobj(L,w,x),
+                status = NULL))
+  } else if (length(nonzero.cols) < m) {
+    warning(paste("One or more columns of \"L\" are all zeros; solution",
+                  "entries associated with these columns are trivially",
+                  "zero"))
+    L <- L[,nonzero.cols]
+  }
+  
   # SOLVE OPTIMIZATION PROBLEM USING MOSEK
   # --------------------------------------
   # Check that the REBayes package is available.
   if(!requireNamespace("REBayes",quietly = TRUE))
     stop("mixKWDual requires package REBayes")
-  d   <- rep(1,m)
+  d   <- rep(1,ncol(L))
   out <- REBayes::KWDual(L,d,w,...)
 
   # POST-PROCESSING STEPS
@@ -75,9 +96,20 @@ mixkwdual <- function (L, w = rep(1,nrow(L)), ...)  {
   x[x < 0] <- 0
   x        <- x/sum(x)
 
+  # Compute the value of the objective at the estimated solution.
+  f <- mixobj(L,w,x)
+  
+  # If necessary, insert the zero mixture weights associated with the
+  # columns of zeros.
+  if (length(nonzero.cols) < m) {
+    xnz <- x
+    x   <- rep(0,m)
+    x[nonzero.cols] <- xnz
+  }
+  
   # Return a list containing the solution to the optimization problem
   # (x), the value of the objective at the solution (value), and the
   # MOSEK convergence status (status).
   names(x) <- colnames(L)
-  return(list(x = x,value = mixobj(L,w,x),status = out$status))
+  return(list(x = x,value = f,status = out$status))
 }
