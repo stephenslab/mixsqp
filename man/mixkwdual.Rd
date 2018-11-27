@@ -12,9 +12,8 @@ In the context of mixture-model fitting, \code{L[j,k]} should be
 the value of the kth mixture component density at the jth data
 point. \code{L} should be a numeric matrix with at least two
 columns, with all entries being non-negative and finite (and not
-missing). Further, no column should be entirely zeros. For large
-matrices, it is preferrable that the matrix is stored in
-double-precision; see \code{\link{storage.mode}}.}
+missing). For large matrices, it is preferrable that the matrix is
+stored in double-precision; see \code{\link{storage.mode}}.}
 
 \item{w}{An optional numeric vector, with one entry for each row of
 \code{L}, specifying the "weights" associated with the rows of

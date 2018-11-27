@@ -239,10 +239,14 @@ test_that(paste("Case is properly handled in which all columns except",
   L[,-i]  <- 0
   xsol    <- rep(0,m)
   xsol[i] <- 1
-  expect_warning(capture.output(out <- mixsqp(L)))
-  expect_equal(out$x,xsol)
-  expect_equal(out$status,mixsqp:::mixsqp.status.didnotrun)
-  expect_null(out$progress)
+  expect_warning(capture.output(out1 <- mixsqp(L)))
+  expect_equal(out1$status,mixsqp:::mixsqp.status.didnotrun)
+  expect_null(out1$progress)
+  expect_equal(out1$x,xsol)
+
+  skip_if_not_installed("REBayes")
+  expect_warning(capture.output(out2 <- mixkwdual(L)))
+  expect_equal(out2$x,xsol)
 })
 
 test_that("Case is properly handled in which one column is all zeros",{
@@ -256,11 +260,18 @@ test_that("Case is properly handled in which one column is all zeros",{
   L[,i] <- 1e-8
   capture.output(out1 <- mixsqp(L))
 
-  # Set one of the columns to be all zeros.
+  # Set one of the columns to be all zeros, and re-run the mix-SQP
+  # algorithm.
   L[,i] <- 0
   expect_warning(capture.output(out2 <- mixsqp(L)))
 
   # The two solutions should be pretty much the same.
   expect_equal(out1$x,out2$x,tolerance = 1e-8)
   expect_equal(out1$value,out2$value,tolerance = 1e-8)
+
+  # Also check KWDual solution.
+  skip_if_not_installed("REBayes")
+  expect_warning(out3 <- mixkwdual(L))
+  expect_equal(out1$x,out3$x,tolerance = 1e-6)
+  expect_equal(out1$value,out3$value,tolerance = 1e-6)
 })
