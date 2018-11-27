@@ -1,6 +1,7 @@
 # Possible convergence status messages in mixsqp.
 mixsqp.status.converged      <- "converged to optimal solution"
 mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
+mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 
 #' @title Maximum-likelihood estimation of mixture proportions using SQP
 #'
@@ -155,9 +156,8 @@ mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
 #' the value of the kth mixture component density at the jth data
 #' point. \code{L} should be a numeric matrix with at least two
 #' columns, with all entries being non-negative and finite (and not
-#' missing). Further, no column should be entirely zeros. For large
-#' matrices, it is preferrable that the matrix is stored in
-#' double-precision; see \code{\link{storage.mode}}.
+#' missing). For large matrices, it is preferrable that the matrix is
+#' stored in double-precision; see \code{\link{storage.mode}}.
 #'
 #' @param w An optional numeric vector, with one entry for each row of
 #' \code{L}, specifying the "weights" associated with the rows of
@@ -307,12 +307,37 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # Input argument "verbose" should be TRUE or FALSE.
   verify.logical.arg(verbose)
 
+  # When all the entries of one or more columns are zero, the mixture
+  # weights associated with those columns are necessarily zero. Here
+  # we handle this situation.
+  nonzero.cols <- which(apply(L,2,max) > 0)
+  if (length(nonzero.cols) == 1) {
+    warning(paste("All columns of \"L\" are zeros except one; this",
+                  "corresponds to the trivial solution \"x\" in which",
+                  "x[i] = 1 for one column i, and all other entries of",
+                  "\"x\" are zero. No optimization algorithm was needed."))
+    x               <- rep(0,m)
+    x[nonzero.cols] <- 1
+    names(x)        <- colnames(L)
+    return(list(x        = x,
+                status   = mixsqp.status.didnotrun,
+                value    = mixobj(L,w,x),
+                progress = NULL))
+  } else if (length(nonzero.cols) < m) {
+    warning(paste("One or more columns of \"L\" are all zeros; solution",
+                  "entries associated with these columns are trivially",
+                  "zero"))
+    L  <- L[,nonzero.cols]
+    x0 <- x0[nonzero.cols]
+    x0 <- x0/sum(x0)
+  }
+  
   # SOLVE OPTIMIZATION PROBLEM USING mix-SQP
   # ----------------------------------------
   out <- mixsqp_rcpp(L,w,x0,convtol.sqp,convtol.activeset,
                      zero.threshold.solution,zero.threshold.searchdir,
                      eps,delta,maxiter.sqp,maxiter.activeset,verbose)
-  
+
   # Get the algorithm convergence status. The convention is that
   # status = 0 means that the algorithm has successfully converged to
   # the optimal solution, and a status = 1 means that the algorithm
@@ -339,9 +364,20 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   out$nqp[out$nqp < 0]           <- NA
   out$nls[out$nls < 0]           <- NA
 
+  # Compute the value of the objective at the estimated solution.
+  x <- out$x
+  f <- mixobj(L,w,x)
+  
+  # If necessary, insert the zero mixture weights associated with the
+  # columns of zeros.
+  if (length(nonzero.cols) < m) {
+    xnz <- x
+    x   <- rep(0,m)
+    x[nonzero.cols] <- xnz
+  }
+  
   # Label the elements of the solution (x) by the column labels of the
   # likelihood matrix (L).
-  x        <- out$x
   x        <- drop(x)
   names(x) <- colnames(L)
 
@@ -349,7 +385,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # ----------------
   return(list(x        = x,
               status   = status,
-              value    = mixobj(L,w,x),
+              value    = f,
               progress = data.frame(objective = out$objective,
                                     max.rdual = out$max.rdual,
                                     nnz       = out$nnz,

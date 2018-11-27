@@ -228,3 +228,39 @@ test_that(paste("mix-SQP converges, and outputs correct solution, for example",
   expect_equal(out2$value,out4$value,tolerance = 1e-8)
   expect_equal(out3$value,out4$value,tolerance = 1e-8)
 })
+
+test_that(paste("Case is properly handled in which all columns except",
+                "one are filled with zeros"),{
+  set.seed(1)
+  n       <- 200
+  m       <- 10
+  i       <- 7
+  L       <- simulatemixdata(n,m)$L
+  L[,-i]  <- 0
+  xsol    <- rep(0,m)
+  xsol[i] <- 1
+  expect_warning(capture.output(out <- mixsqp(L)))
+  expect_equal(out$x,xsol)
+  expect_equal(out$status,mixsqp:::mixsqp.status.didnotrun)
+  expect_null(out$progress)
+})
+
+test_that("Case is properly handled in which one column is all zeros",{
+  set.seed(1)
+  n     <- 200
+  m     <- 10
+  i     <- 7
+  L     <- simulatemixdata(n,m)$L
+
+  # Run the mix-SQP algorithm when all columns have nonzeros.
+  L[,i] <- 1e-8
+  capture.output(out1 <- mixsqp(L))
+
+  # Set one of the columns to be all zeros.
+  L[,i] <- 0
+  expect_warning(capture.output(out2 <- mixsqp(L)))
+
+  # The two solutions should be pretty much the same.
+  expect_equal(out1$x,out2$x,tolerance = 1e-8)
+  expect_equal(out1$value,out2$value,tolerance = 1e-8)
+})
