@@ -7,7 +7,7 @@
 using namespace Rcpp;
 
 // mixsqp_rcpp
-List mixsqp_rcpp(const arma::mat& L, const arma::vec& w, const arma::vec& x0, double convtolsqp, double convtolactiveset, double zerothresholdsolution, double zerothresholdsearchdir, double eps, double delta, int maxitersqp, int maxiteractiveset, bool verbose);
+List mixsqp_rcpp(const arma::mat& L, const arma::vec& w, const arma::vec& x0, double convtolsqp, double convtolactiveset, double zerothresholdsolution, double zerothresholdsearchdir, const arma::vec& eps, double delta, int maxitersqp, int maxiteractiveset, bool verbose);
 RcppExport SEXP _mixsqp_mixsqp_rcpp(SEXP LSEXP, SEXP wSEXP, SEXP x0SEXP, SEXP convtolsqpSEXP, SEXP convtolactivesetSEXP, SEXP zerothresholdsolutionSEXP, SEXP zerothresholdsearchdirSEXP, SEXP epsSEXP, SEXP deltaSEXP, SEXP maxitersqpSEXP, SEXP maxiteractivesetSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -19,7 +19,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type convtolactiveset(convtolactivesetSEXP);
     Rcpp::traits::input_parameter< double >::type zerothresholdsolution(zerothresholdsolutionSEXP);
     Rcpp::traits::input_parameter< double >::type zerothresholdsearchdir(zerothresholdsearchdirSEXP);
-    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type eps(epsSEXP);
     Rcpp::traits::input_parameter< double >::type delta(deltaSEXP);
     Rcpp::traits::input_parameter< int >::type maxitersqp(maxitersqpSEXP);
     Rcpp::traits::input_parameter< int >::type maxiteractiveset(maxiteractivesetSEXP);
