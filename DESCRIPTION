@@ -10,7 +10,9 @@ Authors@R: c(person("Youngseok","Kim",role="aut",
              person("Peter","Carbonetto",role=c("aut","cre"),
                     email="peter.carbonetto@gmail.com"),
              person("Mihai","Anitescu",role="aut"),
-             person("Matthew","Stephens",role="aut"))
+             person("Matthew","Stephens",role="aut"),
+             person("Jason","Willwerscheid",role="ctb"),
+             person("Jean","Morrison",role="ctb"))
 URL: https://github.com/stephenslab/mixsqp
 BugReports: https://github.com/stephenslab/mixsqp/issues
 SystemRequirements: C++11
