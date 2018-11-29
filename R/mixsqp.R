@@ -117,7 +117,7 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' \code{L}, \code{eps} is automatically scaled separately for each
 #' row of \code{L}; specifically, the ith modified logarithm term
 #' becomes \code{log(L[i,]*x + ei)}, in which \code{ei} is set to
-#' {eps * max(L[i,])}.
+#' \code{eps * max(L[i,])}.}
 #'
 #' \item{\code{delta}}{A small, non-negative number added to the
 #' diagonal of the Hessian to improve numerical stability (and
