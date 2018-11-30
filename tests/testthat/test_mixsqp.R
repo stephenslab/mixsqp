@@ -277,3 +277,13 @@ test_that("Case is properly handled in which one column is all zeros",{
   expect_equal(out1$x,out3$x,tolerance = 1e-6)
   expect_equal(out1$value,out3$value,tolerance = 1e-6)
 })
+
+# This test comes from Issue #19.
+test_that("mix-SQP converges in a more difficult example",{
+  load("flashr.example.RData")
+  x0    <- c(rep(0,6),1)
+  out1  <- mixkwdual(L)
+  capture.output(out2 <- mixsqp(L,x0 = x0))
+  expect_equal(out2$status,mixsqp:::mixsqp.status.converged)
+  expect_equal(out1$x,out2$x,tolerance = 1e-8)
+})
