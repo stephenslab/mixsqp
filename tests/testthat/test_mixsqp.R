@@ -279,12 +279,13 @@ test_that("Case is properly handled in which one column is all zeros",{
 })
 
 # This test comes from Issue #19.
-test_that("mix-SQP converges in a more difficult example",{
+test_that("mix-SQP converges (sometimes) in a more difficult example",{
   load("flashr.example.RData")
-  x0    <- c(rep(0,6),1)
-  capture.output(out1 <- mixsqp(L,x0 = x0))
-  expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
+  capture.output(out1 <- mixsqp(L))
+  capture.output(out2 <- mixsqp(L,x0 = c(rep(0,6),1)))
+  expect_equal(out1$status,mixsqp:::mixsqp.status.noprogress)
+  expect_equal(out2$status,mixsqp:::mixsqp.status.converged)
   skip_if_not_installed("REBayes")
-  out2 <- mixkwdual(L)
-  expect_equal(out1$x,out2$x,tolerance = 1e-8)
+  out3 <- mixkwdual(L)
+  expect_equal(out2$x,out3$x,tolerance = 1e-8)
 })

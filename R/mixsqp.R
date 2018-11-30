@@ -1,6 +1,7 @@
 # Possible convergence status messages in mixsqp.
 mixsqp.status.converged      <- "converged to optimal solution"
 mixsqp.status.didnotconverge <- "exceeded maximum number of iterations"
+mixsqp.status.noprogress     <- "step size too small"
 mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 
 #' @title Maximum-likelihood estimation of mixture proportions using SQP
@@ -182,8 +183,8 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' \item{value}{The value of the objective function, \eqn{f(x)}, at
 #' \code{x}.}
 #'
-#' \item{status}{A character string giving the status of the algorithm
-#' upon termination.}
+#' \item{status}{A character string describing the status of the
+#' algorithm upon termination.}
 #'
 #' \item{progress}{A data frame containing more detailed information
 #' about the algorithm's progress. The data frame has one row per SQP
@@ -341,15 +342,23 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # solution.
   if (out$status == 0)
     status <- mixsqp.status.converged
-  else
+  else if (out$status == 1)
     status <- mixsqp.status.didnotconverge
+  else
+    status <- mixsqp.status.noprogress
   if (verbose) {
     if (out$status == 0)
       cat("Convergence criteria met---optimal solution found.\n")
-    else 
+    else if (out$status == 1)
       cat("Failed to converge within iterations limit.\n")
+    else {
+      cat("Step size is too small; consider adjusting control parameters",
+          "\"eps\" and/or\n")
+      cat("\"delta\", relaxing convergence criteria, or modifing initial",
+          "estimate, \"x0\".\n")
+    }
   }
-  
+
   # POST-PROCESS RESULT
   # -------------------
   # The last entries of max.diff, nqp and nls may not have been
