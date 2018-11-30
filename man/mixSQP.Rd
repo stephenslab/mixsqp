@@ -45,8 +45,8 @@ A list object with the following elements:
 \item{value}{The value of the objective function, \eqn{f(x)}, at
 \code{x}.}
 
-\item{status}{A character string giving the status of the algorithm
-upon termination.}
+\item{status}{A character string describing the status of the
+algorithm upon termination.}
 
 \item{progress}{A data frame containing more detailed information
 about the algorithm's progress. The data frame has one row per SQP

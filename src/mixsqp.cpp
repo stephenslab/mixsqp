@@ -51,7 +51,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP algorithm 0.1-87 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP algorithm 0.1-88 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):     %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set):    %0.1e\n",convtolactiveset);
     Rprintf("zero threshold (solution):  %0.1e\n",zerothresholdsolution);
@@ -92,7 +92,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 		      // differences between between two solution
 		      // estimates.
   
-  double status = 1;   // Convergence status.
+  double status = 1;  // Convergence status.
   
   // This is used in computing the Hessian matrix.
   I  = arma::eye(m,m);
@@ -166,6 +166,11 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     // BACKTRACKING LINE SEARCH
     // ------------------------
     nls[i] = backtrackinglinesearch(obj[i],L,w,g,x,y,eps);
+    if (nls[i] >= 24) {
+      status = 2;
+      i++;
+      break;
+    }
     
     // UPDATE THE SOLUTION
     // -------------------
@@ -331,7 +336,5 @@ double backtrackinglinesearch (double f, const arma::mat& L,
     }
     y = (y - x)/2 + x;
   }
-  if (j >= 24)
-    Rcpp::stop("Step size is too small; consider adjusting control parameters  \"eps\" and/or \"delta\", or relaxing convergence criteria, or modifing the initial estimate, \"x0\"");
   return j;
 }
