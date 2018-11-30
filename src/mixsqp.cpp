@@ -332,6 +332,6 @@ double backtrackinglinesearch (double f, const arma::mat& L,
     y = (y - x)/2 + x;
   }
   if (j >= 24)
-    Rcpp::stop("Step size is too small; consider adjusting control parameters  \"eps\" and/or \"delta\", or relaxing convergence criteria");
+    Rcpp::stop("Step size is too small; consider adjusting control parameters  \"eps\" and/or \"delta\", or relaxing convergence criteria, or modifing the initial estimate, \"x0\"");
   return j;
 }
