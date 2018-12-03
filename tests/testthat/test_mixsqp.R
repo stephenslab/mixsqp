@@ -295,7 +295,7 @@ test_that(paste("mix-SQP converges to solution for \"flat\" objective even",
   m   <- 20
   L   <- matrix(runif(n*m),n,m)
   out <- mixsqp(L)
-  expect_equal(out$status,mixsqp::mixsqp.status.converged)
+  expect_equal(out$status,mixsqp:::mixsqp.status.converged)
 })
 
 # This test comes from Issue #19.
