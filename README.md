@@ -14,7 +14,7 @@ interior-point solver (called via the "KWDual" function in the
 [REBayes package][rebayes]), and is expected to compute these
 solutions much more quickly in large data sets.
 
-For more details on the SQP algorithm, please see [our paper on
+For more details on the SQP algorithm, please see [our paper on 
 arXiv][arxiv-paper].
 
 See also the [Julia implementation][mixsqp-julia], which, at time of
