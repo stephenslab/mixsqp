@@ -251,12 +251,12 @@ test_that(paste("Case is properly handled in which all columns except",
   expect_equal(out2$x,xsol)
 })
 
-test_that("Case is properly handled in which one column is all zeros",{
+test_that("Case is properly handled in which one column of L is all zeros",{
   set.seed(1)
-  n     <- 200
-  m     <- 10
-  i     <- 7
-  L     <- simulatemixdata(n,m)$L
+  n <- 200
+  m <- 10
+  i <- 7
+  L <- simulatemixdata(n,m)$L
 
   # Run the mix-SQP algorithm when all columns have nonzeros.
   L[,i] <- 1e-8
@@ -276,6 +276,16 @@ test_that("Case is properly handled in which one column is all zeros",{
   expect_warning(out3 <- mixkwdual(L))
   expect_equal(out1$x,out3$x,tolerance = 1e-6)
   expect_equal(out1$value,out3$value,tolerance = 1e-6)
+})
+
+test_that("Case is properly handled when L has only one column",{
+  set.seed(1)
+  L    <- matrix(runif(100))
+  suppressWarnings(out1 <- mixsqp(L))
+  suppressWarnings(out2 <- mixkwdual(L))
+  expect_equal(out1$x,1)
+  expect_equal(out2$x,1)
+  expect_equal(out1$value,out2$value)
 })
 
 # This test comes from Issue #19.
