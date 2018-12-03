@@ -288,14 +288,22 @@ test_that("Case is properly handled when L has only one column",{
   expect_equal(out1$value,out2$value)
 })
 
+test_that(paste("mix-SQP converges to solution for \"flat\" objective even",
+                "if initial progress is poor"),{
+  set.seed(1)
+  n   <- 10000
+  m   <- 20
+  L   <- matrix(runif(n*m),n,m)
+  out <- mixsqp(L)
+  expect_equal(out$status,mixsqp::mixsqp.status.converged)
+})
+
 # This test comes from Issue #19.
 test_that("mix-SQP converges (sometimes) in a more difficult example",{
   load("flashr.example.RData")
   capture.output(out1 <- mixsqp(L))
-  capture.output(out2 <- mixsqp(L,x0 = c(rep(0,6),1)))
-  expect_equal(out1$status,mixsqp:::mixsqp.status.noprogress)
-  expect_equal(out2$status,mixsqp:::mixsqp.status.converged)
+  expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
   skip_if_not_installed("REBayes")
-  out3 <- mixkwdual(L)
-  expect_equal(out2$x,out3$x,tolerance = 1e-8)
+  out2 <- mixkwdual(L)
+  expect_equal(out1$x,out2$x,tolerance = 1e-8)
 })

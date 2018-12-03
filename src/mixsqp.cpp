@@ -51,7 +51,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP algorithm 0.1-89 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP algorithm 0.1-90 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):     %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set):    %0.1e\n",convtolactiveset);
     Rprintf("zero threshold (solution):  %0.1e\n",zerothresholdsolution);
@@ -103,7 +103,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   
   // Print the column labels for reporting the algorithm's progress.
   if (verbose)
-    Rprintf("iter    objective max(rdual) nnz max.diff nqp nls\n");
+    Rprintf("iter        objective max(rdual) nnz max.diff nqp nls\n");
   
   // Repeat until the convergence criterion is met, or until we reach
   // the maximum number of (outer loop) iterations.
@@ -129,10 +129,10 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     nnz[i]  = sum(t);
     if (verbose) {
       if (i == 0)
-        Rprintf("%4d %+0.5e %+0.3e%4d       NA  NA  NA\n",i + 1,obj[i],
+        Rprintf("%4d %+0.9e %+0.3e%4d       NA  NA  NA\n",i + 1,obj[i],
 		-gmin[i],int(nnz[i]));
       else
-        Rprintf("%4d %+0.5e %+0.3e%4d %0.2e %3d %3d\n",i + 1,obj[i],
+        Rprintf("%4d %+0.9e %+0.3e%4d %0.2e %3d %3d\n",i + 1,obj[i],
 		-gmin[i],int(nnz[i]),dmax[i-1],int(nqp[i-1]),
 		int(nls[i-1]));
     }
@@ -166,11 +166,6 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     // BACKTRACKING LINE SEARCH
     // ------------------------
     nls[i] = backtrackinglinesearch(obj[i],L,w,g,x,y,eps);
-    if (nls[i] >= 24) {
-      status = 2;
-      i++;
-      break;
-    }
     
     // UPDATE THE SOLUTION
     // -------------------
@@ -329,7 +324,7 @@ double backtrackinglinesearch (double f, const arma::mat& L,
 			       const arma::vec& eps) {
   int n = L.n_rows;
   int j;
-  for (j = 0; j < 24; j++) {
+  for (j = 0; j < 10; j++) {
     if (f + sum(log(L*y + eps) % w) > dot(x - y,g)/(2*n)) {
       j++;
       break;
