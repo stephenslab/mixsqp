@@ -28,7 +28,8 @@ double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
 double backtrackinglinesearch (double f, const arma::mat& L,
 			       const arma::vec& w, const arma::vec& g,
 			       const arma::vec& x, arma::vec& y,
-			       const arma::vec& eps);
+			       const arma::vec& eps, int maxiter,
+			       double reduc, double suffdec);
 
 // FUNCTION DEFINITIONS
 // --------------------
@@ -41,8 +42,10 @@ double backtrackinglinesearch (double f, const arma::mat& L,
 List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0, 
                   double convtolsqp, double convtolactiveset,
 		  double zerothresholdsolution, double zerothresholdsearchdir,
-		  const arma::vec& eps, double delta, int maxitersqp, 
-		  int maxiteractiveset, bool verbose) {
+		  double reductionls, double suffdecls,
+		  const arma::vec& eps, double delta,
+		  int maxitersqp, int maxiteractiveset,
+		  int maxiterls, bool verbose) {
   
   // Get the number of rows (n) and columns (m) of the conditional
   // likelihood matrix.
@@ -56,8 +59,11 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     Rprintf("conv. tol. (active-set):    %0.1e\n",convtolactiveset);
     Rprintf("zero threshold (solution):  %0.1e\n",zerothresholdsolution);
     Rprintf("zero thresh. (search dir.): %0.1e\n",zerothresholdsearchdir);
+    Rprintf("l.s. reduction param:       %0.1e\n",reductionls);
+    Rprintf("l.s. suff. dec. param:      %0.1e\n",suffdecls);
     Rprintf("max. iter (SQP):            %d\n",maxitersqp);
     Rprintf("max. iter (active-set):     %d\n",maxiteractiveset);
+    Rprintf("max. iter (linesearch):     %d\n",maxiterls);
   }
   
   // PREPARE DATA STRUCTURES
@@ -165,7 +171,9 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     
     // BACKTRACKING LINE SEARCH
     // ------------------------
-    nls[i] = backtrackinglinesearch(obj[i],L,w,g,x,y,eps);
+    if (maxiterls > 0) {
+      nls[i] = backtrackinglinesearch(obj[i],L,w,g,x,y,eps,maxiterls,reductionls,suffdecls);
+    }
     
     // UPDATE THE SOLUTION
     // -------------------
@@ -297,7 +305,7 @@ double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
           alpha          = alp[newind]; 
           t[act[newind]] = 0;
           i1             = find(t);
-	  i0             = find(1 - t);
+	        i0             = find(1 - t);
         }
       }
     }
@@ -321,15 +329,16 @@ double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
 double backtrackinglinesearch (double f, const arma::mat& L,
 			       const arma::vec& w, const arma::vec& g,
 			       const arma::vec& x, arma::vec& y,
-			       const arma::vec& eps) {
+			       const arma::vec& eps, int maxiter,
+			       double reduc, double suffdec) {
   int n = L.n_rows;
   int j;
-  for (j = 0; j < 10; j++) {
-    if (f + sum(log(L*y + eps) % w) > dot(x - y,g)/(2*n)) {
+  for (j = 0; j < maxiter; j++) {
+    if (f + sum(log(L*y + eps) % w) > suffdec * dot(x - y,g)/(2*n)) {
       j++;
       break;
     }
-    y = (y - x)/2 + x;
+    y = (y - x) * reduc + x;
   }
   return j;
 }

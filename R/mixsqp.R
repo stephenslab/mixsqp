@@ -265,6 +265,9 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   if (any(!is.element(names(control),names(control0))))
     stop("Argument \"control\" contains unknown parameter names")
   control <- modifyList(control0,control,keep.null = TRUE)
+  reduction.linesearch     <- control$reduction.linesearch
+  suffdec.linesearch       <- control$suffdec.linesearch
+  maxiter.linesearch       <- control$maxiter.linesearch
   convtol.sqp              <- control$convtol.sqp
   convtol.activeset        <- control$convtol.activeset
   zero.threshold.solution  <- control$zero.threshold.solution
@@ -277,10 +280,13 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 
   # Input arguments "maxiter.sqp" and "maxiter.activeset" should be
   # scalars that are integers greater than zero.
-  verify.maxiter.arg(maxiter.sqp)
   verify.maxiter.arg(maxiter.activeset)
-  maxiter.sqp       <- as.integer(maxiter.sqp)
-  maxiter.activeset <- as.integer(maxiter.activeset)
+  verify.maxiter.arg(maxiter.sqp)
+  if (maxiter.linesearch != 0)
+    verify.maxiter.arg(maxiter.linesearch)
+  maxiter.linesearch <- as.integer(maxiter.linesearch)
+  maxiter.sqp        <- as.integer(maxiter.sqp)
+  maxiter.activeset  <- as.integer(maxiter.activeset)
 
   # Input arguments "convtol.sqp", "convtol.activeset",
   # "zero.threshold.solution", "zero.threshold.searchdir", and "eps"
@@ -288,11 +294,15 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # "zero.threshold.solution" should be less than 1/m. Also, post a
   # warning if eps is within range of the largest value in one of the
   # rows of the matrix L.
+  verify.nonneg.scalar.arg(suffdec.linesearch)
+  verify.nonneg.scalar.arg(reduction.linesearch)
   verify.nonneg.scalar.arg(convtol.sqp)
   verify.nonneg.scalar.arg(convtol.activeset)
   verify.nonneg.scalar.arg(zero.threshold.solution)
   verify.nonneg.scalar.arg(zero.threshold.searchdir)
   verify.nonneg.scalar.arg(eps)
+  if (reduction.linesearch >= 1)
+    stop(paste("Line search reduction parameter must be less than 1"))
   if (zero.threshold.solution >= 1/m)
     stop(paste("Behavior of algorithm will be unpredictable if",
                "zero.threshold > 1/m, where m = ncol(X)"))
@@ -332,7 +342,9 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # ----------------------------------------
   out <- mixsqp_rcpp(L,w,x0,convtol.sqp,convtol.activeset,
                      zero.threshold.solution,zero.threshold.searchdir,
-                     eps,delta,maxiter.sqp,maxiter.activeset,verbose)
+                     reduction.linesearch,suffdec.linesearch,
+                     eps,delta,maxiter.sqp,maxiter.activeset,
+                     maxiter.linesearch,verbose)
 
   # Get the algorithm convergence status. The convention is that
   # status = 0 means that the algorithm has successfully converged to
@@ -395,7 +407,10 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 #' @export
 #' 
 mixsqp_control_default <- function()
-  list(convtol.sqp              = 1e-8,
+  list(reduction.linesearch     = 1/2 ,
+       suffdec.linesearch       = 1,
+       maxiter.linesearch       = 10,
+       convtol.sqp              = 1e-8,
        convtol.activeset        = 1e-10,
        zero.threshold.solution  = 1e-6,
        zero.threshold.searchdir = 1e-8,
