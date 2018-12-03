@@ -305,8 +305,8 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # weights associated with those columns are necessarily zero. Here
   # we handle this situation.
   nonzero.cols <- which(apply(L,2,max) > 0)
-  if (length(nonzero.cols) == 1) {
-    warning(paste("All columns of \"L\" are zeros except one; this",
+  if (m == 1 | length(nonzero.cols) == 1) {
+    warning(paste("Only one column of \"L\" has positive entries; this",
                   "corresponds to the trivial solution \"x\" in which",
                   "x[i] = 1 for one column i, and all other entries of",
                   "\"x\" are zero. No optimization algorithm was needed."))
