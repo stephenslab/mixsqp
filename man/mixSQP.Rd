@@ -165,6 +165,17 @@ this tolerance parameter can affect how reliably the SQP
 convergence criterion is satisfied, as determined by
 \code{convtol.sqp}, so choose this parameter carefully.}
 
+\item{\code{suffdecr.linesearch}}{Add description here.}
+
+\item{\code{stepsizereduce}}{The multiplicative factor for
+decreasing the step size in the backtracking line search. Smaller
+values will yield a faster backtracking line search at the expense
+of a less fine-grained search. Must be a positive number less than
+1.}
+
+\item{\code{minstepsize}}{The smallest step size accepted by the
+line search step. Must be a number greater than 0.}
+
 \item{\code{eps}}{A small, non-negative number that is added to the
 terms inside the logarithms to sidestep computing logarithms of
 zero. This prevents numerical problems at the cost of introducing a
