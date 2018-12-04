@@ -108,16 +108,20 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' convergence criterion is satisfied, as determined by
 #' \code{convtol.sqp}, so choose this parameter carefully.}
 #'
-#' \item{\code{suffdecr.linesearch}}{Add description here.}
+#' \item{\code{suffdecr.linesearch}}{This parameter determines how
+#' stringent t he "sufficient decrease" condition is for accepting a
+#' step size in the backtracking line search. Larger values will make
+#' the condition more stringent. This should be a positive number less
+#' than 1.}
 #'
 #' \item{\code{stepsizereduce}}{The multiplicative factor for
 #' decreasing the step size in the backtracking line search. Smaller
 #' values will yield a faster backtracking line search at the expense
-#' of a less fine-grained search. Must be a positive number less than
+#' of a less fine-grained search. Should be a positive number less than
 #' 1.}
 #'
 #' \item{\code{minstepsize}}{The smallest step size accepted by the
-#' line search step. Must be a number greater than 0.}
+#' line search step. Should be a number greater than 0 and at most 1.}
 #' 
 #' \item{\code{eps}}{A small, non-negative number that is added to the
 #' terms inside the logarithms to sidestep computing logarithms of
