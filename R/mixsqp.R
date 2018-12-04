@@ -107,6 +107,17 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' this tolerance parameter can affect how reliably the SQP
 #' convergence criterion is satisfied, as determined by
 #' \code{convtol.sqp}, so choose this parameter carefully.}
+#'
+#' \item{\code{suffdecr.linesearch}}{Add description here.}
+#'
+#' \item{\code{stepsizereduce}}{The multiplicative factor for
+#' decreasing the step size in the backtracking line search. Smaller
+#' values will yield a faster backtracking line search at the expense
+#' of a less fine-grained search. Must be a positive number less than
+#' 1.}
+#'
+#' \item{\code{minstepsize}}{The smallest step size accepted by the
+#' line search step. Must be a number greater than 0.}
 #' 
 #' \item{\code{eps}}{A small, non-negative number that is added to the
 #' terms inside the logarithms to sidestep computing logarithms of
@@ -265,13 +276,13 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   if (any(!is.element(names(control),names(control0))))
     stop("Argument \"control\" contains unknown parameter names")
   control <- modifyList(control0,control,keep.null = TRUE)
-  reduction.linesearch     <- control$reduction.linesearch
-  suffdec.linesearch       <- control$suffdec.linesearch
-  maxiter.linesearch       <- control$maxiter.linesearch
   convtol.sqp              <- control$convtol.sqp
   convtol.activeset        <- control$convtol.activeset
   zero.threshold.solution  <- control$zero.threshold.solution
   zero.threshold.searchdir <- control$zero.threshold.searchdir
+  suffdecr.linesearch      <- control$suffdecr.linesearch
+  stepsizereduce           <- control$stepsizereduce
+  minstepsize              <- control$minstepsize
   eps                      <- control$eps
   delta                    <- control$delta
   maxiter.sqp              <- control$maxiter.sqp
@@ -282,9 +293,6 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # scalars that are integers greater than zero.
   verify.maxiter.arg(maxiter.activeset)
   verify.maxiter.arg(maxiter.sqp)
-  if (maxiter.linesearch != 0)
-    verify.maxiter.arg(maxiter.linesearch)
-  maxiter.linesearch <- as.integer(maxiter.linesearch)
   maxiter.sqp        <- as.integer(maxiter.sqp)
   maxiter.activeset  <- as.integer(maxiter.activeset)
 
@@ -294,15 +302,19 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # "zero.threshold.solution" should be less than 1/m. Also, post a
   # warning if eps is within range of the largest value in one of the
   # rows of the matrix L.
-  verify.nonneg.scalar.arg(suffdec.linesearch)
-  verify.nonneg.scalar.arg(reduction.linesearch)
   verify.nonneg.scalar.arg(convtol.sqp)
   verify.nonneg.scalar.arg(convtol.activeset)
   verify.nonneg.scalar.arg(zero.threshold.solution)
   verify.nonneg.scalar.arg(zero.threshold.searchdir)
+  verify.nonneg.scalar.arg(suffdecr.linesearch)
+  verify.nonneg.scalar.arg(stepsizereduce)
+  verify.nonneg.scalar.arg(minstepsize)
   verify.nonneg.scalar.arg(eps)
-  if (reduction.linesearch >= 1)
-    stop(paste("Line search reduction parameter must be less than 1"))
+  if (!(0 < stepsizereduce & stepsizereduce < 1 &
+        0 < suffdecr.linesearch & 0 < minstepsize))
+    stop(paste("Control parameter \"stepsizereduce\" must be greater than",
+               "0 and less than 1, and \"suffdecr.linesearch\" and",
+               "\"minstepsize\" must be positive"))
   if (zero.threshold.solution >= 1/m)
     stop(paste("Behavior of algorithm will be unpredictable if",
                "zero.threshold > 1/m, where m = ncol(X)"))
@@ -342,10 +354,9 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # ----------------------------------------
   out <- mixsqp_rcpp(L,w,x0,convtol.sqp,convtol.activeset,
                      zero.threshold.solution,zero.threshold.searchdir,
-                     reduction.linesearch,suffdec.linesearch,
-                     eps,delta,maxiter.sqp,maxiter.activeset,
-                     maxiter.linesearch,verbose)
-
+                     suffdecr.linesearch,stepsizereduce,minstepsize,
+                     eps,delta,maxiter.sqp,maxiter.activeset,verbose)
+  
   # Get the algorithm convergence status. The convention is that
   # status = 0 means that the algorithm has successfully converged to
   # the optimal solution, and a status = 1 means that the algorithm
@@ -364,10 +375,11 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 
   # POST-PROCESS RESULT
   # -------------------
-  # The last entries of max.diff, nqp and nls may not have been
+  # The last entries of stepsize, max.diff, nqp and nls may not have been
   # assigned if the SQP algorithm converged successfully (as indicated
   # by negative values), in which case we should more appropriately
   # assign them missing values (NA).
+  out$stepsize[out$stepsize < 0] <- NA
   out$max.diff[out$max.diff < 0] <- NA
   out$nqp[out$nqp < 0]           <- NA
   out$nls[out$nls < 0]           <- NA
@@ -397,6 +409,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
               progress = data.frame(objective = out$objective,
                                     max.rdual = out$max.rdual,
                                     nnz       = out$nnz,
+                                    stepsize  = out$stepsize,
                                     max.diff  = out$max.diff,
                                     nqp       = out$nqp,
                                     nls       = out$nls)))
@@ -407,13 +420,13 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 #' @export
 #' 
 mixsqp_control_default <- function()
-  list(reduction.linesearch     = 1/2 ,
-       suffdec.linesearch       = 1,
-       maxiter.linesearch       = 10,
-       convtol.sqp              = 1e-8,
+  list(convtol.sqp              = 1e-8,
        convtol.activeset        = 1e-10,
        zero.threshold.solution  = 1e-6,
        zero.threshold.searchdir = 1e-8,
+       suffdecr.linesearch      = 0.01,
+       stepsizereduce           = 0.5,
+       minstepsize              = 1e-4,
        eps                      = 1e-8,
        delta                    = 1e-10,
        maxiter.sqp              = 1000,
