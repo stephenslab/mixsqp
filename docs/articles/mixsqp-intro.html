@@ -60,7 +60,7 @@
       <h1>Illustration of mixsqp applied to a small data set, and a large one</h1>
                         <h4 class="author">Youngseok Kim, Peter Carbonetto and Matthew Stephens</h4>
             
-            <h4 class="date">2018-10-30</h4>
+            <h4 class="date">2018-12-10</h4>
           </div>
 
     
@@ -91,8 +91,8 @@
 <h2 class="hasAnchor">
 <a href="#fit-mixture-model" class="anchor"></a>Fit mixture model</h2>
 <p>Now we fit the mixture model using the SQP algorithm:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit.sqp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixsqp.html">mixsqp</a></span>(L)
-<span class="co"># Running mix-SQP algorithm 0.1-74 on 1000 x 20 matrix</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit.sqp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixSQP.html">mixsqp</a></span>(L)
+<span class="co"># Running mix-SQP algorithm 0.1-85 on 1000 x 20 matrix</span>
 <span class="co"># convergence tol. (SQP):     1.0e-08</span>
 <span class="co"># conv. tol. (active-set):    1.0e-10</span>
 <span class="co"># zero threshold (solution):  1.0e-06</span>
@@ -140,9 +140,9 @@
 <span class="kw">dim</span>(L)
 <span class="co"># [1] 100000    100</span></code></pre></div>
 <p>Now we fit the model using the SQP algorithm:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">timing &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.sqp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixsqp.html">mixsqp</a></span>(L))
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">timing &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.sqp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixSQP.html">mixsqp</a></span>(L))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Computation took %0.2f seconds</span><span class="ch">\n</span><span class="st">"</span>,timing[<span class="st">"elapsed"</span>]))
-<span class="co"># Running mix-SQP algorithm 0.1-74 on 100000 x 100 matrix</span>
+<span class="co"># Running mix-SQP algorithm 0.1-85 on 100000 x 100 matrix</span>
 <span class="co"># convergence tol. (SQP):     1.0e-08</span>
 <span class="co"># conv. tol. (active-set):    1.0e-10</span>
 <span class="co"># zero threshold (solution):  1.0e-06</span>
@@ -162,11 +162,11 @@
 <span class="co">#   10 +6.15052e-01 +9.288e-07   7 9.53e-04   2   1</span>
 <span class="co">#   11 +6.15052e-01 -1.543e-08   7 1.14e-05   2   1</span>
 <span class="co"># Convergence criteria met---optimal solution found.</span>
-<span class="co"># Computation took 7.75 seconds</span></code></pre></div>
+<span class="co"># Computation took 7.54 seconds</span></code></pre></div>
 <p>If you have the REBayes package, you can also run the IP method:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">timing &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.ip  &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixkwdual.html">mixkwdual</a></span>(L))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Computation took %0.2f seconds</span><span class="ch">\n</span><span class="st">"</span>,timing[<span class="st">"elapsed"</span>]))
-<span class="co"># Computation took 13.74 seconds</span></code></pre></div>
+<span class="co"># Computation took 14.45 seconds</span></code></pre></div>
 <p>If you run the IP algorithm, you should find that the SQP algorithm was considerably faster than the IP solver, and it converged to a solution with nearly the same objective value as the IP solution.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at SQP solution: %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.sqp<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at IP solution:  %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.ip<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))
@@ -195,10 +195,10 @@
 <span class="co"># [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
 <span class="co"># </span>
 <span class="co"># other attached packages:</span>
-<span class="co"># [1] Rmosek_8.0.69 Matrix_1.2-12 mixsqp_0.1-74</span>
+<span class="co"># [1] Rmosek_8.0.69 Matrix_1.2-12 mixsqp_0.1-85</span>
 <span class="co"># </span>
 <span class="co"># loaded via a namespace (and not attached):</span>
-<span class="co">#  [1] Rcpp_0.12.19    lattice_0.20-35 digest_0.6.17   rprojroot_1.3-2</span>
+<span class="co">#  [1] Rcpp_1.0.0      lattice_0.20-35 digest_0.6.17   rprojroot_1.3-2</span>
 <span class="co">#  [5] grid_3.4.3      backports_1.1.2 magrittr_1.5    evaluate_0.11  </span>
 <span class="co">#  [9] stringi_1.2.4   rmarkdown_1.10  tools_3.4.3     stringr_1.3.1  </span>
 <span class="co"># [13] REBayes_1.3     yaml_2.2.0      compiler_3.4.3  htmltools_0.3.6</span>

@@ -93,7 +93,7 @@ mixsqp and KWDual for details." />
     <p>This function is simply a wrapper to
 <code><a href='http://www.rdocumentation.org/packages/REBayes/topics/KWDual'>KWDual</a></code> with a similar interface to
 <code>mixsqp</code> for solving the same problem as <code>mixsqp</code>. See
-<code><a href='mixsqp.html'>mixsqp</a></code> and <code><a href='http://www.rdocumentation.org/packages/REBayes/topics/KWDual'>KWDual</a></code> for details.</p>
+<code><a href='mixSQP.html'>mixsqp</a></code> and <code><a href='http://www.rdocumentation.org/packages/REBayes/topics/KWDual'>KWDual</a></code> for details.</p>
     
 
     <pre class="usage"><span class='fu'>mixkwdual</span>(<span class='no'>L</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)), <span class='no'>...</span>)</pre>
@@ -108,9 +108,8 @@ In the context of mixture-model fitting, <code>L[j,k]</code> should be
 the value of the kth mixture component density at the jth data
 point. <code>L</code> should be a numeric matrix with at least two
 columns, with all entries being non-negative and finite (and not
-missing). Further, no column should be entirely zeros. For large
-matrices, it is preferrable that the matrix is stored in
-double-precision; see <code>storage.mode</code>.</p></td>
+missing). For large matrices, it is preferrable that the matrix is
+stored in double-precision; see <code>storage.mode</code>.</p></td>
     </tr>
     <tr>
       <th>w</th>
@@ -142,7 +141,7 @@ For more information on this output, see
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p><code><a href='mixsqp.html'>mixsqp</a></code>, <code><a href='http://www.rdocumentation.org/packages/REBayes/topics/KWDual'>KWDual</a></code></p>
+    <p><code><a href='mixSQP.html'>mixsqp</a></code>, <code><a href='http://www.rdocumentation.org/packages/REBayes/topics/KWDual'>KWDual</a></code></p>
     
 
   </div>
