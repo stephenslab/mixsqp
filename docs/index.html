@@ -15,16 +15,16 @@
 <meta property="og:description" content="Provides optimization algorithms based on sequential
   quadratic programming (SQP) for maximum likelihood estimation of the
   mixture proportions in a finite mixture model where the component
-  densities are known. The SQP algorithm is expected to
-  obtain solutions that are at least as accurate as the state-of-the-art
-  MOSEK interior-point solver (called by function " kwdual in the package and is expected to compute these solutions much more quickly large data sets.>
-<meta name="twitter:card" content="summary">
-<!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+  densities are known. The algorithms are expected to obtain solutions
+  that are at least as accurate as the state-of-the-art MOSEK
+  interior-point solver (called by function " kwdual in the package and they are expected to arrive at solutions more quickly large data sets. algorithms described y. kim p. carbonetto m. stephens anitescu>
 </head>
 <body>
+<p>." /&gt;
+<meta name="twitter:card" content="summary"><!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+<![endif]--></p>
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -66,7 +66,7 @@
     <div id="mixsqp-r-package-for-fast-maximum-likelihood-estimation-of-mixture-proportions-using-sequential-quadratic-programming" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#mixsqp-r-package-for-fast-maximum-likelihood-estimation-of-mixture-proportions-using-sequential-quadratic-programming" class="anchor"></a>mixsqp: R package for fast maximum-likelihood estimation of mixture proportions using sequential quadratic programming</h1></div>
-
+<p><a href="https://cran.r-project.org/package=mixsqp"><img src="https://www.r-pkg.org/badges/version/mixsqp" alt="CRAN status badge"></a> <a href="https://travis-ci.org/stephenslab/mixsqp"><img src="https://travis-ci.org/stephenslab/mixsqp.svg?branch=master" alt="Travis Build Status"></a> <a href="https://ci.appveyor.com/project/pcarbo/mixsqp"><img src="https://ci.appveyor.com/api/projects/status/i8744qet66w5uhe2?svg=true" alt="Appveyor Build status"></a> <a href="https://codecov.io/gh/stephenslab/mixsqp"><img src="https://codecov.io/gh/stephenslab/mixsqp/branch/master/graph/badge.svg" alt="codecov"></a></p>
 <p>The mixsqp R package provides algorithms based on <a href="https://neos-guide.org/content/sequential-quadratic-programming">sequential quadratic programming</a> for maximum likelihood estimation of the mixture proportions in a finite mixture model where the component densities are known. The SQP algorithm is expected to obtain solutions that are at least as accurate as the state-of-the-art MOSEK interior-point solver (called via the “KWDual” function in the <a href="https://cran.r-project.org/package=REBayes">REBayes package</a>), and is expected to compute these solutions much more quickly in large data sets.</p>
 <p>For more details on the SQP algorithm, please see <a href="https://arxiv.org/abs/1806.01412">our paper on arXiv</a>.</p>
 <p>See also the <a href="https://github.com/stephenslab/mixsqp-paper">Julia implementation</a>, which, at time of writing, is faster than the R implementation, particularly for large data sets.</p>
@@ -88,9 +88,8 @@
 <div id="quick-start" class="section level2">
 <h2 class="hasAnchor">
 <a href="#quick-start" class="anchor"></a>Quick Start</h2>
-<p>Install the latest version of the mixsqp package from GitHub:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"stephenslab/mixsqp"</span>,
-                         <span class="dt">upgrade_dependencies =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<p>Install mixsqp from <a href="http://www.r-pkg.org/pkg/varbvs">CRAN</a>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"mixsqp"</span>)</code></pre></div>
 <p>For more detailed installation instructions, see the “Setup” section below.</p>
 <p>Once you have installed the package, load the package in R:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(mixsqp)</code></pre></div>
@@ -103,16 +102,17 @@
 <div id="setup" class="section level2">
 <h2 class="hasAnchor">
 <a href="#setup" class="anchor"></a>Setup</h2>
-<p>To install the latest version of the mixsqp package from GitHub, use <a href="https://github.com/r-lib/devtools">devtools</a>:</p>
+<p>To install mixsqp from <a href="http://www.r-pkg.org/pkg/varbvs">CRAN</a>, in R run:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"mixsqp"</span>)</code></pre></div>
+<p>Alternatively, to install the latest version of the mixsqp package from GitHub, use <a href="https://github.com/r-lib/devtools">devtools</a>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"devtools"</span>)
 <span class="kw">library</span>(devtools)
-<span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"stephenslab/mixsqp"</span>,<span class="dt">build_vignettes =</span> <span class="ot">TRUE</span>,
-               <span class="dt">upgrade_dependencies =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/reexports">install_github</a></span>(<span class="st">"stephenslab/mixsqp"</span>)</code></pre></div>
 <p>This command should automatically install all required packages if they are not installed already.</p>
-<p>Alternatively, if you have cloned the repository locally, you can install the package with the <code>install_local</code> function from devtools. Assuming your working directory contains the mixsqp repository, run this code to install the package:</p>
+<p>If you have cloned the repository locally, you can install the package with the <code>install_local</code> function from devtools. Assuming your working directory contains the mixsqp repository, run this code to install the package:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(devtools)
 <span class="kw">list.files</span>(<span class="dt">pattern =</span> <span class="st">"mixsqp"</span>) <span class="co"># Should output "mixsqp".</span>
-<span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_local">install_local</a></span>(<span class="st">"mixsqp"</span>,<span class="dt">build_vignettes =</span> <span class="ot">TRUE</span>,<span class="dt">upgrade_dependencies =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/reexports">install_local</a></span>(<span class="st">"mixsqp"</span>)</code></pre></div>
 <div id="additional-setup-notes" class="section level3">
 <h3 class="hasAnchor">
 <a href="#additional-setup-notes" class="anchor"></a>Additional setup notes</h3>
@@ -120,9 +120,7 @@
 <li><p>Compiling the mixsqp package from source will require a C++ compiler setup that is appropriate for the the R installed on your computer. For details, refer to the <a href="https://cran.r-project.org">CRAN documentation</a>. For Mac computers, see <a href="https://pcarbo.github.io/pcarbo/r-macos.html">these notes</a>.</p></li>
 <li><p>To use the (optional) alternative solver, “mixkwdual”, which is mostly useful for comparisons of the different optimization methods, you will need to install the <a href="https://cran.r-project.org/package=REBayes">REBayes</a> package. The REBayes package, in turn, requires the <a href="https://www.mosek.com">Rmosek</a> package. Refer to the <a href="https://www.mosek.com/documentation">MOSEK documentation</a> for instructions on installing the Rmosek package. Once you have followed these steps, you can run <a href="inst/code/test.rmosek.R">this example</a> to verify that Rmosek is correctly installed. Installation of the REBayes package also allows you to build <a href="https://stephenslab.github.io/mixsqp/articles/mixsqp-intro.html">the vignette</a> and view it locally:</p></li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"stephenslab/mixsqp"</span>,
-                         <span class="dt">build_vignettes =</span> <span class="ot">TRUE</span>,
-                         <span class="dt">upgrade_dependencies =</span> <span class="ot">FALSE</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/reexports">install_github</a></span>(<span class="st">"stephenslab/mixsqp"</span>,<span class="dt">build_vignettes =</span> <span class="ot">TRUE</span>)
 <span class="kw">library</span>(mixsqp)
 <span class="kw">vignette</span>(<span class="st">"mixsqp-intro"</span>)</code></pre></div>
 </div>
@@ -135,8 +133,8 @@
 <a href="#testing-the-package" class="anchor"></a>Testing the package</h3>
 <p>To install and test the mixsqp R package, run the following commands in the shell:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">R</span> CMD build mixsqp
-<span class="ex">R</span> CMD INSTALL mixsqp_0.1-74.tar.gz
-<span class="ex">R</span> CMD check --as-cran mixsqp_0.1-74.tar.gz</code></pre></div>
+<span class="ex">R</span> CMD INSTALL mixsqp_0.1-92.tar.gz
+<span class="ex">R</span> CMD check --as-cran mixsqp_0.1-92.tar.gz</code></pre></div>
 <p>Note that these commands require that the dependencies have already been installed. See the <a href="DESCRIPTION" class="uri">DESCRIPTION</a> file for details.</p>
 </div>
 <div id="updating-the-c-source-and-documentation" class="section level3">
@@ -153,9 +151,7 @@
 <div id="other-developer-notes" class="section level3">
 <h3 class="hasAnchor">
 <a href="#other-developer-notes" class="anchor"></a>Other developer notes</h3>
-<ul>
-<li>Add file <code>pre-commit</code> to <code>.git/hooks</code> in the git repository to prevent commits that don’t include a change to the package version.</li>
-</ul>
+<p>Add file <code>pre-commit</code> to <code>.git/hooks</code> in the git repository to prevent commits that don’t include a change to the package version.</p>
 </div>
 </div>
 <div id="credits" class="section level2">
@@ -169,6 +165,8 @@
   <div class="col-md-3" id="sidebar">
     <h2>Links</h2>
 <ul class="list-unstyled">
+<li>Download from CRAN at <br><a href="https://cran.r-project.org/package=mixsqp">https://​cran.r-project.org/​package=mixsqp</a>
+</li>
 <li>Browse source code at <br><a href="https://github.com/stephenslab/mixsqp">https://​github.com/​stephenslab/​mixsqp</a>
 </li>
 <li>Report a bug at <br><a href="https://github.com/stephenslab/mixsqp/issues">https://​github.com/​stephenslab/​mixsqp/​issues</a>
@@ -186,12 +184,7 @@
 <li>Peter Carbonetto <br><small class="roles"> Author, maintainer </small>  </li>
 <li>Mihai Anitescu <br><small class="roles"> Author </small>  </li>
 <li>Matthew Stephens <br><small class="roles"> Author </small>  </li>
-</ul>
-<h2>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://travis-ci.org/stephenslab/mixsqp"><img src="https://travis-ci.org/stephenslab/mixsqp.svg?branch=master" alt="Travis Build Status"></a></li>
-<li><a href="https://ci.appveyor.com/project/pcarbo/mixsqp"><img src="https://ci.appveyor.com/api/projects/status/i8744qet66w5uhe2?svg=true" alt="Appveyor Build status"></a></li>
-<li><a href="https://codecov.io/gh/stephenslab/mixsqp"><img src="https://codecov.io/gh/stephenslab/mixsqp/branch/master/graph/badge.svg" alt="codecov"></a></li>
+<li><a href="authors.html">All authors...</a></li>
 </ul>
 </div>
 </div>
@@ -208,5 +201,6 @@
       </footer>
 </div>
 
-  </body>
+  
+</body>
 </html>

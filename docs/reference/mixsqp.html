@@ -117,9 +117,8 @@ In the context of mixture-model fitting, <code>L[j,k]</code> should be
 the value of the kth mixture component density at the jth data
 point. <code>L</code> should be a numeric matrix with at least two
 columns, with all entries being non-negative and finite (and not
-missing). Further, no column should be entirely zeros. For large
-matrices, it is preferrable that the matrix is stored in
-double-precision; see <code>storage.mode</code>.</p></td>
+missing). For large matrices, it is preferrable that the matrix is
+stored in double-precision; see <code>storage.mode</code>.</p></td>
     </tr>
     <tr>
       <th>w</th>
@@ -155,8 +154,8 @@ the optimization algorithm. See &#8216;Details&#8217;.</p></td>
 <dt>value</dt><dd><p>The value of the objective function, \(f(x)\), at
 <code>x</code>.</p></dd>
 
-<dt>status</dt><dd><p>A character string giving the status of the algorithm
-upon termination.</p></dd>
+<dt>status</dt><dd><p>A character string describing the status of the
+algorithm upon termination.</p></dd>
 
 <dt>progress</dt><dd><p>A data frame containing more detailed information
 about the algorithm's progress. The data frame has one row per SQP
@@ -203,9 +202,9 @@ that the optimization algorithm will behave similarly irrespective
 of the scale of <code>L</code>; for example, the same value for the
 convergence tolerance <code>convtol.sqp</code> will have the same effect
 at different scales. The one exception is the <code>eps</code> control
-parameter, which should be adjusted appropriately to reflect the
-scale of <code>L</code>, or set to zero; see the description of this
-parameter below for more details.</p>
+parameter, and for this reason the effect of <code>eps</code> is
+automatically adjusted to reflect the scale of <code>L</code>; see the
+description of this parameter below for more details.</p>
 <p>A related feature is that the solution to the optimization problem
 is invariant to rescaling the rows of <code>L</code>; for example, the
 solution will remain the same after all the entries in a row of
@@ -255,18 +254,28 @@ active-set step is considered "small enough". Note that changes to
 this tolerance parameter can affect how reliably the SQP
 convergence criterion is satisfied, as determined by
 <code>convtol.sqp</code>, so choose this parameter carefully.</p></dd>
-    <dt><code>eps</code></dt><dd><p>A small, non-negative number added to the
+    <dt><code>suffdecr.linesearch</code></dt><dd><p>This parameter determines how
+stringent t he "sufficient decrease" condition is for accepting a
+step size in the backtracking line search. Larger values will make
+the condition more stringent. This should be a positive number less
+than 1.</p></dd>
+    <dt><code>stepsizereduce</code></dt><dd><p>The multiplicative factor for
+decreasing the step size in the backtracking line search. Smaller
+values will yield a faster backtracking line search at the expense
+of a less fine-grained search. Should be a positive number less than
+1.</p></dd>
+    <dt><code>minstepsize</code></dt><dd><p>The smallest step size accepted by the
+line search step. Should be a number greater than 0 and at most 1.</p></dd>
+    <dt><code>eps</code></dt><dd><p>A small, non-negative number that is added to the
 terms inside the logarithms to sidestep computing logarithms of
 zero. This prevents numerical problems at the cost of introducing a
 small inaccuracy in the solution. Increasing this number may lead
-to faster convergence but possibly a less accurate solution. Note
-that an appropriate value of <code>eps</code> will depend on the "scale"
-of <code>L</code>; for example, if the largest entry in the matrix is
-<code>1e-10</code>, setting <code>eps = 1e-8</code> will dominate the
-logarithm terms in the objective, leading to inaccurate solutions.
-In such situations, <code>eps</code> should be increased or decreased
-appropriately (or set to zero), or the rows of <code>L</code> can
-normalized beforehand (see above).</p></dd>
+to faster convergence but possibly a less accurate solution. Since
+an appropriate value of this number will depend on the "scale" of
+<code>L</code>, <code>eps</code> is automatically scaled separately for each
+row of <code>L</code>; specifically, the ith modified logarithm term
+becomes <code>log(L[i,]*x + ei)</code>, in which <code>ei</code> is set to
+<code>eps * max(L[i,])</code>.</p></dd>
     <dt><code>delta</code></dt><dd><p>A small, non-negative number added to the
 diagonal of the Hessian to improve numerical stability (and
 possibly the speed) when computing the search directions in the
@@ -312,25 +321,28 @@ using sequential quadratic programming. arXiv:1806.01412
 <span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fl'>10</span>
 <span class='no'>w</span> <span class='kw'>&lt;-</span> <span class='fu'>rep</span>(<span class='fl'>1</span>,<span class='no'>n</span>)/<span class='no'>n</span>
 <span class='no'>L</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='simulatemixdata.html'>simulatemixdata</a></span>(<span class='no'>n</span>,<span class='no'>m</span>)$<span class='no'>L</span>
-<span class='no'>out.mixsqp</span> <span class='kw'>&lt;-</span> <span class='fu'>mixsqp</span>(<span class='no'>L</span>,<span class='no'>w</span>)</div><div class='output co'>#&gt; Running mix-SQP algorithm 0.1-74 on 100000 x 10 matrix
+<span class='no'>out.mixsqp</span> <span class='kw'>&lt;-</span> <span class='fu'>mixsqp</span>(<span class='no'>L</span>,<span class='no'>w</span>)</div><div class='output co'>#&gt; Running mix-SQP algorithm 0.1-92 on 100000 x 10 matrix
 #&gt; convergence tol. (SQP):     1.0e-08
 #&gt; conv. tol. (active-set):    1.0e-10
 #&gt; zero threshold (solution):  1.0e-06
 #&gt; zero thresh. (search dir.): 1.0e-08
+#&gt; l.s. sufficient decrease:   1.0e-02
+#&gt; step size reduction factor: 5.0e-01
+#&gt; minimum step size:          1.0e-04
 #&gt; max. iter (SQP):            1000
 #&gt; max. iter (active-set):     100
-#&gt; iter    objective max(rdual) nnz max.diff nqp nls
-#&gt;    1 +7.72664e-01 +2.756e-01  10       NA  NA  NA
-#&gt;    2 +6.53047e-01 +4.736e+00   5 3.38e-01  13   1
-#&gt;    3 +6.04839e-01 +2.156e+00   5 4.67e-02   8   1
-#&gt;    4 +5.99876e-01 +9.136e-01   5 8.23e-03   2   1
-#&gt;    5 +5.99756e-01 +2.970e-01   5 1.60e-03   2   1
-#&gt;    6 +5.99697e-01 +1.645e-01   5 4.96e-03   2   1
-#&gt;    7 +5.99515e-01 +7.147e-02   5 9.18e-03   2   1
-#&gt;    8 +5.99190e-01 +1.949e-02   5 8.83e-03   2   1
-#&gt;    9 +5.98988e-01 +1.944e-03   5 3.62e-03   2   1
-#&gt;   10 +5.98959e-01 +2.152e-05   5 3.94e-04   2   1
-#&gt;   11 +5.98959e-01 -1.537e-08   5 4.32e-06   2   1
+#&gt; iter        objective max(rdual) nnz stepsize max.diff nqp nls
+#&gt;    1 +7.726636683e-01 +2.756e-01  10       NA       NA  NA  NA
+#&gt;    2 +6.530469427e-01 +4.736e+00   5 1.00e+00 3.38e-01  13   1
+#&gt;    3 +6.048392150e-01 +2.156e+00   5 1.00e+00 4.67e-02   8   1
+#&gt;    4 +5.998755485e-01 +9.136e-01   5 1.00e+00 8.23e-03   2   1
+#&gt;    5 +5.997560223e-01 +2.970e-01   5 1.00e+00 1.60e-03   2   1
+#&gt;    6 +5.996968174e-01 +1.645e-01   5 1.00e+00 4.96e-03   2   1
+#&gt;    7 +5.995150384e-01 +7.147e-02   5 1.00e+00 9.18e-03   2   1
+#&gt;    8 +5.991903721e-01 +1.949e-02   5 1.00e+00 8.83e-03   2   1
+#&gt;    9 +5.989876049e-01 +1.944e-03   5 1.00e+00 3.62e-03   2   1
+#&gt;   10 +5.989593530e-01 +2.152e-05   5 1.00e+00 3.94e-04   2   1
+#&gt;   11 +5.989590146e-01 -1.537e-08   5 1.00e+00 4.32e-06   2   1
 #&gt; Convergence criteria met---optimal solution found.</div><div class='input'><span class='no'>f</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='mixobjective.html'>mixobjective</a></span>(<span class='no'>L</span>,<span class='no'>out.mixsqp</span>$<span class='no'>x</span>,<span class='no'>w</span>)
 <span class='fu'>print</span>(<span class='no'>f</span>,<span class='kw'>digits</span> <span class='kw'>=</span> <span class='fl'>16</span>)</div><div class='output co'>#&gt; [1] 0.5989590363728408</div><div class='input'>
 # We can also compare this result with solution found from an 
