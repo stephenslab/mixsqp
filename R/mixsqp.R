@@ -145,7 +145,9 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' active-set method.}
 #' 
 #' \item{\code{maxiter.activeset}}{Maximum number of active-set
-#' iterations taken to solve each of the quadratic subproblems.}
+#' iterations taken to solve each of the quadratic subproblems. If
+#' \code{NULL}, the maximum number of active-set iterations is set to
+#' \code{1 + ncol(L)}.}
 #' 
 #' \item{\code{verbose}}{If \code{verbose = TRUE}, the algorithm's
 #' progress and a summary of the optimization settings are printed to
@@ -293,6 +295,11 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   maxiter.activeset        <- control$maxiter.activeset
   verbose                  <- control$verbose
 
+  # If the maximum number of active-set iterations is set to NULL, set
+  # it to be equal to the number of columns of L.
+  if (is.null(maxiter.activeset))
+    maxiter.activeset <- m + 1
+  
   # Input arguments "maxiter.sqp" and "maxiter.activeset" should be
   # scalars that are integers greater than zero.
   verify.maxiter.arg(maxiter.activeset)
@@ -434,5 +441,5 @@ mixsqp_control_default <- function()
        eps                      = 1e-8,
        delta                    = 1e-10,
        maxiter.sqp              = 1000,
-       maxiter.activeset        = 100,
+       maxiter.activeset        = NULL,
        verbose                  = TRUE)
