@@ -5,7 +5,7 @@
 [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/i8744qet66w5uhe2?svg=true)](https://ci.appveyor.com/project/pcarbo/mixsqp)
 [![codecov](https://codecov.io/gh/stephenslab/mixsqp/branch/master/graph/badge.svg)](https://codecov.io/gh/stephenslab/mixsqp)
 
-The mixsqp R package provides algorithms based on [sequential
+The mixsqp R package provides algorithms based on [sequential 
 quadratic programming][sqp] for maximum likelihood estimation of the
 mixture proportions in a finite mixture model where the component
 densities are known. The SQP algorithm is expected to obtain solutions
