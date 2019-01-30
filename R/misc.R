@@ -5,7 +5,6 @@ verify.logical.arg <- function (x, arg.name = deparse(substitute(x))) {
         is.logical(x) &
         length(x) == 1 &
         all(!is.na(x)) &
-        all(is.finite(x)) &
         all(x == TRUE | x == FALSE)))
     stop(paste("Argument",arg.name,"should be TRUE or FALSE"))
   return(TRUE)
