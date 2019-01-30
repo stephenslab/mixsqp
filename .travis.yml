@@ -6,6 +6,10 @@ r_check_args: --as-cran --ignore-vignettes
 
 r_packages:
   - covr
+
+install:
+  R -e 'install.packages("testthat")'
+  R -e 'remotes::install_deps(dependencies = c("Imports","LinkingTo"))'
   
 env:
   global:
