@@ -22,7 +22,7 @@ environment:
     R_CHECK_ARGS: --no-manual --as-cran
   
 build_script:
-  - R -e 'install.packages'
+  - R -e 'install.packages("testthat","Rcpp","RcppArmadillo")'
 
 test_script:
   - travis-tool.sh run_tests
