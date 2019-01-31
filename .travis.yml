@@ -8,8 +8,7 @@ r_packages:
   - covr
 
 install:
-  - R -e 'install.packages(c("remotes","testthat"))'
-  - R -e 'remotes::install_deps(dependencies = c("Imports","LinkingTo"))'
+  - R -e 'install.packages("testthat","Rcpp","RcppArmadillo")'
   
 env:
   global:

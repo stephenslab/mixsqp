@@ -22,7 +22,7 @@ environment:
     R_CHECK_ARGS: --no-manual --as-cran
   
 build_script:
-  - travis-tool.sh install_deps
+  - R -e 'install.packages'
 
 test_script:
   - travis-tool.sh run_tests
