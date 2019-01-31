@@ -20,7 +20,9 @@ environment:
     R_VERSION: release
     R_ARCH: x64
     R_CHECK_ARGS: --no-manual --as-cran
-  
+
+# This is the minimal set of R packages needed to run "R CMD check" on
+# the package.
 build_script:
   - R -e install.packages(c('testthat','Rcpp','RcppArmadillo'),head(.libPaths(),1),'http://cran.wustl.edu')
 

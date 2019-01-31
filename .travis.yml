@@ -7,6 +7,8 @@ r_check_args: --as-cran --ignore-vignettes
 r_packages:
   - covr
 
+# This is the minimal set of R packages needed to run "R CMD check" on
+# the package.
 install:
   - R -e 'install.packages(c("testthat","Rcpp","RcppArmadillo"))'
   
