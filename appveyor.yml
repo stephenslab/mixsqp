@@ -22,7 +22,7 @@ environment:
     R_CHECK_ARGS: --no-manual --as-cran
   
 build_script:
-  - R -e install.packages(c('testthat','Rcpp','RcppArmadillo'),repos = 'http://cran.wustl.edu')
+  - R -e 'install.packages(c("testthat","Rcpp","RcppArmadillo"),repos = "http://cran.wustl.edu")'
 
 test_script:
   - travis-tool.sh run_tests
