@@ -11,9 +11,14 @@ vignette: >
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(collapse = TRUE,results = "hold",comment = "#",
-                      fig.align="center")
-if (!requireNamespace("REBayes",quietly = TRUE))
-  knitr::opts_chunk$set(eval = FALSE)
+                      fig.align="center",eval = FALSE)
+if (requireNamespace("REBayes",quietly = TRUE) &
+    requireNamespace("Rmosek",quietly = TRUE)) {
+  if (!is.element("mosek_attachbuilder",getNamespaceExports("Rmosek"))) {
+    knitr::opts_chunk$set(eval = TRUE)
+	cat("!!!\n")
+  }
+}
 ```
 
 In this vignette, we illustrate the use of the sequential quadratic
@@ -31,13 +36,6 @@ Load the `mixsqp` package.
 
 ```{r load-pkgs, eval=TRUE, message=FALSE}
 library(mixsqp)
-```
-
-Optionally, load the `Rmosek` package. (The Rmosek package is only
-used to check the version of MOSEK.)
-
-```{r load-rmosek, message=FALSE}
-library(Rmosek)
 ```
 
 Next, initialize the sequence of pseudorandom numbers.
@@ -168,13 +166,6 @@ version of R and the packages used.
 
 ```{r session-info, eval=TRUE}
 sessionInfo()
-```
-
-If you used `REBayes` and `Rmosek` above, it is also helpful to record
-the version of MOSEK that was used.
-
-```{r mosek-info}
-mosek_version()
 ```
 
 [mosek]: https://www.mosek.com
