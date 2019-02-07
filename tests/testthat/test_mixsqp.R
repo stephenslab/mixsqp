@@ -1,5 +1,15 @@
 context("mixsqp")
 
+# The Rmosek package on CRAN will not work with REBayes. This function
+# is used for some of the tests to check whether the correct Rmosek
+# package (the one downloaded from mosek.com) is installed.
+skip_if_mixkwdual_doesnt_work <- function() {
+  testthat::skip_if_not_installed("REBayes")
+  testthat::skip_if_not_installed("Rmosek")
+  testthat::skip_if(is.element("mosek_attachbuilder",
+                               getNamespaceExports("Rmosek")))
+}
+
 test_that("Version number in mixsqp with verbose = TRUE is correct",{
   data(tacks)
   out <- capture.output(mixsqp(tacks$L,tacks$w))
@@ -86,7 +96,7 @@ test_that(paste("mix-SQP and KWDual return the same solution for",
   expect_equal(names(out1$x),colnames(L))
 
   # Apply KWDual solver to the data set. 
-  skip_if_not_installed("REBayes")
+  skip_if_mixkwdual_doesnt_work()
   out2 <- mixkwdual(L)
   expect_equal(names(out2$x),colnames(L))
 
@@ -100,7 +110,7 @@ test_that(paste("mix-SQP & KWDual return the same solution for",
                 "1000 x 10 likelihood matrix with unequal row weights"),{
 
   # The REBayes package is required to run this test.
-  skip_if_not_installed("REBayes")
+  skip_if_mixkwdual_doesnt_work()
   
   # Simulate a 1000 x 10 likelihood matrix, and different weights for
   # the rows of this matrix.
@@ -114,7 +124,7 @@ test_that(paste("mix-SQP & KWDual return the same solution for",
   expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
 
   # Apply KWDual solver to the data set.
-  skip_if_not_installed("REBayes")
+  skip_if_mixkwdual_doesnt_work()
   out2 <- mixkwdual(L,w)
   
   # The outputted solutions, and the objective values at those
@@ -190,7 +200,7 @@ test_that(paste("mix-SQP gives correct solution for \"short and fat\" matrix,",
   # be very similar, even when the Newton search direction in the
   # active-set method is not necessarily unique (i.e., the Hessian is
   # not s.p.d.).
-  skip_if_not_installed("REBayes")
+  skip_if_mixkwdual_doesnt_work()
   out3 <- mixkwdual(L)
   expect_equal(out1$x,out3$x,tolerance = 1e-8)
   expect_equal(out2$x,out3$x,tolerance = 1e-8)
@@ -223,7 +233,7 @@ test_that(paste("mix-SQP converges, and outputs correct solution, for example",
   
   # When the mix-SQP iterates converge, they should be very close to
   # the KWDual solution.
-  skip_if_not_installed("REBayes")
+  skip_if_mixkwdual_doesnt_work()
   out4 <- mixkwdual(L)
   expect_equal(out2$x,out4$x,tolerance = 1e-7)
   expect_equal(out3$x,out4$x,tolerance = 1e-7)
@@ -246,7 +256,7 @@ test_that(paste("Case is properly handled in which all columns except",
   expect_null(out1$progress)
   expect_equal(out1$x,xsol)
 
-  skip_if_not_installed("REBayes")
+  skip_if_mixkwdual_doesnt_work()
   expect_warning(capture.output(out2 <- mixkwdual(L)))
   expect_equal(out2$x,xsol)
 })
@@ -272,7 +282,7 @@ test_that("Case is properly handled in which one column of L is all zeros",{
   expect_equal(out1$value,out2$value,tolerance = 1e-8)
 
   # Also check KWDual solution.
-  skip_if_not_installed("REBayes")
+  skip_if_mixkwdual_doesnt_work()
   expect_warning(out3 <- mixkwdual(L))
   expect_equal(out1$x,out3$x,tolerance = 1e-6)
   expect_equal(out1$value,out3$value,tolerance = 1e-6)
@@ -303,7 +313,7 @@ test_that("mix-SQP converges (sometimes) in a more difficult example",{
   load("flashr.example.RData")
   capture.output(out1 <- mixsqp(L))
   expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
-  skip_if_not_installed("REBayes")
+  skip_if_mixkwdual_doesnt_work()
   out2 <- mixkwdual(L)
   expect_equal(out1$x,out2$x,tolerance = 1e-8)
 })
