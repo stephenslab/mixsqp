@@ -55,7 +55,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP algorithm 0.1-97 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP algorithm 0.1-99 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):     %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set):    %0.1e\n",convtolactiveset);
     Rprintf("zero threshold (solution):  %0.1e\n",zerothresholdsolution);
@@ -249,11 +249,11 @@ double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
 		    double convtolactiveset) {
   int    m     = g.n_elem;
   double nnz   = sum(t);
-  double alpha = 1;  // The step size.
-  int    newind;     // New index to be added or deleted.
+  double alpha = 1; // The step size.
+  int    newind;    // New index to be added or deleted.
+  arma::vec b(m);   // Vector of length m storing H*y + 2*g + 1.
+  arma::vec p(m);   // Vector of length m storing the search direction.
   int    j;
-  arma::vec b(m);    // Vector of length m storing H*y + 2*g + 1.
-  arma::vec p(m);    // Vector of length m storing the search direction.
   
   // Initialize the solution to the QP subproblem, y.
   arma::uvec i0 = find(1 - t);
@@ -290,15 +290,15 @@ double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
         break;
       }
 
-      // Find an index with smallest multiplier, and add this to the
-      // inactive set.
+      // Find an co-ordinate with the smallest multiplier, and remove
+      // it from the working set.
       newind     = i0[b(i0).index_min()];
       t[newind]  = 1;
       i0         = find(1 - t);
       i1         = find(t);
 
     // In this next part, we consider adding a co-ordinate to the
-    // working set, but only if there is at least 2 non-zero
+    // working set, but only if there are 2 or more non-zero
     // co-ordinates.
     } else if (sum(t) > 1) {
         

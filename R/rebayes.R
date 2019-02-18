@@ -79,7 +79,7 @@ mixkwdual <- function (L, w = rep(1,nrow(L)), ...)  {
   # SOLVE OPTIMIZATION PROBLEM USING MOSEK
   # --------------------------------------
   # Check that the REBayes package is available.
-  if(!requireNamespace("REBayes",quietly = TRUE))
+  if (!requireNamespace("REBayes",quietly = TRUE))
     stop("mixKWDual requires package REBayes")
   d   <- rep(1,ncol(L))
   out <- REBayes::KWDual(L,d,w,...)
