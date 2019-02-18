@@ -109,7 +109,7 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' \code{convtol.sqp}, so choose this parameter carefully.}
 #'
 #' \item{\code{suffdecr.linesearch}}{This parameter determines how
-#' stringent t he "sufficient decrease" condition is for accepting a
+#' stringent the "sufficient decrease" condition is for accepting a
 #' step size in the backtracking line search. Larger values will make
 #' the condition more stringent. This should be a positive number less
 #' than 1.}
