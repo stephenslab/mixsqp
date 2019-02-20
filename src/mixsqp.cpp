@@ -55,7 +55,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP algorithm 0.1-101 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP algorithm 0.1-102 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):     %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set):    %0.1e\n",convtolactiveset);
     Rprintf("zero threshold (solution):  %0.1e\n",zerothresholdsolution);
@@ -276,10 +276,17 @@ double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
       
     // Reset the step size.
     alpha = 1;
-      
-    // First check that the search direction is close to zero
-    // (according to the "zerothresholdsearchdir" parameter).
-    if ((p.max() <= zerothresholdsearchdir) &
+
+    // If the working set is empty, and we have already tried to
+    // update the working set at least once, we have reached a
+    // suitable solution.
+    if (i0.n_elem == 0 & j > 0) {
+      j++;
+      break;
+    
+    // Check that the search direction is close to zero (according to
+    // the "zerothresholdsearchdir" parameter).
+    } else if ((p.max() <= zerothresholdsearchdir) &
 	(-p.min() <= zerothresholdsearchdir) &
         (i0.n_elem > 0)) {
         
