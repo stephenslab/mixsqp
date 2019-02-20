@@ -204,7 +204,7 @@ active-set method.}
 \item{\code{maxiter.activeset}}{Maximum number of active-set
 iterations taken to solve each of the quadratic subproblems. If
 \code{NULL}, the maximum number of active-set iterations is set to
-\code{1 + ncol(L)}.}
+\code{min(100,1 + ncol(L))}.}
 
 \item{\code{verbose}}{If \code{verbose = TRUE}, the algorithm's
 progress and a summary of the optimization settings are printed to
