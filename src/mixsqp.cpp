@@ -55,7 +55,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP algorithm 0.1-99 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP algorithm 0.1-100 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):     %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set):    %0.1e\n",convtolactiveset);
     Rprintf("zero threshold (solution):  %0.1e\n",zerothresholdsolution);
@@ -253,6 +253,7 @@ double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
   int    newind;    // New index to be added or deleted.
   arma::vec b(m);   // Vector of length m storing H*y + 2*g + 1.
   arma::vec p(m);   // Vector of length m storing the search direction.
+  arma::vec p0(m);  // Search direction for nonzero co-ordinates only.
   int    j;
   
   // Initialize the solution to the QP subproblem, y.
@@ -298,18 +299,21 @@ double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
       i1         = find(t);
 
     // In this next part, we consider adding a co-ordinate to the
-    // working set, but only if there are 2 or more non-zero
+    // working set, but only if there are two or more non-zero
     // co-ordinates.
     } else if (sum(t) > 1) {
         
       // Define the step size.
-      arma::uvec act = find(p < 0);
+      p0 = p;
+      p0.elem(i0).fill(0);
+      arma::uvec act = find(p0 < 0);
       if (!act.is_empty()) {
         arma::vec alp = -y.elem(act)/p.elem(act);
         newind        = alp.index_min();
         if (alp[newind] < 1) {
             
-          // Blocking constraint exists; find and delete it.
+          // Blocking constraint exists; find and add it to the
+          // working set.
           alpha          = alp[newind]; 
           t[act[newind]] = 0;
           i1             = find(t);
