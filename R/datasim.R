@@ -99,9 +99,9 @@ simulatemixdata <- function (n, m, simtype = c("n","nt"),
   # CREATE LIKELIHOOD MATRIX
   # ------------------------
   # Entry (i,j) of the conditional likelihood matrix is equal to
-  # N(0,se[i]^2 + s[j]^2), the normal density with zero mean and
-  # variance se[i]^2 + s[j]^2, where se[i] is the standard error 
-  # assigned to sample i. Here, all s.e.'s are assumed to be 1.
+  # N(x[i]; 0, se[i]^2 + s[j]^2), the normal density at x[i] with zero
+  # mean and variance se[i]^2 + s[j]^2, where se[i] is the standard
+  # error assigned to sample i. Here, all s.e.'s are assumed to be 1.
   L <- matrix(0,n,m)
   for (j in 1:m)
     L[,j] <- dnorm(x,sd = sqrt(1 + s[j]^2))
