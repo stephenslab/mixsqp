@@ -55,7 +55,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP algorithm 0.1-102 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP algorithm 0.1-103 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):     %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set):    %0.1e\n",convtolactiveset);
     Rprintf("zero threshold (solution):  %0.1e\n",zerothresholdsolution);
@@ -226,17 +226,17 @@ void computegrad (const arma::mat& L, const arma::vec& w, const arma::vec& x,
 		  const arma::vec& e, arma::vec& g, arma::mat& H, arma::vec& u,
 		  arma::mat& Z, const arma::mat& I) {
    
-  // Compute the gradient g = -L'*u where u = w./(L*x + e), and "./"
-  // denotes element-wise division.
+  // Compute the gradient g = -L'*(w.*u) where u = 1./(L*x + e), ".*"
+  // denotes element-wise multiplication, and "./" denotes
+  // element-wise division.
   u = L*x + e;
   u = w / u;
   g = -trans(L) * u;
-    
+  
   // Compute the Hessian H = L'*U*W*U*L, where U = diag(u) and 
   // W = diag(w), with vector u defined as above.
   Z = L;
-  u = L*x + e;
-  u = sqrt(w) / u;
+  u /= sqrt(w);
   Z.each_col() %= u;
   H = trans(Z) * Z + I;
 }
