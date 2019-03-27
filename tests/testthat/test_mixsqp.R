@@ -161,14 +161,14 @@ test_that(paste("mix-SQP gives correct solution for Beckett & Diaconis",
   data(tacks)
   L <- tacks$L
   w <- tacks$w
-  capture.output(out <- mixsqp(L,w,control = list(eps=0,convtol.sqp=1e-10)))
+  capture.output(out <- mixsqp(L,w))
 
   # The mix-SQP solution should be very close to the KWDual solution
   # and, more importantly, the quality of the mix-SQP solution should
   # be as good or greater.
   expect_equal(out$status,mixsqp:::mixsqp.status.converged)
   expect_equal(tacks$x,out$x,tolerance = 5e-4)
-  expect_lte(out$value,mixobjective(L,tacks$x,w))
+  expect_lte(out$value,mixobjective(L,tacks$x,w) + 1e-6)
 })
 
 # This is mainly to test post-processing of the output when the
