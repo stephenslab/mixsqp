@@ -153,7 +153,7 @@ test_that(paste("mix-SQP returns the same solution regardless whether",
   # values of the objectives will be different).
   expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
   expect_equal(out2$status,mixsqp:::mixsqp.status.converged)
-  expect_equal(out1$x,out2$x,tolerance = 1e-8)
+  expect_equal(out1$x,out2$x,tolerance = 1e-7)
 })
                     
 test_that(paste("mix-SQP gives correct solution for Beckett & Diaconis",
