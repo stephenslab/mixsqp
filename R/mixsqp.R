@@ -310,7 +310,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 
   # Input arguments "convtol.sqp", "convtol.activeset",
   # "zero.threshold.solution", "zero.threshold.searchdir", and "eps"
-  # should be non-negative scalars.  Additionally,
+  # should be non-negative scalars. Additionally,
   # "zero.threshold.solution" should be less than 1/m. Also, post a
   # warning if eps is within range of the largest value in one of the
   # rows of the matrix L.
