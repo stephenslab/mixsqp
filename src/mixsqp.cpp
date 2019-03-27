@@ -360,17 +360,19 @@ void backtrackinglinesearch (double f, const arma::mat& L,
   // any more (because we have hit the minimum step size constraint),
   // or (2) the new candidate solution satisfies the "sufficient
   // decrease" condition.
-  while (stepsizereduce * stepsize >= minstepsize) {
+  while (true) {
     y    = x + stepsize*p;
     fnew = mixobjective(L,w,y,eps,u);
     nls++;
 
     // Check whether the new candidate solution (y) satisfies the
-    // sufficient decrease condition. If so, accept this candidate
-    // solution.
-    if (fnew <= f + suffdecr*stepsize*dot(p,g))
+    // sufficient decrease condition, and remains feasible. If so,
+    // accept this candidate solution.
+    if (y.min() >= 0 & fnew <= f + suffdecr*stepsize*dot(p,g))
       break;
-
+    else if (stepsizereduce * stepsize < minstepsize)
+      break;
+    
     // The new candidate does not satisfy the sufficient decrease
     // condition, so we need to try again with a smaller step size.
     stepsize *= stepsizereduce;

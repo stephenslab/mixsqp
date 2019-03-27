@@ -161,7 +161,7 @@ test_that(paste("mix-SQP gives correct solution for Beckett & Diaconis",
   data(tacks)
   L <- tacks$L
   w <- tacks$w
-  capture.output(out <- mixsqp(L,w,control = list(eps = 0)))
+  capture.output(out <- mixsqp(L,w,control = list(eps=0,convtol.sqp=1e-10)))
 
   # The mix-SQP solution should be very close to the KWDual solution
   # and, more importantly, the quality of the mix-SQP solution should
@@ -301,10 +301,10 @@ test_that("Case is properly handled when L has only one column",{
 test_that(paste("mix-SQP converges to solution for \"flat\" objective even",
                 "if initial progress is poor"),{
   set.seed(1)
-  n   <- 10000
-  m   <- 20
-  L   <- matrix(runif(n*m),n,m)
-  out <- mixsqp(L)
+  n <- 10000
+  m <- 20
+  L <- matrix(runif(n*m),n,m)
+  capture.output(out <- mixsqp(L))
   expect_equal(out$status,mixsqp:::mixsqp.status.converged)
 })
 
