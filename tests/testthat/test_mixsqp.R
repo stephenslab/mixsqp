@@ -153,7 +153,7 @@ test_that(paste("mix-SQP returns the same solution regardless whether",
   # values of the objectives will be different).
   expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
   expect_equal(out2$status,mixsqp:::mixsqp.status.converged)
-  expect_equal(out1$x,out2$x,tolerance = 1e-7)
+  expect_equal(out1$x,out2$x,tolerance = 1e-8)
 })
                     
 test_that(paste("mix-SQP gives correct solution for Beckett & Diaconis",
@@ -278,7 +278,7 @@ test_that("Case is properly handled in which one column of L is all zeros",{
   expect_warning(capture.output(out2 <- mixsqp(L)))
 
   # The two solutions should be pretty much the same.
-  expect_equal(out1$x,out2$x,tolerance = 1e-8)
+  expect_equal(out1$x,out2$x,tolerance = 1e-7)
   expect_equal(out1$value,out2$value,tolerance = 1e-8)
 
   # Also check KWDual solution.
