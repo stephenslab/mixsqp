@@ -434,7 +434,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 mixsqp_control_default <- function()
   list(convtol.sqp              = 1e-8,
        convtol.activeset        = 1e-10,
-       zero.threshold.solution  = 1e-6,
+       zero.threshold.solution  = 1e-8,
        zero.threshold.searchdir = 1e-8,
        suffdecr.linesearch      = 0.01,
        stepsizereduce           = 0.5,

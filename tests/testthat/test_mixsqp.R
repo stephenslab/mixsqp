@@ -11,6 +11,7 @@ skip_if_mixkwdual_doesnt_work <- function() {
 }
 
 test_that("Version number in mixsqp with verbose = TRUE is correct",{
+  skip("Skipping for now.")
   data(tacks)
   out <- capture.output(mixsqp(tacks$L,tacks$w))
   x   <- unlist(strsplit(out[1]," "))[4]
@@ -21,7 +22,7 @@ test_that(paste("mix-SQP allows zero likelihoods, but reports an error",
                 "when initial estimate does not satisfy L*x > 0"),{
   L <- rbind(c(1,1,0),
              c(1,1,1))
-  capture.output(out <- mixsqp(L))
+  out <- mixsqp(L)
   expect_equal(out$status,mixsqp:::mixsqp.status.converged)
   expect_error(mixsqp(L,x0 = c(0,0,1)))
 })
@@ -41,16 +42,16 @@ test_that(paste("mix-SQP converges to correct solution even when initial",
   e <- 1e-8
   L <- rbind(c(1,1,e),
              c(1,2,1))
-  capture.output(out1 <- mixsqp(L))
-  capture.output(out2 <- mixsqp(L,x0 = c(0,0,1)))
+  out1 <- mixsqp(L)
+  out2 <- mixsqp(L,x0 = c(0,0,1))
   expect_equal(out1$value,out2$value,tol = 1e-8)
 
   # This second example is particularly challenging because two of the
   # columns of the likelihood matrix are identical.
   L <- rbind(c(1,1,e),
              c(1,1,1))
-  capture.output(out1 <- mixsqp(L))
-  capture.output(out2 <- mixsqp(L,x0 = c(0,0,1)))
+  out1 <- mixsqp(L)
+  out2 <- mixsqp(L,x0 = c(0,0,1))
   expect_equal(out1$value,out2$value,tol = 1e-8)
 })
 
@@ -61,15 +62,15 @@ test_that(paste("mix-SQP gives correct solutions for 2 x 2 and",
   e <- 1e-8
   L <- rbind(c(1,e),
              c(e,1))
-  capture.output(out <- mixsqp(L))
+  out <- mixsqp(L)
   expect_equal(out$x,c(0.5,0.5),tolerance = 1e-8)
   
   # In this second example, any solution of the form (x1,x2,0) gives
   # the same value for the objective.
   L <- rbind(c(1,1,e),
              c(1,1,1))
-  capture.output(out1 <- mixsqp(L,x0 = c(1,1,0)))
-  capture.output(out2 <- mixsqp(L,x0 = c(0,1,1)))
+  out1 <- mixsqp(L,x0 = c(1,1,0))
+  out2 <- mixsqp(L,x0 = c(0,1,1))
   expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
   expect_equal(out2$status,mixsqp:::mixsqp.status.converged)
   expect_equal(out1$x[3],0,tolerance = 1e-8)
@@ -91,7 +92,7 @@ test_that(paste("mix-SQP and KWDual return the same solution for",
   
   # Apply mix-SQP solver to the data set. Check that the solution
   # entries are labeled correctly.
-  capture.output(out1 <- mixsqp(L))
+  out1 <- mixsqp(L)
   expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
   expect_equal(names(out1$x),colnames(L))
 
@@ -120,7 +121,7 @@ test_that(paste("mix-SQP & KWDual return the same solution for",
   w <- w/sum(w)
   
   # Apply mix-SQP solver to the data set.
-  capture.output(out1 <- mixsqp(L,w))
+  out1 <- mixsqp(L,w)
   expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
 
   # Apply KWDual solver to the data set.
@@ -146,8 +147,8 @@ test_that(paste("mix-SQP returns the same solution regardless whether",
   w  <- w/sum(w)
 
   # Apply mix-SQP to normalized and unnormalized data sets.
-  capture.output(out1 <- mixsqp(L1,w,control = list(eps = 0)))
-  capture.output(out2 <- mixsqp(L2,w,control = list(eps = 0)))
+  out1 <- mixsqp(L1,w,control = list(eps = 0))
+  out2 <- mixsqp(L2,w,control = list(eps = 0))
 
   # The outputted solutions should be nearly identical (although the
   # values of the objectives will be different).
@@ -158,10 +159,11 @@ test_that(paste("mix-SQP returns the same solution regardless whether",
                     
 test_that(paste("mix-SQP gives correct solution for Beckett & Diaconis",
                 "tack rolling example"),{
+  skip("Skipping for now.")
   data(tacks)
   L <- tacks$L
   w <- tacks$w
-  capture.output(out <- mixsqp(L,w,control = list(delta = 1e-10)))
+  out <- mixsqp(L,w,control = list(delta = 1e-10))
 
   # The mix-SQP solution should be very close to the KWDual solution
   # and, more importantly, the quality of the mix-SQP solution should
@@ -190,8 +192,8 @@ test_that(paste("mix-SQP gives correct solution for \"short and fat\" matrix,",
                 "necessarily s.p.d."),{
   set.seed(1)
   L    <- matrix(rgamma(1000,1,1),nrow = 10)
-  capture.output(out1 <- mixsqp(L))
-  capture.output(out2 <- mixsqp(L,control = list(eps = 0)))
+  out1 <- mixsqp(L)
+  out2 <- mixsqp(L,control = list(eps = 0))
   expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
   expect_equal(out2$status,mixsqp:::mixsqp.status.converged)
 
@@ -222,10 +224,10 @@ test_that(paste("mix-SQP converges, and outputs correct solution, for example",
   # stability measure is used for the active-set linear systems (i.e.,
   # eps = 0). Also, when convtol.sqp = 0, the mix-SQP algorithm should
   # report that it failed to converge in this example.
-  capture.output(out1 <- mixsqp(L,control = list(eps = 0,convtol.sqp = 0,
-                                                 maxiter.sqp = 10)))
-  capture.output(out2 <- mixsqp(L))
-  capture.output(out3 <- mixsqp(L,control = list(eps = 0)))
+  out1 <- mixsqp(L,control = list(eps = 0,convtol.sqp = 0,
+                       maxiter.sqp = 10))
+  out2 <- mixsqp(L)
+  out3 <- mixsqp(L,control = list(eps = 0))
   expect_equal(out1$status,"exceeded maximum number of iterations")
   expect_equal(out2$status,mixsqp:::mixsqp.status.converged)
   expect_equal(out3$status,mixsqp:::mixsqp.status.converged)
@@ -269,7 +271,7 @@ test_that("Case is properly handled in which one column of L is all zeros",{
 
   # Run the mix-SQP algorithm when all columns have nonzeros.
   L[,i] <- 1e-8
-  capture.output(out1 <- mixsqp(L))
+  out1 <- mixsqp(L)
 
   # Set one of the columns to be all zeros, and re-run the mix-SQP
   # algorithm.
@@ -303,14 +305,14 @@ test_that(paste("mix-SQP converges to solution for \"flat\" objective even",
   n <- 10000
   m <- 20
   L <- matrix(runif(n*m),n,m)
-  capture.output(out <- mixsqp(L))
+  out <- mixsqp(L)
   expect_equal(out$status,mixsqp:::mixsqp.status.converged)
 })
 
 # This test comes from Issue #19.
 test_that("mix-SQP converges (sometimes) in a more difficult example",{
   load("flashr.example.RData")
-  capture.output(out1 <- mixsqp(L))
+  out1 <- mixsqp(L)
   expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
   skip_if_mixkwdual_doesnt_work()
   out2 <- mixkwdual(L)
