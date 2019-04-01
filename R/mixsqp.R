@@ -439,7 +439,7 @@ mixsqp_control_default <- function()
        suffdecr.linesearch      = 0.01,
        stepsizereduce           = 0.5,
        minstepsize              = 1e-4,
-       eps                      = 1e-8,
+       eps                      = 1e-10,
        delta                    = 1e-15,
        maxiter.sqp              = 1000,
        maxiter.activeset        = NULL,
