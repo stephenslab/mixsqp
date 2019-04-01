@@ -300,9 +300,9 @@ double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
       t[k] = 1;
 
     // In this next part, we consider adding a co-ordinate to the
-    // working set, but only if there are two or more non-zero
-    // co-ordinates.
-    } else if (i1.n_elem >= 2) {
+    // working set (but only if there are two or more non-zero
+    // co-ordinates).
+    } else {
         
       // Define the step size.
       alpha = 1;
@@ -311,20 +311,22 @@ double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
       S = find(p0 < 0);
       if (!S.is_empty()) {
         z = -y.elem(S)/p.elem(S);
-        k   = z.index_min();
+        k = z.index_min();
         if (z[k] < 1) {
             
           // Blocking constraint exists; find and add it to the
-          // working set.
-          alpha   = z[k]; 
-          t[S[k]] = 0;
+          // working set (but only if there are two or more non-zero
+          // co-ordinates).
+          alpha = z[k];
+	  if (i1.n_elem >= 2)
+	    t[S[k]] = 0;
         }
       }
-    }
       
-    // Move to the new "inner loop" iterate (y) along the search
-    // direction.
-    y += alpha * p;
+      // Move to the new "inner loop" iterate (y) along the search
+      // direction.
+      y += alpha * p;
+    }
   }
 
   return j;
