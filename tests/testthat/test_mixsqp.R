@@ -236,10 +236,10 @@ test_that(paste("mix-SQP converges, and outputs correct solution, for example",
   # the KWDual solution.
   skip_if_mixkwdual_doesnt_work()
   out4 <- mixkwdual(L)
-  expect_equal(out2$x,out4$x,tolerance = 1e-7)
-  expect_equal(out3$x,out4$x,tolerance = 1e-7)
-  expect_equal(out2$value,out4$value,tolerance = 1e-8)
-  expect_equal(out3$value,out4$value,tolerance = 1e-8)
+  expect_equal(out2$x,out4$x,tolerance = 1e-6)
+  expect_equal(out3$x,out4$x,tolerance = 1e-6)
+  expect_equal(out2$value,out4$value,tolerance = 1e-6)
+  expect_equal(out3$value,out4$value,tolerance = 1e-6)
 })
 
 test_that(paste("Case is properly handled in which all columns except",
