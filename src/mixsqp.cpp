@@ -11,27 +11,22 @@
 //
 
 using namespace Rcpp;
+using namespace arma;
 
 // FUNCTION DECLARATIONS
 // ---------------------
-double mixobjective (const arma::mat& L, const arma::vec& w,
-		     const arma::vec& x, const arma::vec& e, 
-		     arma::vec& u);
-void   computegrad  (const arma::mat& L, const arma::vec& w,
-		     const arma::vec& x, const arma::vec& e, 
-		     arma::vec& g, arma::mat& H, arma::vec& u, 
-		     arma::mat& Z, const arma::mat& I);
-double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
-		    arma::uvec& t, int maxiteractiveset,
-		    double zerothresholdsearchdir, 
+double mixobjective (const mat& L, const vec& w, const vec& x, const vec& e, 
+		     vec& u);
+void   computegrad  (const mat& L, const vec& w, const vec& x, const vec& e, 
+		     vec& g, mat& H, vec& u, mat& Z, const mat& I);
+double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
+		    int maxiteractiveset, double zerothresholdsearchdir, 
 		    double convtolactiveset);
-void backtrackinglinesearch (double f, const arma::mat& L,
-			     const arma::vec& w, const arma::vec& g,
-			     const arma::vec& x, const arma::vec& p,
-			     const arma::vec& eps, double suffdecr,
+void backtrackinglinesearch (double f, const mat& L, const vec& w,
+			     const vec& g, const vec& x, const vec& p,
+			     const vec& eps, double suffdecr,
 			     double stepsizereduce, double minstepsize, 
-			     double& nls, double& stepsize, arma::vec& y,
-			     arma::vec& u);
+			     double& nls, double& stepsize, vec& y, vec& u);
 
 // FUNCTION DEFINITIONS
 // --------------------
@@ -70,13 +65,13 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   // PREPARE DATA STRUCTURES
   // -----------------------
   // Initialize storage for the outputs obj, gmin, nnz, nqp and dmax.
-  arma::vec obj(maxitersqp);
-  arma::vec gmin(maxitersqp);
-  arma::vec nnz(maxitersqp);
-  arma::vec nqp(maxitersqp);
-  arma::vec nls(maxitersqp);
-  arma::vec stepsize(maxitersqp);
-  arma::vec dmax(maxitersqp);
+  vec obj(maxitersqp);
+  vec gmin(maxitersqp);
+  vec nnz(maxitersqp);
+  vec nqp(maxitersqp);
+  vec nls(maxitersqp);
+  vec stepsize(maxitersqp);
+  vec dmax(maxitersqp);
   obj.zeros();
   gmin.zeros();
   nnz.zeros();
@@ -86,26 +81,27 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   dmax.fill(-1);
 
   // Initialize the solution.
-  arma::vec x = x0;
+  vec x = x0;
   
   // Initialize storage for matrices and vectors used in the
   // computations below.
-  arma::vec  g(m);    // Vector of length m storing the gradient.
-  arma::vec  p(m);    // Vector of length m storing the search direction.
-  arma::vec  u(n);    // Vector of length n storing L*x + eps or its log.
-  arma::mat  H(m,m);  // m x m matrix storing Hessian.
-  arma::mat  Z(n,m);  // n x m matrix Z = D*L, where D = diag(1/(L*x+e)).
-  arma::mat  I(m,m);  // m x m diagonal matrix e*I.
-  arma::uvec t(m);    // Temporary unsigned int. vector result of length m.
-  arma::vec  y(m);    // Vector of length m storing y
-  arma::vec  d(m);    // Vector of length m storing absolute
-		      // differences between between two solution
-		      // estimates.
+  vec  g(m);    // Vector of length m storing the gradient.
+  vec  ghat(m); // Vector of length m storing gradient of subproblem.
+  vec  p(m);    // Vector of length m storing the search direction.
+  vec  u(n);    // Vector of length n storing L*x + eps or its log.
+  mat  H(m,m);  // m x m matrix storing Hessian.
+  mat  Z(n,m);  // n x m matrix Z = D*L, where D = diag(1/(L*x+e)).
+  mat  I(m,m);  // m x m diagonal matrix e*I.
+  uvec t(m);    // Temporary unsigned int. vector result of length m.
+  vec  y(m);    // Vector of length m storing y
+  vec  d(m);    // Vector of length m storing absolute
+                // differences between between two solution
+	        // estimates.
   
   double status = 1;  // Convergence status.
   
   // This is used in computing the Hessian matrix.
-  I  = arma::eye(m,m);
+  I  = eye(m,m);
   I *= delta;
   
   // Initialize some loop variables used in the loops below.
@@ -173,7 +169,8 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     // SOLVE QUADRATIC SUBPROBLEM
     // --------------------------
     // Run the active-set solver to obtain a search direction.
-    nqp[i] = activesetqp(H,g,y,t,maxiteractiveset,zerothresholdsearchdir,
+    ghat   = g - H*x + 1;
+    nqp[i] = activesetqp(H,ghat,y,t,maxiteractiveset,zerothresholdsearchdir,
 			 convtolactiveset);
     p = y - x;
     
@@ -207,8 +204,8 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 // is an additional positive constant near zero. Input argument u is a
 // vector of length n used to store an intermediate result used in the
 // calculation of the objective.
-double mixobjective (const arma::mat& L, const arma::vec& w,
-		     const arma::vec& x, const arma::vec& e, arma::vec& u) {
+double mixobjective (const mat& L, const vec& w, const vec& x, const vec& e,
+		     vec& u) {
   u = L*x + e;
   if (u.min() <= 0)
     Rcpp::stop("Halting because the objective function has a non-finite value (logarithms of numbers less than or equal to zero) at the current estimate of the solution");
@@ -222,9 +219,8 @@ double mixobjective (const arma::mat& L, const arma::vec& w,
 // vector of length m, and an m x m matrix). Intermediate results used
 // in these calculations are stored in three variables: u, a vector of
 // length n; Z, an n x m matrix; and ZW, another n x m matrix.
-void computegrad (const arma::mat& L, const arma::vec& w, const arma::vec& x,
-		  const arma::vec& e, arma::vec& g, arma::mat& H, arma::vec& u,
-		  arma::mat& Z, const arma::mat& I) {
+void computegrad (const mat& L, const vec& w, const vec& x, const vec& e,
+		  vec& g, mat& H, vec& u, mat& Z, const mat& I) {
    
   // Compute the gradient g = -L'*(w.*u) where u = 1./(L*x + e), ".*"
   // denotes element-wise multiplication, and "./" denotes
@@ -243,32 +239,37 @@ void computegrad (const arma::mat& L, const arma::vec& w, const arma::vec& x,
 
 // This implements the active-set method from p. 472 of of Nocedal &
 // Wright, Numerical Optimization, 2nd ed, 2006.
-double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
-		    arma::uvec& t, int maxiteractiveset,
-		    double zerothresholdsearchdir, 
+double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
+		    int maxiteractiveset, double zerothresholdsearchdir, 
 		    double convtolactiveset) {
   int    m     = g.n_elem;
   double nnz   = sum(t);
-  double alpha;     // The step size.
-  int    newind;    // New index to be added or deleted.
-  arma::vec b(m);   // Vector of length m storing H*y + 2*g + 1.
-  arma::vec p(m);   // Vector of length m storing the search direction.
-  arma::vec p0(m);  // Search direction for nonzero co-ordinates only.
-  int    j;
+  double alpha;  // The step size.
+  int    j, k;
+  vec    b(m);   // Vector of length m storing H*y + 2*g + 1.
+  vec    p(m);   // Vector of length m storing the search direction.
+  vec    p0(m);  // Search direction for nonzero co-ordinates only.
+  vec    bs(m);
+  vec    z(m);
+  mat    Hs(m,m);
+  uvec   S(m);
+  uvec   i0(m);
+  uvec   i1(m);
   
   // Initialize the solution to the QP subproblem, y.
-  arma::uvec i0 = find(1 - t);
-  arma::uvec i1 = find(t);
   y.fill(0);
+  i1 = find(t);
   y.elem(i1).fill(1/nnz);
     
   // Run active set method to solve the QP subproblem.
   for (j = 0; j < maxiteractiveset; j++) {
-      
+    
     // Define the smaller QP subproblem.
-    b = H*y + 2*g + 1;
-    arma::vec bs = b.elem(i1);
-    arma::mat Hs = H.elem(i1,i1);
+    i0 = find(1 - t);
+    i1 = find(t);
+    b  = H*y + g;
+    bs = b.elem(i1);
+    Hs = H.elem(i1,i1);
       
     // Solve the smaller problem.
     p.fill(0);
@@ -276,55 +277,47 @@ double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
       
     // Reset the step size.
     alpha = 1;
-
-    // If the working set is empty, and we have already tried to
-    // update the working set at least once, we have reached a
-    // suitable solution.
-    if (i0.n_elem == 0 & j > 0) {
-      j++;
-      break;
     
     // Check that the search direction is close to zero (according to
     // the "zerothresholdsearchdir" parameter).
-    } else if ((p.max() <= zerothresholdsearchdir) &
-	       (-p.min() <= zerothresholdsearchdir) &
-               (i0.n_elem > 0)) {
+    if ((p.max() <= zerothresholdsearchdir) &
+	(-p.min() <= zerothresholdsearchdir)) {
         
       // If all the Lagrange multiplers in the working set (that is,
       // zeroed co-ordinates) are positive, or nearly positive, we
       // have reached a suitable solution.
-      if (b(i0).min() >= -convtolactiveset) {
+      if (i0.n_elem == 0) {
 	j++;
-        break;
+	break;
+      } else if (b(i0).min() >= -convtolactiveset) {
+	j++;
+	break;
       }
 
       // Find an co-ordinate with the smallest multiplier, and remove
       // it from the working set.
-      newind     = i0[b(i0).index_min()];
-      t[newind]  = 1;
-      i0         = find(1 - t);
-      i1         = find(t);
+      k    = i0[b(i0).index_min()];
+      t[k] = 1;
 
     // In this next part, we consider adding a co-ordinate to the
     // working set, but only if there are two or more non-zero
     // co-ordinates.
-    } else if (sum(t) > 1) {
+    } else if (i1.n_elem >= 2) {
         
       // Define the step size.
-      p0 = p;
+      alpha = 1;
+      p0    = p;
       p0.elem(i0).fill(0);
-      arma::uvec act = find(p0 < 0);
-      if (!act.is_empty()) {
-        arma::vec alp = -y.elem(act)/p.elem(act);
-        newind        = alp.index_min();
-        if (alp[newind] < 1) {
+      S = find(p0 < 0);
+      if (!S.is_empty()) {
+        z = -y.elem(S)/p.elem(S);
+        k   = z.index_min();
+        if (z[k] < 1) {
             
           // Blocking constraint exists; find and add it to the
           // working set.
-          alpha          = alp[newind]; 
-          t[act[newind]] = 0;
-          i1             = find(t);
-	  i0             = find(1 - t);
+          alpha   = z[k]; 
+          t[S[k]] = 0;
         }
       }
     }
@@ -345,15 +338,13 @@ double activesetqp (const arma::mat& H, const arma::vec& g, arma::vec& y,
 // 
 // Note that sum(x) = sum(y) = 1, so replacing g by g + 1 in dot product
 // of p and g has no effect.
-void backtrackinglinesearch (double f, const arma::mat& L,
-			     const arma::vec& w, const arma::vec& g,
-			     const arma::vec& x, const arma::vec& p,
-			     const arma::vec& eps, double suffdecr,
+void backtrackinglinesearch (double f, const mat& L, const vec& w,
+			     const vec& g, const vec& x, const vec& p,
+			     const vec& eps, double suffdecr,
 			     double stepsizereduce, double minstepsize, 
-			     double& nls, double& stepsize, arma::vec& y,
-			     arma::vec& u) {
+			     double& nls, double& stepsize, vec& y, vec& u) {
   double fnew;
-  stepsize = 1;
+  stepsize = 0.99;
   nls      = 0;
 
   // Iteratively reduce the step size until either (1) we can't reduce
