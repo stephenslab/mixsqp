@@ -50,7 +50,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP algorithm 0.1-108 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP algorithm 0.1-109 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):     %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set):    %0.1e\n",convtolactiveset);
     Rprintf("zero threshold (solution):  %0.1e\n",zerothresholdsolution);
@@ -333,13 +333,9 @@ double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
 }
 
 // This implements the backtracking line search algorithm from p. 37
-// of Nocedal & Wright, Numerical Optimization, 2nd ed, 2006. The
-// return value is the number of line search iterations needed to
-// identify a step size satisfying the "sufficient decrease"
-// condition.
-// 
-// Note that sum(x) = sum(y) = 1, so replacing g by g + 1 in dot product
-// of p and g has no effect.
+// of Nocedal & Wright, Numerical Optimization, 2nd ed, 2006. Note
+// that sum(x) = sum(y) = 1, so replacing g by g + 1 in dot product of
+// p and g has no effect.
 void backtrackinglinesearch (double f, const mat& L, const vec& w,
 			     const vec& g, const vec& x, const vec& p,
 			     const vec& eps, double suffdecr,
@@ -366,8 +362,15 @@ void backtrackinglinesearch (double f, const mat& L, const vec& w,
       break;
     newstepsize = stepsizereduce * stepsize;
     if (newstepsize < minstepsize) {
-      if (y.min() < 0)
+
+      // We need to terminate backtracking line search because we have
+      // arrived at the smallest allowed step size.
+      stepsize = minstepsize;
+      y        = x + stepsize*p;
+      if (y.min() < 0) {
 	stepsize = 0;
+	y        = x;
+      }
       break;
     }
     
