@@ -50,7 +50,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
   // Print a brief summary of the analysis, if requested.
   if (verbose) {
-    Rprintf("Running mix-SQP algorithm 0.1-107 on %d x %d matrix\n",n,m);
+    Rprintf("Running mix-SQP algorithm 0.1-108 on %d x %d matrix\n",n,m);
     Rprintf("convergence tol. (SQP):     %0.1e\n",convtolsqp);
     Rprintf("conv. tol. (active-set):    %0.1e\n",convtolactiveset);
     Rprintf("zero threshold (solution):  %0.1e\n",zerothresholdsolution);
@@ -346,6 +346,7 @@ void backtrackinglinesearch (double f, const mat& L, const vec& w,
 			     double stepsizereduce, double minstepsize, 
 			     double& nls, double& stepsize, vec& y, vec& u) {
   double fnew;
+  double newstepsize;
   stepsize = 0.99;
   nls      = 0;
 
@@ -363,11 +364,15 @@ void backtrackinglinesearch (double f, const mat& L, const vec& w,
     // accept this candidate solution.
     if (y.min() >= 0 & fnew <= f + suffdecr*stepsize*dot(p,g))
       break;
-    else if (stepsizereduce * stepsize < minstepsize)
+    newstepsize = stepsizereduce * stepsize;
+    if (newstepsize < minstepsize) {
+      if (y.min() < 0)
+	stepsize = 0;
       break;
+    }
     
     // The new candidate does not satisfy the sufficient decrease
     // condition, so we need to try again with a smaller step size.
-    stepsize *= stepsizereduce;
+    stepsize = newstepsize;
   }
 }
