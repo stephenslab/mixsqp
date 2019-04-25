@@ -388,25 +388,27 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # RUN A FEW ITERATIONS OF EM
   # --------------------------
   x <- x0
-  progress.em <- data.frame(objective = rep(0,numiter.em),
-                            max.rdual = rep(as.numeric(NA),numiter.em),
-                            nnz       = rep(as.numeric(NA),numiter.em),
-                            stepsize  = rep(1,numiter.em),
-                            max.diff  = rep(0,numiter.em),
-                            nqp       = rep(as.numeric(NA),numiter.em),
-                            nls       = rep(as.numeric(NA),numiter.em))
-  if (numiter.em > 0)
+  if (numiter.em > 0) {
+    progress.em <- data.frame(objective = rep(0,numiter.em),
+                              max.rdual = rep(as.numeric(NA),numiter.em),
+                              nnz       = rep(as.numeric(NA),numiter.em),
+                              stepsize  = rep(1,numiter.em),
+                              max.diff  = rep(0,numiter.em),
+                              nqp       = rep(as.numeric(NA),numiter.em),
+                              nls       = rep(as.numeric(NA),numiter.em))
     for (i in 1:numiter.em) {
       xprev <- x
       x     <- mixem.update(L,w,x,eps)
-      progress.em[i,"max.diff"]  <- max(abs(x - xprev))
       progress.em[i,"objective"] <- mixobj(L,w,x,eps)
+      progress.em[i,"max.diff"]  <- max(abs(x - xprev))
       progress.em[i,"nnz"]       <- sum(x >= zero.threshold.solution)
       if (verbose)
         cat(sprintf("%4d %+0.9e  -- EM -- %4d 1.00e+00 %0.2e  --  --\n",
                     i,progress.em[i,"objective"],progress.em[i,"nnz"],
-                    progress.em[i,"nnz"]))
+                    progress.em[i,"max.diff"]))
     }
+  } else
+    progress.em <- NULL
 
   # SOLVE OPTIMIZATION PROBLEM USING mix-SQP
   # ----------------------------------------
