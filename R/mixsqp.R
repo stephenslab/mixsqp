@@ -149,7 +149,9 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' \code{NULL}, the maximum number of active-set iterations is set to
 #' \code{min(100,1 + ncol(L))}.}
 #'
-#' \item{\code{numiter.em}}{Add description here.}
+#' \item{\code{numiter.em}}{Number of expectation maximization (EM)
+#' updates to perform prior to running mix-SQP. This can help ensure
+#' convergence of mix-SQP when the initial solution is very poor.}
 #' 
 #' \item{\code{verbose}}{If \code{verbose = TRUE}, the algorithm's
 #' progress and a summary of the optimization settings are printed to
