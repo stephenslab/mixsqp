@@ -181,9 +181,9 @@ test_that("mix-SQP does not report an error with convergence failure",{
   L <- rbind(c(1,1,e),
              c(1,1,1))
   capture_output(out <- mixsqp(L,x0 = c(0,1,1),
-                               control = list(maxiter.sqp = 3)))
+                               control = list(maxiter.sqp = 2)))
   expect_equal(out$status,mixsqp.status.didnotconverge)
-  expect_equal(dim(out$progress),c(3,7))
+  expect_equal(dim(out$progress),c(6,7))
 })
 
 # This test comes from Issue #3.
@@ -324,4 +324,5 @@ test_that("mix-SQP converges despite poor initialization",{
   load("ashr.example.RData")
   out <- mixsqp(L,x0 = x0)
   expect_equal(out$status,mixsqp:::mixsqp.status.converged)
-}
+})
+
