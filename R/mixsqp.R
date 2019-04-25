@@ -464,13 +464,14 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   return(list(x        = x,
               status   = status,
               value    = f,
-              progress = data.frame(objective = out$objective,
-                                    max.rdual = out$max.rdual,
-                                    nnz       = out$nnz,
-                                    stepsize  = out$stepsize,
-                                    max.diff  = out$max.diff,
-                                    nqp       = out$nqp,
-                                    nls       = out$nls)))
+              progress = rbind(progress.em,
+                               data.frame(objective = out$objective,
+                                          max.rdual = out$max.rdual,
+                                          nnz       = out$nnz,
+                                          stepsize  = out$stepsize,
+                                          max.diff  = out$max.diff,
+                                          nqp       = out$nqp,
+                                          nls       = out$nls))))
 }
 
 #' @rdname mixsqp
