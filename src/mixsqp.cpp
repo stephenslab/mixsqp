@@ -93,12 +93,6 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   // Initialize some loop variables used in the loops below.
   int i = 0; 
   
-  // Print the column labels for reporting the algorithm's progress.
-  if (verbose) {
-    Rprintf("iter        objective max(rdual) nnz stepsize max.diff nqp nls");
-    Rprintf("\n");
-  }
-  
   // Repeat until the convergence criterion is met, or until we reach
   // the maximum number of (outer loop) iterations.
   for (i = 0; i < maxitersqp; i++) {
@@ -123,7 +117,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     nnz[i]  = sum(t);
     if (verbose) {
       if (i == 0)
-        Rprintf("%4d %+0.9e %+0.3e%4d       NA       NA  NA  NA\n",
+        Rprintf("%4d %+0.9e %+0.3e%4d  ------   ------   --  --\n",
 		i + 1,obj[i],-gmin[i],int(nnz[i]));
       else
         Rprintf("%4d %+0.9e %+0.3e%4d %0.2e %0.2e %3d %3d\n",i + 1,obj[i],

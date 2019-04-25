@@ -366,16 +366,6 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # Scale "eps" by the maximum value of each row of L.
   eps <- eps * apply(L,1,max)
 
-  # RUN SEVERAL ITERATIONS OF EM
-  # ----------------------------
-  if (numiter.em > 0) {
-    xem <- x0
-  }
-  else
-    xem <- x0
-  
-  # SOLVE OPTIMIZATION PROBLEM USING mix-SQP
-  # ----------------------------------------
   # Print a brief summary of the analysis, if requested.
   if (verbose) {
     cat(sprintf("Running mix-SQP algorithm 0.1-110 on %d x %d matrix\n",n,m))
@@ -389,8 +379,38 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
     cat(sprintf("minimum step size:          %0.1e\n",minstepsize))
     cat(sprintf("max. iter (SQP):            %d\n",maxiter.sqp))
     cat(sprintf("max. iter (active-set):     %d\n",maxiter.activeset))
+    cat(sprintf("number of EM iterations:    %d\n",numiter.em))
+
+    # Print the column labels for reporting the algorithm's progress.
+    cat("iter        objective max(rdual) nnz stepsize max.diff nqp nls\n")
   }
-  out <- mixsqp_rcpp(L,w,xem,convtol.sqp,convtol.activeset,
+  
+  # RUN A FEW ITERATIONS OF EM
+  # --------------------------
+  x <- x0
+  progress.em <- data.frame(objective = rep(0,numiter.em),
+                            max.rdual = rep(as.numeric(NA),numiter.em),
+                            nnz       = rep(as.numeric(NA),numiter.em),
+                            stepsize  = rep(1,numiter.em),
+                            max.diff  = rep(0,numiter.em),
+                            nqp       = rep(as.numeric(NA),numiter.em),
+                            nls       = rep(as.numeric(NA),numiter.em))
+  if (numiter.em > 0)
+    for (i in 1:numiter.em) {
+      xprev <- x
+      x     <- mixem.update(L,w,x,eps)
+      progress.em[i,"max.diff"]  <- max(abs(x - xprev))
+      progress.em[i,"objective"] <- mixobj(L,w,x,eps)
+      progress.em[i,"nnz"]       <- sum(x >= zero.threshold.solution)
+      if (verbose)
+        cat(sprintf("%4d %+0.9e  -- EM -- %4d 1.00e+00 %0.2e  --  --\n",
+                    i,progress.em[i,"objective"],progress.em[i,"nnz"],
+                    progress.em[i,"nnz"]))
+    }
+
+  # SOLVE OPTIMIZATION PROBLEM USING mix-SQP
+  # ----------------------------------------
+  out <- mixsqp_rcpp(L,w,x,convtol.sqp,convtol.activeset,
                      zero.threshold.solution,zero.threshold.searchdir,
                      suffdecr.linesearch,stepsizereduce,minstepsize,
                      eps,delta,maxiter.sqp,maxiter.activeset,verbose)
@@ -471,3 +491,19 @@ mixsqp_control_default <- function()
        maxiter.activeset        = NULL,
        numiter.em               = 4,
        verbose                  = TRUE)
+
+# TO DO: Briefly explain here what this function does.
+mixem.update <- function (L, w, x, e) {
+
+  # E STEP
+  # ------
+  # Compute the n x m matrix of posterior mixture assignment
+  # probabilities (L is an n x m matrix).
+  P <- scale.cols(L,x) + e
+  P <- P / rowSums(P)
+
+  # M STEP
+  # ------
+  # Update the mixture weights.
+  return(colMeans(P))
+}
