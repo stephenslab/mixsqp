@@ -126,9 +126,6 @@ logspace <- function (x, y, n)
   2^seq(log2(x),log2(y),length = n)
 
 # Scale each column A[,i] by b[i].
-scale.cols <- function (A, b) {
-    
-  # TO DO: Modify this code to avoid the transpose of A, which could
-  # be a large matrix.
+scale.cols <- function (A, b)
   t(t(A) * b)
-}
+
