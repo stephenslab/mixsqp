@@ -148,6 +148,8 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' iterations taken to solve each of the quadratic subproblems. If
 #' \code{NULL}, the maximum number of active-set iterations is set to
 #' \code{min(100,1 + ncol(L))}.}
+#'
+#' \item{\code{numiter.em}}{Add description here.}
 #' 
 #' \item{\code{verbose}}{If \code{verbose = TRUE}, the algorithm's
 #' progress and a summary of the optimization settings are printed to
@@ -443,4 +445,5 @@ mixsqp_control_default <- function()
        delta                    = 1e-10,
        maxiter.sqp              = 1000,
        maxiter.activeset        = NULL,
+       numiter.em               = 4,
        verbose                  = TRUE)

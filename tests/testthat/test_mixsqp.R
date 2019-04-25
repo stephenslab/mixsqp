@@ -318,3 +318,10 @@ test_that("mix-SQP converges (sometimes) in a more difficult example",{
   out2 <- mixkwdual(L)
   expect_equal(out1$x,out2$x,tolerance = 1e-6)
 })
+
+# This test comes from Issue #29.
+test_that("Add description of text here",{
+  load("ashr.example.RData")
+  out <- mixsqp(L,x0 = x0,control = list(maxiter.sqp = 20))
+  expect_equal(out$status,mixsqp:::mixsqp.status.converged)
+}
