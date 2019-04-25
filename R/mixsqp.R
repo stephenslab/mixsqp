@@ -296,6 +296,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   delta                    <- control$delta
   maxiter.sqp              <- control$maxiter.sqp
   maxiter.activeset        <- control$maxiter.activeset
+  numiter.em               <- control$numiter.em
   verbose                  <- control$verbose
 
   # If the maximum number of active-set iterations is set to NULL, set
@@ -311,13 +312,14 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   maxiter.activeset  <- as.integer(maxiter.activeset)
 
   # Input arguments "convtol.sqp", "convtol.activeset",
-  # "zero.threshold.solution", "zero.threshold.searchdir", and "eps"
-  # should be non-negative scalars. Additionally,
-  # "zero.threshold.solution" should be less than 1/m. Also, post a
-  # warning if eps is within range of the largest value in one of the
-  # rows of the matrix L.
+  # "zero.threshold.solution", "zero.threshold.searchdir",
+  # "numiter.em", and "eps" should be non-negative
+  # scalars. Additionally, "zero.threshold.solution" should be less
+  # than 1/m. Also, post a warning if eps is within range of the
+  # largest value in one of the rows of the matrix L.
   verify.nonneg.scalar.arg(convtol.sqp)
   verify.nonneg.scalar.arg(convtol.activeset)
+  verify.nonneg.scalar.arg(numiter.em)
   verify.nonneg.scalar.arg(zero.threshold.solution)
   verify.nonneg.scalar.arg(zero.threshold.searchdir)
   verify.nonneg.scalar.arg(suffdecr.linesearch)
@@ -363,10 +365,32 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 
   # Scale "eps" by the maximum value of each row of L.
   eps <- eps * apply(L,1,max)
+
+  # RUN SEVERAL ITERATIONS OF EM
+  # ----------------------------
+  if (numiter.em > 0) {
+    xem <- x0
+  }
+  else
+    xem <- x0
   
   # SOLVE OPTIMIZATION PROBLEM USING mix-SQP
   # ----------------------------------------
-  out <- mixsqp_rcpp(L,w,x0,convtol.sqp,convtol.activeset,
+  # Print a brief summary of the analysis, if requested.
+  if (verbose) {
+    cat(sprintf("Running mix-SQP algorithm 0.1-110 on %d x %d matrix\n",n,m))
+    cat(sprintf("convergence tol. (SQP):     %0.1e\n",convtol.sqp))
+    cat(sprintf("conv. tol. (active-set):    %0.1e\n",convtol.activeset))
+    cat(sprintf("zero threshold (solution):  %0.1e\n",zero.threshold.solution))
+    cat(sprintf("zero thresh. (search dir.): %0.1e\n",
+                zero.threshold.searchdir))
+    cat(sprintf("l.s. sufficient decrease:   %0.1e\n",suffdecr.linesearch))
+    cat(sprintf("step size reduction factor: %0.1e\n",stepsizereduce))
+    cat(sprintf("minimum step size:          %0.1e\n",minstepsize))
+    cat(sprintf("max. iter (SQP):            %d\n",maxiter.sqp))
+    cat(sprintf("max. iter (active-set):     %d\n",maxiter.activeset))
+  }
+  out <- mixsqp_rcpp(L,w,xem,convtol.sqp,convtol.activeset,
                      zero.threshold.solution,zero.threshold.searchdir,
                      suffdecr.linesearch,stepsizereduce,minstepsize,
                      eps,delta,maxiter.sqp,maxiter.activeset,verbose)

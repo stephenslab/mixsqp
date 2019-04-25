@@ -48,20 +48,6 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   int n = L.n_rows;
   int m = L.n_cols;
 
-  // Print a brief summary of the analysis, if requested.
-  if (verbose) {
-    Rprintf("Running mix-SQP algorithm 0.1-110 on %d x %d matrix\n",n,m);
-    Rprintf("convergence tol. (SQP):     %0.1e\n",convtolsqp);
-    Rprintf("conv. tol. (active-set):    %0.1e\n",convtolactiveset);
-    Rprintf("zero threshold (solution):  %0.1e\n",zerothresholdsolution);
-    Rprintf("zero thresh. (search dir.): %0.1e\n",zerothresholdsearchdir);
-    Rprintf("l.s. sufficient decrease:   %0.1e\n",suffdecr);
-    Rprintf("step size reduction factor: %0.1e\n",stepsizereduce);
-    Rprintf("minimum step size:          %0.1e\n",minstepsize);
-    Rprintf("max. iter (SQP):            %d\n",maxitersqp);
-    Rprintf("max. iter (active-set):     %d\n",maxiteractiveset);
-  }
-  
   // PREPARE DATA STRUCTURES
   // -----------------------
   // Initialize storage for the outputs obj, gmin, nnz, nqp and dmax.
