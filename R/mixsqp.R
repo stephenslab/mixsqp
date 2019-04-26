@@ -500,7 +500,7 @@ mixsqp_control_default <- function()
        numiter.em                = 4,
        verbose                   = TRUE)
 
-# TO DO: Briefly explain here what this function does.
+# Perform a single expectation maximum (EM) update.
 mixem.update <- function (L, w, x, e) {
 
   # E STEP
