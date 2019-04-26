@@ -122,6 +122,9 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #'
 #' \item{\code{minstepsize}}{The smallest step size accepted by the
 #' line search step. Should be a number greater than 0 and at most 1.}
+#'
+#' \item{\code{}}{identity.contrib.increase}{Explain here what this
+#' control parameter is for.}
 #' 
 #' \item{\code{eps}}{A small, non-negative number that is added to the
 #' terms inside the logarithms to sidestep computing logarithms of
@@ -282,18 +285,19 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   if (any(!is.element(names(control),names(control0))))
     stop("Argument \"control\" contains unknown parameter names")
   control <- modifyList(control0,control,keep.null = TRUE)
-  convtol.sqp              <- control$convtol.sqp
-  convtol.activeset        <- control$convtol.activeset
-  zero.threshold.solution  <- control$zero.threshold.solution
-  zero.threshold.searchdir <- control$zero.threshold.searchdir
-  suffdecr.linesearch      <- control$suffdecr.linesearch
-  stepsizereduce           <- control$stepsizereduce
-  minstepsize              <- control$minstepsize
-  eps                      <- control$eps
-  maxiter.sqp              <- control$maxiter.sqp
-  maxiter.activeset        <- control$maxiter.activeset
-  numiter.em               <- control$numiter.em
-  verbose                  <- control$verbose
+  convtol.sqp               <- control$convtol.sqp
+  convtol.activeset         <- control$convtol.activeset
+  zero.threshold.solution   <- control$zero.threshold.solution
+  zero.threshold.searchdir  <- control$zero.threshold.searchdir
+  suffdecr.linesearch       <- control$suffdecr.linesearch
+  stepsizereduce            <- control$stepsizereduce
+  minstepsize               <- control$minstepsize
+  identity.contrib.increase <- control$identity.contrib.increase
+  eps                       <- control$eps
+  maxiter.sqp               <- control$maxiter.sqp
+  maxiter.activeset         <- control$maxiter.activeset
+  numiter.em                <- control$numiter.em
+  verbose                   <- control$verbose
 
   # If the maximum number of active-set iterations is set to NULL, set
   # it to be equal to 1 + ncol(L), or 100, whichever is smaller.
@@ -309,10 +313,10 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 
   # Input arguments "convtol.sqp", "convtol.activeset",
   # "zero.threshold.solution", "zero.threshold.searchdir",
-  # "numiter.em", and "eps" should be non-negative
-  # scalars. Additionally, "zero.threshold.solution" should be less
-  # than 1/m. Also, post a warning if eps is within range of the
-  # largest value in one of the rows of the matrix L.
+  # "numiter.em", "identity.contrib.increase", and "eps" should be
+  # non-negative scalars. Additionally, "zero.threshold.solution"
+  # should be less than 1/m. Also, post a warning if eps is within
+  # range of the largest value in one of the rows of the matrix L.
   verify.nonneg.scalar.arg(convtol.sqp)
   verify.nonneg.scalar.arg(convtol.activeset)
   verify.nonneg.scalar.arg(numiter.em)
@@ -321,12 +325,16 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   verify.nonneg.scalar.arg(suffdecr.linesearch)
   verify.nonneg.scalar.arg(stepsizereduce)
   verify.nonneg.scalar.arg(minstepsize)
+  verify.nonneg.scalar.arg(identity.contrib.increase)
   verify.nonneg.scalar.arg(eps)
   if (!(0 < stepsizereduce & stepsizereduce < 1 &
-        0 < suffdecr.linesearch & 0 < minstepsize))
+        identity.contrib.increase > 0  &
+        suffdecr.linesearch > 0 &
+        minstepsize > 0))
     stop(paste("Control parameter \"stepsizereduce\" must be greater than",
-               "0 and less than 1, and \"suffdecr.linesearch\" and",
-               "\"minstepsize\" must be positive"))
+               "0 and less than 1, and \"suffdecr.linesearch\",",
+               "\"identity.contrib.increase\" and \"minstepsize\" must be",
+               "positive"))
   if (zero.threshold.solution >= 1/m)
     stop(paste("Behavior of algorithm will be unpredictable if",
                "zero.threshold > 1/m, where m = ncol(X)"))
@@ -411,7 +419,8 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   out <- mixsqp_rcpp(L,w,x,convtol.sqp,convtol.activeset,
                      zero.threshold.solution,zero.threshold.searchdir,
                      suffdecr.linesearch,stepsizereduce,minstepsize,
-                     eps,maxiter.sqp,maxiter.activeset,verbose)
+                     identity.contrib.increase,eps,maxiter.sqp,
+                     maxiter.activeset,verbose)
   
   # Get the algorithm convergence status. The convention is that
   # status = 0 means that the algorithm has successfully converged to
@@ -477,18 +486,19 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 #' @export
 #' 
 mixsqp_control_default <- function()
-  list(convtol.sqp              = 1e-8,
-       convtol.activeset        = 1e-10,
-       zero.threshold.solution  = 1e-8,
-       zero.threshold.searchdir = 1e-15,
-       suffdecr.linesearch      = 0.01,
-       stepsizereduce           = 0.75,
-       minstepsize              = 1e-8,
-       eps                      = 1e-10,
-       maxiter.sqp              = 1000,
-       maxiter.activeset        = NULL,
-       numiter.em               = 4,
-       verbose                  = TRUE)
+  list(convtol.sqp               = 1e-8,
+       convtol.activeset         = 1e-10,
+       zero.threshold.solution   = 1e-8,
+       zero.threshold.searchdir  = 1e-15,
+       suffdecr.linesearch       = 0.01,
+       stepsizereduce            = 0.75,
+       minstepsize               = 1e-8,
+       identity.contrib.increase = 10,
+       eps                       = 1e-10,
+       maxiter.sqp               = 1000,
+       maxiter.activeset         = NULL,
+       numiter.em                = 4,
+       verbose                   = TRUE)
 
 # TO DO: Briefly explain here what this function does.
 mixem.update <- function (L, w, x, e) {

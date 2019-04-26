@@ -19,11 +19,11 @@ double mixobjective (const mat& L, const vec& w, const vec& x, const vec& e,
 		     vec& u);
 void   computegrad  (const mat& L, const vec& w, const vec& x, const vec& e, 
 		     vec& g, mat& H, vec& u, mat& Z);
-double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
-		    int maxiteractiveset, double zerothresholdsearchdir, 
-		    double convtolactiveset);
-void computeactivesetsearchdir (const mat& H, const vec& y, vec& p, mat& B,
-				double ainc, double amax);
+double activesetqp  (const mat& H, const vec& g, vec& y, uvec& t,
+		     int maxiteractiveset, double zerothresholdsearchdir, 
+		     double convtolactiveset, double identitycontribincrease);
+void computeactivesetsearchdir (const mat& H, const vec& y, vec& p,
+				mat& B, double ainc);
 void backtrackinglinesearch (double f, const mat& L, const vec& w,
 			     const vec& g, const vec& x, const vec& p,
 			     const vec& eps, double suffdecr,
@@ -42,8 +42,8 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
                   double convtolsqp, double convtolactiveset,
 		  double zerothresholdsolution, double zerothresholdsearchdir,
 		  double suffdecr, double stepsizereduce, double minstepsize,
-		  const arma::vec& eps, int maxitersqp,
-		  int maxiteractiveset, bool verbose) {
+		  double identitycontribincrease, const arma::vec& eps,
+		  int maxitersqp, int maxiteractiveset, bool verbose) {
   
   // Get the number of rows (n) and columns (m) of the conditional
   // likelihood matrix.
@@ -148,7 +148,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     // Run the active-set solver to obtain a search direction.
     ghat   = g - H*x + 1;
     nqp[i] = activesetqp(H,ghat,y,t,maxiteractiveset,zerothresholdsearchdir,
-			 convtolactiveset);
+			 convtolactiveset,identitycontribincrease);
     p = y - x;
     
     // BACKTRACKING LINE SEARCH
@@ -218,7 +218,7 @@ void computegrad (const mat& L, const vec& w, const vec& x, const vec& e,
 // Wright, Numerical Optimization, 2nd ed, 2006.
 double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
 		    int maxiteractiveset, double zerothresholdsearchdir, 
-		    double convtolactiveset) {
+		    double convtolactiveset, double identitycontribincrease) {
   int    m     = g.n_elem;
   double nnz   = sum(t);
   double alpha;  // The step size.
@@ -229,6 +229,7 @@ double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
   vec    bs(m);
   vec    z(m);
   mat    Hs(m,m);
+  mat    B(m,m);
   uvec   S(m);
   uvec   i0(m);
   uvec   i1(m);
@@ -250,7 +251,8 @@ double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
       
     // Solve the smaller problem.
     p.fill(0);
-    p.elem(i1) = -solve(Hs,bs);
+    computeactivesetsearchdir(Hs,bs,p0,B,identitycontribincrease);
+    p.elem(i1) = p0;
       
     // Reset the step size.
     alpha = 1;
@@ -311,12 +313,12 @@ double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
 
 // This implements Algorithm 3.3, "Cholesky with added multiple of the
 // identity", from Nocedal & Wright, 2nd ed, p. 51.
-void computeactivesetsearchdir (const mat& H, const vec& y, vec& p, mat& B,
-				double ainc, double amax) {
+void computeactivesetsearchdir (const mat& H, const vec& y, vec& p,
+				mat& B, double ainc) {
+  double amax = 1;
   int    n = y.n_elem;
   double d = H.diag().min();
   double a = 0;
-  double anew;
   mat    I(n,n,fill::eye);
   mat    R(n,n);
   
@@ -324,19 +326,20 @@ void computeactivesetsearchdir (const mat& H, const vec& y, vec& p, mat& B,
   if (d < 0)
     a = 1e-15 - d;
 
-  // TO DO: Explain here what this "while loop" does.
+  // Repeat until a modified Hessian is found that is symmetric
+  // positive definite, or until we cannot modify it any longer.
   while (true) {
 
     // Compute the modified Hessian.
     B = H + a*I;
     
     // Attempt to compute the Cholesky factorization of the modified
-    // Hessian. If this fails, increase the weight on the 
-    anew = ainc * a;
-    if (chol(R,B) | (anew > amax))
+    // Hessian. If this fails, increase the contribution of the
+    // identity matrix in the modified Hessian.
+    if (chol(R,B) | (a*ainc > amax))
       break;
     else
-      a = anew;
+      a *= ainc;
   }
 
   // Compute the search direction using the modified Hessian.
