@@ -322,7 +322,7 @@ void computeactivesetsearchdir (const mat& H, const vec& y, vec& p,
   double a = 0;
   mat    I(n,n,fill::eye);
   mat    R(n,n);
-  
+
   // Initialize the scalar multiplier for the identity matrix.
   if (d < 0)
     a = a0 - d;

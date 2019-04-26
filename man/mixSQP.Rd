@@ -180,6 +180,9 @@ of a less fine-grained search. Should be a positive number less than
 \item{\code{minstepsize}}{The smallest step size accepted by the
 line search step. Should be a number greater than 0 and at most 1.}
 
+\item{\code{}}{identity.contrib.increase}{Explain here what this
+control parameter is for.}
+
 \item{\code{eps}}{A small, non-negative number that is added to the
 terms inside the logarithms to sidestep computing logarithms of
 zero. This prevents numerical problems at the cost of introducing a
