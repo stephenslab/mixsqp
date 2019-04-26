@@ -180,8 +180,11 @@ of a less fine-grained search. Should be a positive number less than
 \item{\code{minstepsize}}{The smallest step size accepted by the
 line search step. Should be a number greater than 0 and at most 1.}
 
-\item{\code{}}{identity.contrib.increase}{Explain here what this
-control parameter is for.}
+\item{\code{identity.contrib.increase}}{When the Hessian is not
+positive definite, a multiple of the identity is added to the
+Hessian to ensure a unique search direction. The factor for
+increasing the identity contribution in this modified Hessian is
+determined by this control parameter.}
 
 \item{\code{eps}}{A small, non-negative number that is added to the
 terms inside the logarithms to sidestep computing logarithms of

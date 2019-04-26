@@ -123,8 +123,11 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' \item{\code{minstepsize}}{The smallest step size accepted by the
 #' line search step. Should be a number greater than 0 and at most 1.}
 #'
-#' \item{\code{}}{identity.contrib.increase}{Explain here what this
-#' control parameter is for.}
+#' \item{\code{identity.contrib.increase}}{When the Hessian is not
+#' positive definite, a multiple of the identity is added to the
+#' Hessian to ensure a unique search direction. The factor for
+#' increasing the identity contribution in this modified Hessian is
+#' determined by this control parameter.}
 #' 
 #' \item{\code{eps}}{A small, non-negative number that is added to the
 #' terms inside the logarithms to sidestep computing logarithms of
@@ -372,7 +375,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 
   # Print a brief summary of the analysis, if requested.
   if (verbose) {
-    cat(sprintf("Running mix-SQP algorithm 0.1-114 on %d x %d matrix\n",n,m))
+    cat(sprintf("Running mix-SQP algorithm 0.1-115 on %d x %d matrix\n",n,m))
     cat(sprintf("convergence tol. (SQP):     %0.1e\n",convtol.sqp))
     cat(sprintf("conv. tol. (active-set):    %0.1e\n",convtol.activeset))
     cat(sprintf("zero threshold (solution):  %0.1e\n",zero.threshold.solution))
