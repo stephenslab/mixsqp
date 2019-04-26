@@ -315,6 +315,7 @@ double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
 // identity", from Nocedal & Wright, 2nd ed, p. 51.
 void computeactivesetsearchdir (const mat& H, const vec& y, vec& p,
 				mat& B, double ainc) {
+  double a0   = 1e-15;
   double amax = 1;
   int    n = y.n_elem;
   double d = H.diag().min();
@@ -324,7 +325,7 @@ void computeactivesetsearchdir (const mat& H, const vec& y, vec& p,
   
   // Initialize the scalar multiplier for the identity matrix.
   if (d < 0)
-    a = 1e-15 - d;
+    a = a0 - d;
 
   // Repeat until a modified Hessian is found that is symmetric
   // positive definite, or until we cannot modify it any longer.
@@ -338,10 +339,12 @@ void computeactivesetsearchdir (const mat& H, const vec& y, vec& p,
     // identity matrix in the modified Hessian.
     if (chol(R,B) | (a*ainc > amax))
       break;
+    else if (a <= 0)
+      a = a0;
     else
       a *= ainc;
   }
-
+  
   // Compute the search direction using the modified Hessian.
   p = -solve(B,y);
 }
