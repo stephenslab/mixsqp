@@ -163,7 +163,7 @@ test_that(paste("mix-SQP gives correct solution for Beckett & Diaconis",
   data(tacks)
   L   <- tacks$L
   w   <- tacks$w
-  capture.output(out <- mixsqp(L,w)
+  capture.output(out <- mixsqp(L,w))
 
   # The mix-SQP solution should be very close to the KWDual solution
   # and, more importantly, the quality of the mix-SQP solution should
@@ -310,7 +310,7 @@ test_that(paste("mix-SQP converges to solution for \"flat\" objective even",
 })
 
 # This test comes from Issue #19.
-test_that("mix-SQP converges (sometimes) in a more difficult example",{
+test_that("mix-SQP converges in a more difficult example",{
   load("flashr.example.RData")
   capture.output(out1 <- mixsqp(L))
   expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
