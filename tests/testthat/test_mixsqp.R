@@ -163,7 +163,7 @@ test_that(paste("mix-SQP gives correct solution for Beckett & Diaconis",
   data(tacks)
   L   <- tacks$L
   w   <- tacks$w
-  capture.output(out <- mixsqp(L,w,control = list(eps = 1e-15,delta = 1e-15)))
+  capture.output(out <- mixsqp(L,w)
 
   # The mix-SQP solution should be very close to the KWDual solution
   # and, more importantly, the quality of the mix-SQP solution should
@@ -322,7 +322,7 @@ test_that("mix-SQP converges (sometimes) in a more difficult example",{
 # This test comes from Issue #29.
 test_that("mix-SQP converges despite poor initialization",{
   load("ashr.example.RData")
-  out <- mixsqp(L,x0 = x0)
+  capture.output(out <- mixsqp(L,x0 = x0))
   expect_equal(out$status,mixsqp:::mixsqp.status.converged)
 })
 
