@@ -134,11 +134,6 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' becomes \code{log(L[i,]*x + ei)}, in which \code{ei} is set to
 #' \code{eps * max(L[i,])}.}
 #'
-#' \item{\code{delta}}{A small, non-negative number added to the
-#' diagonal of the Hessian to improve numerical stability (and
-#' possibly the speed) when computing the search directions in the
-#' active-set step.}
-#' 
 #' \item{\code{maxiter.sqp}}{Maximum number of SQP iterations to
 #' run before reporting a convergence failure; that is, the maximum
 #' number of quadratic subproblems that will be solved by the
@@ -295,7 +290,6 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   stepsizereduce           <- control$stepsizereduce
   minstepsize              <- control$minstepsize
   eps                      <- control$eps
-  delta                    <- control$delta
   maxiter.sqp              <- control$maxiter.sqp
   maxiter.activeset        <- control$maxiter.activeset
   numiter.em               <- control$numiter.em
@@ -417,7 +411,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   out <- mixsqp_rcpp(L,w,x,convtol.sqp,convtol.activeset,
                      zero.threshold.solution,zero.threshold.searchdir,
                      suffdecr.linesearch,stepsizereduce,minstepsize,
-                     eps,delta,maxiter.sqp,maxiter.activeset,verbose)
+                     eps,maxiter.sqp,maxiter.activeset,verbose)
   
   # Get the algorithm convergence status. The convention is that
   # status = 0 means that the algorithm has successfully converged to
@@ -491,7 +485,6 @@ mixsqp_control_default <- function()
        stepsizereduce           = 0.75,
        minstepsize              = 1e-8,
        eps                      = 1e-10,
-       delta                    = 1e-10,
        maxiter.sqp              = 1000,
        maxiter.activeset        = NULL,
        numiter.em               = 4,

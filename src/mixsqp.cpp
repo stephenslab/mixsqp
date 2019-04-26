@@ -18,10 +18,12 @@ using namespace arma;
 double mixobjective (const mat& L, const vec& w, const vec& x, const vec& e, 
 		     vec& u);
 void   computegrad  (const mat& L, const vec& w, const vec& x, const vec& e, 
-		     vec& g, mat& H, vec& u, mat& Z, const mat& I);
+		     vec& g, mat& H, vec& u, mat& Z);
 double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
 		    int maxiteractiveset, double zerothresholdsearchdir, 
 		    double convtolactiveset);
+void computeactivesetsearchdir (const mat& H, const vec& y, vec& p, mat& B,
+				double ainc, double amax);
 void backtrackinglinesearch (double f, const mat& L, const vec& w,
 			     const vec& g, const vec& x, const vec& p,
 			     const vec& eps, double suffdecr,
@@ -40,7 +42,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
                   double convtolsqp, double convtolactiveset,
 		  double zerothresholdsolution, double zerothresholdsearchdir,
 		  double suffdecr, double stepsizereduce, double minstepsize,
-		  const arma::vec& eps, double delta, int maxitersqp,
+		  const arma::vec& eps, int maxitersqp,
 		  int maxiteractiveset, bool verbose) {
   
   // Get the number of rows (n) and columns (m) of the conditional
@@ -77,7 +79,6 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   vec  u(n);    // Vector of length n storing L*x + eps or its log.
   mat  H(m,m);  // m x m matrix storing Hessian.
   mat  Z(n,m);  // n x m matrix Z = D*L, where D = diag(1/(L*x+e)).
-  mat  I(m,m);  // m x m diagonal matrix e*I.
   uvec t(m);    // Temporary unsigned int. vector result of length m.
   vec  y(m);    // Vector of length m storing y
   vec  d(m);    // Vector of length m storing absolute
@@ -85,10 +86,6 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 	        // estimates.
   
   double status = 1;  // Convergence status.
-  
-  // This is used in computing the Hessian matrix.
-  I  = eye(m,m);
-  I *= delta;
   
   // Initialize some loop variables used in the loops below.
   int i = 0; 
@@ -102,7 +99,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 
     // COMPUTE GRADIENT AND HESSIAN
     // ----------------------------
-    computegrad(L,w,x,eps,g,H,u,Z,I);
+    computegrad(L,w,x,eps,g,H,u,Z);
     
     // Determine the nonzero co-ordinates in the current estimate of
     // the solution, x. This specifies the "inactive set".
@@ -200,7 +197,7 @@ double mixobjective (const mat& L, const vec& w, const vec& x, const vec& e,
 // in these calculations are stored in three variables: u, a vector of
 // length n; Z, an n x m matrix; and ZW, another n x m matrix.
 void computegrad (const mat& L, const vec& w, const vec& x, const vec& e,
-		  vec& g, mat& H, vec& u, mat& Z, const mat& I) {
+		  vec& g, mat& H, vec& u, mat& Z) {
    
   // Compute the gradient g = -L'*(w.*u) where u = 1./(L*x + e), ".*"
   // denotes element-wise multiplication, and "./" denotes
@@ -214,7 +211,7 @@ void computegrad (const mat& L, const vec& w, const vec& x, const vec& e,
   Z = L;
   u /= sqrt(w);
   Z.each_col() %= u;
-  H = trans(Z) * Z + I;
+  H = trans(Z) * Z;
 }
 
 // This implements the active-set method from p. 472 of of Nocedal &
@@ -310,6 +307,40 @@ double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
   }
 
   return j;
+}
+
+// This implements Algorithm 3.3, "Cholesky with added multiple of the
+// identity", from Nocedal & Wright, 2nd ed, p. 51.
+void computeactivesetsearchdir (const mat& H, const vec& y, vec& p, mat& B,
+				double ainc, double amax) {
+  int    n = y.n_elem;
+  double d = H.diag().min();
+  double a = 0;
+  double anew;
+  mat    I(n,n,fill::eye);
+  mat    R(n,n);
+  
+  // Initialize the scalar multiplier for the identity matrix.
+  if (d < 0)
+    a = 1e-15 - d;
+
+  // TO DO: Explain here what this "while loop" does.
+  while (true) {
+
+    // Compute the modified Hessian.
+    B = H + a*I;
+    
+    // Attempt to compute the Cholesky factorization of the modified
+    // Hessian. If this fails, increase the weight on the 
+    anew = ainc * a;
+    if (chol(R,B) | (anew > amax))
+      break;
+    else
+      a = anew;
+  }
+
+  // Compute the search direction using the modified Hessian.
+  p = -solve(B,y);
 }
 
 // This implements the backtracking line search algorithm from p. 37

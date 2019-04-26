@@ -191,11 +191,6 @@ row of \code{L}; specifically, the ith modified logarithm term
 becomes \code{log(L[i,]*x + ei)}, in which \code{ei} is set to
 \code{eps * max(L[i,])}.}
 
-\item{\code{delta}}{A small, non-negative number added to the
-diagonal of the Hessian to improve numerical stability (and
-possibly the speed) when computing the search directions in the
-active-set step.}
-
 \item{\code{maxiter.sqp}}{Maximum number of SQP iterations to
 run before reporting a convergence failure; that is, the maximum
 number of quadratic subproblems that will be solved by the
