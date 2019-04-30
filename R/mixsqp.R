@@ -18,14 +18,14 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' containing only non-negative entries, and let \eqn{w = (w_1,
 #' \ldots, w_n)} be a vector of non-negative "weights". \code{mixsqp}
 #' computes the value of vector \eqn{x = (x_1, \ldots, x_m)}
-#' minimizing the following objective function,
-#' \deqn{f(x) = -\sum_{j=1}^n w_j \log (\sum_{k=1}^m L_{jk} x_k),}
-#' subject to the constraint that \eqn{x} lie within the simplex;
-#' that is, the entries of \eqn{x} are non-negative and sum to 1.
-#' Implicitly, there is an additional constraint \eqn{L*x > 0} in
-#' order to ensure that the objective has a finite value. In practice,
-#' this constraint only needs to be checked for the initial estimate
-#' to ensure that it holds for all subsequent iterates.
+#' minimizing the following objective function, \deqn{f(x) =
+#' -\sum_{j=1}^n w_j \log (\sum_{k=1}^m L_{jk} x_k),} subject to the
+#' constraint that \eqn{x} lie within the simplex; that is, the
+#' entries of \eqn{x} are non-negative and sum to 1.  Implicitly,
+#' there is an additional constraint \eqn{L*x > 0} in order to ensure
+#' that the objective has a finite value. In practice, this constraint
+#' only needs to be checked for the initial estimate to ensure that it
+#' holds for all subsequent iterates.
 #' 
 #' If all weights are equal, solving this optimization problem
 #' corresponds to finding the maximum-likelihood estimate of the
@@ -199,7 +199,12 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' 
 #' @return A list object with the following elements:
 #'
-#' \item{x}{The solution to the convex optimization problem.}
+#' \item{x}{If the SQP algorithm converges, this is the solution to
+#' the convex optimization problem. If the algorithm fails to
+#' converge, it is the best estimate of the solution achieved by the
+#' algorithm. Note that if the SQP algorithm terminates before
+#' reaching the solution, \item{x} may not satisfy the equality
+#' constraint; that is, the entries of \item{x} may not sum to 1.}
 #'
 #' \item{value}{The value of the objective function, \eqn{f(x)}, at
 #' \code{x}.}
@@ -375,7 +380,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 
   # Print a brief summary of the analysis, if requested.
   if (verbose) {
-    cat(sprintf("Running mix-SQP algorithm 0.1-115 on %d x %d matrix\n",n,m))
+    cat(sprintf("Running mix-SQP algorithm 0.1-116 on %d x %d matrix\n",n,m))
     cat(sprintf("convergence tol. (SQP):     %0.1e\n",convtol.sqp))
     cat(sprintf("conv. tol. (active-set):    %0.1e\n",convtol.activeset))
     cat(sprintf("zero threshold (solution):  %0.1e\n",zero.threshold.solution))
