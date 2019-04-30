@@ -44,8 +44,8 @@ A list object with the following elements:
 the convex optimization problem. If the algorithm fails to
 converge, it is the best estimate of the solution achieved by the
 algorithm. Note that if the SQP algorithm terminates before
-reaching the solution, \item{x} may not satisfy the equality
-constraint; that is, the entries of \item{x} may not sum to 1.}
+reaching the solution, \code{x} may not satisfy the equality
+constraint; that is, the entries of \code{x} may not sum to 1.}
 
 \item{value}{The value of the objective function, \eqn{f(x)}, at
 \code{x}.}
