@@ -260,5 +260,5 @@ using sequential quadratic programming. arXiv:1806.01412
 \url{https://arxiv.org/abs/1806.01412}.
 }
 \seealso{
-\code{mixobjective}, \code{mixkwdual}
+\code{\link{mixobjective}}, \code{\link{mixkwdual}}
 }

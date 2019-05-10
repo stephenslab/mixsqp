@@ -231,7 +231,7 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' using sequential quadratic programming. arXiv:1806.01412
 #' \url{https://arxiv.org/abs/1806.01412}.
 #'
-#' @seealso \code{mixobjective}, \code{mixkwdual}
+#' @seealso \code{\link{mixobjective}}, \code{\link{mixkwdual}}
 #' 
 #' @examples
 #' set.seed(1)
