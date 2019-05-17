@@ -350,9 +350,7 @@ void computeactivesetsearchdir (const mat& H, const vec& y, vec& p,
 }
 
 // This implements the backtracking line search algorithm from p. 37
-// of Nocedal & Wright, Numerical Optimization, 2nd ed, 2006. Note
-// that sum(x) = sum(y) = 1, so replacing g by g + 1 in dot product of
-// p and g has no effect.
+// of Nocedal & Wright, Numerical Optimization, 2nd ed, 2006.
 void backtrackinglinesearch (double f, const mat& L, const vec& w,
 			     const vec& g, const vec& x, const vec& p,
 			     const vec& eps, double suffdecr,
@@ -375,13 +373,14 @@ void backtrackinglinesearch (double f, const mat& L, const vec& w,
     // Check whether the new candidate solution (y) satisfies the
     // sufficient decrease condition, and remains feasible. If so,
     // accept this candidate solution.
-    if (y.min() >= 0 & fnew <= f + suffdecr*stepsize*dot(p,g))
+    if (y.min() >= 0 &
+	fnew + sum(y) <= f + sum(x) + suffdecr*stepsize*dot(p,g + 1))
       break;
     newstepsize = stepsizereduce * stepsize;
     if (newstepsize < minstepsize) {
 
       // We need to terminate backtracking line search because we have
-      // arrived at the smallest allowed step size.
+      // arrived at the smallest allowable step size.
       stepsize = minstepsize;
       y        = x + stepsize*p;
       if (y.min() < 0) {
