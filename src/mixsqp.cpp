@@ -95,7 +95,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   for (i = 0; i < maxitersqp; i++) {
 
     // Compute the value of the objective at x (obj).
-    obj[i] = mixobjective(L,w,x,eps,u);
+    obj(i) = mixobjective(L,w,x,eps,u);
 
     // COMPUTE GRADIENT AND HESSIAN
     // ----------------------------
@@ -110,16 +110,16 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     // criterion; and the number of nonzeros in the solution (nnz).
     // Note that only the dual residuals (gmin's) corresponding to the
     // nonzero co-ordinates are relevant.
-    gmin[i] = 1 + g.min();
-    nnz[i]  = sum(t);
+    gmin(i) = 1 + g.min();
+    nnz(i)  = sum(t);
     if (verbose) {
       if (i == 0)
         Rprintf("%4d %+0.9e %+0.3e%4d  ------   ------   --  --\n",
-		i + 1,obj[i],-gmin[i],int(nnz[i]));
+		i + 1,obj(i),-gmin(i),int(nnz(i)));
       else
-        Rprintf("%4d %+0.9e %+0.3e%4d %0.2e %0.2e %3d %3d\n",i + 1,obj[i],
-		-gmin[i],(int) nnz[i],stepsize[i-1],dmax[i-1],
-		(int) nqp[i-1],(int) nls[i-1]);
+        Rprintf("%4d %+0.9e %+0.3e%4d %0.2e %0.2e %3d %3d\n",i + 1,obj(i),
+		-gmin(i),(int) nnz(i),stepsize(i-1),dmax(i-1),
+		(int) nqp(i-1),(int) nls(i-1));
     }
     
     // CHECK CONVERGENCE
@@ -132,7 +132,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     // is trivially satisfied for the zero co-ordinates as the
     // gradient must be non-negative for these co-ordinates. (See
     // communication with Youngseok on Slack.)
-    if (gmin[i] >= -convtolsqp) {
+    if (gmin(i) >= -convtolsqp) {
       status = 0;
       i++;
       break;
@@ -147,19 +147,19 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     // --------------------------
     // Run the active-set solver to obtain a search direction.
     ghat   = g - H*x + 1;
-    nqp[i] = activesetqp(H,ghat,y,t,maxiteractiveset,zerothresholdsearchdir,
+    nqp(i) = activesetqp(H,ghat,y,t,maxiteractiveset,zerothresholdsearchdir,
 			 convtolactiveset,identitycontribincrease);
     p = y - x;
     
     // BACKTRACKING LINE SEARCH
     // ------------------------
-    backtrackinglinesearch(obj[i],L,w,g,x,p,eps,suffdecr,stepsizereduce,
-			   minstepsize,nls[i],stepsize[i],y,u);
+    backtrackinglinesearch(obj(i),L,w,g,x,p,eps,suffdecr,stepsizereduce,
+			   minstepsize,nls(i),stepsize(i),y,u);
     
     // UPDATE THE SOLUTION
     // -------------------
     d       = abs(x - y);
-    dmax[i] = d.max();
+    dmax(i) = d.max();
     x = y;
   }
 
@@ -243,8 +243,8 @@ double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
   for (j = 0; j < maxiteractiveset; j++) {
     
     // Define the smaller QP subproblem.
-    i0 = find(1 - t);
-    i1 = find(t);
+    i0 = find(t == 0);
+    i1 = find(t > 0);
     b  = H*y + g;
     bs = b.elem(i1);
     Hs = H.elem(i1,i1);
@@ -275,30 +275,31 @@ double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
 
       // Find an co-ordinate with the smallest multiplier, and remove
       // it from the working set.
-      k    = i0[b(i0).index_min()];
-      t[k] = 1;
+      k    = i0(b(i0).index_min());
+      t(k) = 1;
 
     // In this next part, we consider adding a co-ordinate to the
     // working set (but only if there are two or more non-zero
     // co-ordinates).
     } else {
-        
+      
       // Define the step size.
       alpha = 1;
       p0    = p;
-      p0.elem(i0).fill(0);
-      S = find(p0 < 0);
+      if (i0.n_elem > 0)
+        p0.elem(i0).fill(0);
+      S = find(p0 < -1e-15);
       if (!S.is_empty()) {
         z = -y.elem(S)/p.elem(S);
         k = z.index_min();
-        if (z[k] < 1) {
-            
+        if (z(k) < 1) {
+
           // Blocking constraint exists; find and add it to the
           // working set (but only if there are two or more non-zero
           // co-ordinates).
-          alpha = z[k];
+          alpha = z(k);
 	  if (i1.n_elem >= 2)
-	    t[S[k]] = 0;
+	    t(S(k)) = 0;
         }
       }
       
