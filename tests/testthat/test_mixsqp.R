@@ -159,7 +159,6 @@ test_that(paste("mix-SQP returns the same solution regardless whether",
                     
 test_that(paste("mix-SQP gives correct solution for Beckett & Diaconis",
                 "tack rolling example"),{
-  skip("Unclear if this test is appropriate; skipping for now")
   data(tacks)
   L   <- tacks$L
   w   <- tacks$w
