@@ -147,6 +147,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     // --------------------------
     // Run the active-set solver to obtain a search direction.
     ghat   = g - H*x + 1;
+    y      = x;
     nqp(i) = activesetqp(H,ghat,y,t,maxiteractiveset,zerothresholdsearchdir,
 			 convtolactiveset,identitycontribincrease);
     p = y - x;
@@ -219,8 +220,7 @@ void computegrad (const mat& L, const vec& w, const vec& x, const vec& e,
 double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
 		    int maxiteractiveset, double zerothresholdsearchdir, 
 		    double convtolactiveset, double identitycontribincrease) {
-  int    m     = g.n_elem;
-  double nnz   = sum(t);
+  int    m = g.n_elem;
   double alpha;  // The step size.
   int    j, k;
   vec    b(m);   // Vector of length m storing H*y + 2*g + 1.
@@ -235,9 +235,9 @@ double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
   uvec   i1(m);
   
   // Initialize the solution to the QP subproblem, y.
-  y.fill(0);
-  i1 = find(t);
-  y.elem(i1).fill(1/nnz);
+  i0 = find(t == 0);
+  if (i0.n_elem > 0)
+    y.elem(i0).fill(0);
     
   // Run active set method to solve the QP subproblem.
   for (j = 0; j < maxiteractiveset; j++) {
@@ -253,7 +253,7 @@ double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
     p.fill(0);
     computeactivesetsearchdir(Hs,bs,p0,B,identitycontribincrease);
     p.elem(i1) = p0;
-      
+
     // Reset the step size.
     alpha = 1;
     
@@ -347,7 +347,7 @@ void computeactivesetsearchdir (const mat& H, const vec& y, vec& p,
   }
   
   // Compute the search direction using the modified Hessian.
-  p = -solve(B,y);
+  p = solve(B,-y);
 }
 
 // This implements the backtracking line search algorithm from p. 37
