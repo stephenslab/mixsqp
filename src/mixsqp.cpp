@@ -234,7 +234,7 @@ double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
   uvec   i0(m);
   uvec   i1(m);
   
-  // Initialize the solution to the QP subproblem, y.
+  // Any co-ordinates belonging to the working set should be set to zero.
   i0 = find(t == 0);
   if (i0.n_elem > 0)
     y.elem(i0).fill(0);
