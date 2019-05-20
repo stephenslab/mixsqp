@@ -273,8 +273,8 @@ test_that("Case is properly handled in which one column of L is all zeros",{
   expect_warning(capture.output(out2 <- mixsqp(L)))
 
   # The two solutions should be pretty much the same.
-  expect_equal(out1$x,out2$x,tolerance = 1e-6)
-  expect_equal(out1$value,out2$value,tolerance = 1e-4)
+  expect_equal(out1$x,out2$x,tolerance = 1e-4)
+  expect_equal(out1$value,out2$value,tolerance = 1e-8)
 
   # Also check KWDual solution.
   skip_if_mixkwdual_doesnt_work()
