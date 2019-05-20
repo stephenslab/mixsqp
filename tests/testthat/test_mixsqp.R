@@ -190,8 +190,11 @@ test_that(paste("mix-SQP gives correct solution for \"short and fat\" matrix,",
                 "even when linear systems in active-set method are not",
                 "necessarily s.p.d."),{
   set.seed(1)
-  L <- matrix(rgamma(1000,1,1),nrow = 10)
+  L    <- matrix(rgamma(1000,1,1),nrow = 10)
   capture.output(out1 <- mixsqp(L))
+  capture.output(out2 <- mixsqp(L,control = list(eps = 0)))
+  expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
+  expect_equal(out2$status,mixsqp:::mixsqp.status.converged)
 
   # The mix-SQP solution should be very close to the KWDual solution
   # and, more importantly, the quality of the mix-SQP solution should
@@ -199,9 +202,11 @@ test_that(paste("mix-SQP gives correct solution for \"short and fat\" matrix,",
   # active-set method is not necessarily unique (i.e., the Hessian is
   # not s.p.d.).
   skip_if_mixkwdual_doesnt_work()
-  out2 <- mixkwdual(L)
-  expect_equal(out1$x,out2$x,tolerance = 1e-8)
-  expect_equal(out1$value,out2$value,tolerance = 1e-8)
+  out3 <- mixkwdual(L)
+  expect_equal(out1$x,out3$x,tolerance = 1e-8)
+  expect_equal(out2$x,out3$x,tolerance = 1e-8)
+  expect_equal(out1$value,out3$value,tolerance = 1e-8)
+  expect_equal(out2$value,out3$value,tolerance = 1e-8)
 })
 
 # This test comes from Issue #5.
@@ -316,7 +321,16 @@ test_that("mix-SQP converges in a more difficult example",{
 # This test comes from Issue #29.
 test_that("mix-SQP converges despite poor initialization",{
   load("ashr.example.RData")
-  capture.output(out <- mixsqp(L,x0 = x0))
-  expect_equal(out$status,mixsqp:::mixsqp.status.converged)
+  capture.output(out1 <- mixsqp(L,x0 = x0))
+  expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
 })
 
+# This test comes from Issue #30.
+test_that("mix-SQP works for difficult smashr example",{
+  load("smashr.example.RData")
+  capture.output(out1 <- mixsqp(L,w,x0))
+  expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
+  skip_if_mixkwdual_doesnt_work()
+  out2 <- mixkwdual(L)
+  expect_equal(out1$x,out2$x,tolerance = 1e-6)
+})
