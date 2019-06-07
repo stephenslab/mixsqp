@@ -69,7 +69,7 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' The \code{control} argument is a list in which any of the
 #' following named components will override the default optimization
 #' algorithm settings (as they are defined by
-#' \code{mixsqp_control_defaults}):
+#' \code{mixsqp_control_default}):
 #' 
 #' \describe{
 #' 
