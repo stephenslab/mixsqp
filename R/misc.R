@@ -42,11 +42,9 @@ verify.maxiter.arg <- function (x, arg.name = deparse(substitute(x))) {
 
 # Verify that the likelihood matrix specifying the optimization
 # problem is valid. The likelihood matrix should be a numeric matrix
-# with at least two columns, and all the entries should be positive.
-# It is assumed that the input argument is named "L".
-#
-# If the matrix is not valid, an error is reported; otherwise, TRUE is
-# returned.
+# with at least two columns. It is assumed that the input argument is
+# named "L". If the matrix is not valid, an error is reported;
+# otherwise, TRUE is returned.
 verify.likelihood.matrix <- function (L) {
   msg <- paste("Input argument \"L\" should be a numeric matrix with >= 2",
                "columns, >= 1 rows, all its entries should be non-negative,",

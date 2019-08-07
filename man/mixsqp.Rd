@@ -56,7 +56,7 @@ algorithm upon termination.}
 \item{progress}{A data frame containing more detailed information
 about the algorithm's progress. The data frame has one row per SQP
 iteration. For an explanation of the columns, see the description
-of the \code{verbose} control paramter in \sQuote{Details}. Missing
+of the \code{verbose} control parameter in \sQuote{Details}. Missing
 values (\code{NA}'s) in the last row indicate that these quantities were
 not computed because convergence was reached before computing
 them. Also note that the storage of these quantities in the
@@ -107,10 +107,7 @@ gradient does not change. A practical benefit of this property is
 that the optimization algorithm will behave similarly irrespective
 of the scale of \code{L}; for example, the same value for the
 convergence tolerance \code{convtol.sqp} will have the same effect
-at different scales. The one exception is the \code{eps} control
-parameter, and for this reason the effect of \code{eps} is
-automatically adjusted to reflect the scale of \code{L}; see the
-description of this parameter below for more details.
+at different scales.
 
 A related feature is that the solution to the optimization problem
 is invariant to rescaling the rows of \code{L}; for example, the
@@ -195,12 +192,7 @@ determined by this control parameter.}
 terms inside the logarithms to sidestep computing logarithms of
 zero. This prevents numerical problems at the cost of introducing a
 small inaccuracy in the solution. Increasing this number may lead
-to faster convergence but possibly a less accurate solution. Since
-an appropriate value of this number will depend on the "scale" of
-\code{L}, \code{eps} is automatically scaled separately for each
-row of \code{L}; specifically, the ith modified logarithm term
-becomes \code{log(L[i,]*x + ei)}, in which \code{ei} is set to
-\code{eps * max(L[i,])}.}
+to faster convergence but possibly a less accurate solution.}
 
 \item{\code{maxiter.sqp}}{Maximum number of SQP iterations to
 run before reporting a convergence failure; that is, the maximum

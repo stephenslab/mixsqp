@@ -45,10 +45,7 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' that the optimization algorithm will behave similarly irrespective
 #' of the scale of \code{L}; for example, the same value for the
 #' convergence tolerance \code{convtol.sqp} will have the same effect
-#' at different scales. The one exception is the \code{eps} control
-#' parameter, and for this reason the effect of \code{eps} is
-#' automatically adjusted to reflect the scale of \code{L}; see the
-#' description of this parameter below for more details.
+#' at different scales.
 #'
 #' A related feature is that the solution to the optimization problem
 #' is invariant to rescaling the rows of \code{L}; for example, the
@@ -133,12 +130,7 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' terms inside the logarithms to sidestep computing logarithms of
 #' zero. This prevents numerical problems at the cost of introducing a
 #' small inaccuracy in the solution. Increasing this number may lead
-#' to faster convergence but possibly a less accurate solution. Since
-#' an appropriate value of this number will depend on the "scale" of
-#' \code{L}, \code{eps} is automatically scaled separately for each
-#' row of \code{L}; specifically, the ith modified logarithm term
-#' becomes \code{log(L[i,]*x + ei)}, in which \code{ei} is set to
-#' \code{eps * max(L[i,])}.}
+#' to faster convergence but possibly a less accurate solution.}
 #'
 #' \item{\code{maxiter.sqp}}{Maximum number of SQP iterations to
 #' run before reporting a convergence failure; that is, the maximum
@@ -215,7 +207,7 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' \item{progress}{A data frame containing more detailed information
 #' about the algorithm's progress. The data frame has one row per SQP
 #' iteration. For an explanation of the columns, see the description
-#' of the \code{verbose} control paramter in \sQuote{Details}. Missing
+#' of the \code{verbose} control parameter in \sQuote{Details}. Missing
 #' values (\code{NA}'s) in the last row indicate that these quantities were
 #' not computed because convergence was reached before computing
 #' them. Also note that the storage of these quantities in the
@@ -375,12 +367,9 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
     x0 <- x0/sum(x0)
   }
 
-  # Scale "eps" by the maximum value of each row of L.
-  eps <- eps * apply(L,1,max)
-
   # Print a brief summary of the analysis, if requested.
   if (verbose) {
-    cat(sprintf("Running mix-SQP algorithm 0.1-119 on %d x %d matrix\n",n,m))
+    cat(sprintf("Running mix-SQP algorithm 0.1-120 on %d x %d matrix\n",n,m))
     cat(sprintf("convergence tol. (SQP):     %0.1e\n",convtol.sqp))
     cat(sprintf("conv. tol. (active-set):    %0.1e\n",convtol.activeset))
     cat(sprintf("zero threshold (solution):  %0.1e\n",zero.threshold.solution))
@@ -399,7 +388,8 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # RUN A FEW ITERATIONS OF EM
   # --------------------------
-  x <- x0
+  x   <- x0
+  eps <- rep(eps,n)
   if (numiter.em > 0) {
     progress.em <- data.frame(objective = rep(0,numiter.em),
                               max.rdual = rep(as.numeric(NA),numiter.em),
@@ -502,7 +492,7 @@ mixsqp_control_default <- function()
        stepsizereduce            = 0.75,
        minstepsize               = 1e-8,
        identity.contrib.increase = 10,
-       eps                       = 1e-10,
+       eps                       = 0,
        maxiter.sqp               = 1000,
        maxiter.activeset         = NULL,
        numiter.em                = 4,
