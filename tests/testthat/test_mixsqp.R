@@ -6,8 +6,7 @@ context("mixsqp")
 skip_if_mixkwdual_doesnt_work <- function() {
   testthat::skip_if_not_installed("REBayes")
   testthat::skip_if_not_installed("Rmosek")
-  testthat::skip_if(is.element("mosek_attachbuilder",
-                               getNamespaceExports("Rmosek")))
+  testthat::skip_if(!is.element("mosek",getNamespaceExports("Rmosek")))
 }
 
 test_that("Version number in mixsqp with verbose = TRUE is correct",{
@@ -101,9 +100,9 @@ test_that(paste("mix-SQP and KWDual return the same solution for",
   out2 <- mixkwdual(L)
   expect_equal(names(out2$x),colnames(L))
 
-  # The outputted solutions, and # the objective values at those
+  # The outputted solutions, and the objective values at those
   # solutions, should be nearly identical.
-  expect_equal(out1$x,out2$x,tolerance = 1e-6)
+  expect_equal(out1$x,out2$x,tolerance = 1e-4)
   expect_equal(out1$value,out2$value,tolerance = 1e-8)
 })
 
@@ -130,8 +129,8 @@ test_that(paste("mix-SQP & KWDual return the same solution for",
   
   # The outputted solutions, and the objective values at those
   # solutions, should be nearly identical.
-  expect_equal(out1$x,out2$x,tolerance = 2e-8)
-  expect_equal(out1$value,out2$value,tolerance = 2e-8)
+  expect_equal(out1$x,out2$x,tolerance = 1e-4)
+  expect_equal(out1$value,out2$value,tolerance = 1e-6)
 })
 
 test_that(paste("mix-SQP returns the same solution regardless whether",
@@ -156,7 +155,32 @@ test_that(paste("mix-SQP returns the same solution regardless whether",
   expect_equal(out2$status,mixsqp:::mixsqp.status.converged)
   expect_equal(out1$x,out2$x,tolerance = 1e-8)
 })
-                    
+
+test_that(paste("mix-SQP returns the correct solution with log-likelihoods",
+                "are provided"),{
+  
+  # Simulate a 100 x 10 likelihood matrix as well as different weights
+  # for the rows of this matrix.
+  set.seed(1)
+  L <- simulatemixdata(100,10,normalize.rows = FALSE)$L
+  w <- runif(100)
+  w <- w/sum(w)
+
+  # Compute the log-likelihood matrix for the same data.
+  set.seed(1)
+  logL <- simulatemixdata(100,10,log = TRUE)$L
+  
+  # Apply mix-SQP to the likelihoods and the log-likelihoods.
+  capture.output(out1 <- mixsqp(L,w))
+  capture.output(out2 <- mixsqp(logL,w,log = TRUE))
+
+  # The outputted solutions should be nearly identical (though the
+  # values of the objectives will be different).
+  expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
+  expect_equal(out2$status,mixsqp:::mixsqp.status.converged)
+  expect_equal(out1$x,out2$x,tolerance = 1e-8)
+})
+
 test_that(paste("mix-SQP gives correct solution for Beckett & Diaconis",
                 "tack rolling example"),{
 
@@ -204,8 +228,8 @@ test_that(paste("mix-SQP gives correct solution for \"short and fat\" matrix,",
   # not s.p.d.).
   skip_if_mixkwdual_doesnt_work()
   out2 <- mixkwdual(L)
-  expect_equal(out1$x,out2$x,tolerance = 1e-8)
-  expect_equal(out1$value,out2$value,tolerance = 1e-8)
+  expect_equal(out1$x,out2$x,tolerance = 1e-4)
+  expect_equal(out1$value,out2$value,tolerance = 1e-6)
 })
 
 # This test comes from Issue #5.
@@ -234,8 +258,8 @@ test_that(paste("mix-SQP converges, and outputs correct solution, for example",
   # the KWDual solution.
   skip_if_mixkwdual_doesnt_work()
   out4 <- mixkwdual(L)
-  expect_equal(out2$x,out4$x,tolerance = 1e-6)
-  expect_equal(out3$x,out4$x,tolerance = 1e-6)
+  expect_equal(out2$x,out4$x,tolerance = 1e-5)
+  expect_equal(out3$x,out4$x,tolerance = 1e-5)
   expect_equal(out2$value,out4$value,tolerance = 1e-6)
   expect_equal(out3$value,out4$value,tolerance = 1e-6)
 })
@@ -283,7 +307,7 @@ test_that("Case is properly handled in which one column of L is all zeros",{
   # Also check KWDual solution.
   skip_if_mixkwdual_doesnt_work()
   expect_warning(out3 <- mixkwdual(L))
-  expect_equal(out1$x,out3$x,tolerance = 1e-6)
+  expect_equal(out1$x,out3$x,tolerance = 0.001)
   expect_equal(out1$value,out3$value,tolerance = 1e-6)
 })
 
@@ -314,7 +338,7 @@ test_that("mix-SQP converges in a more difficult example",{
   expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
   skip_if_mixkwdual_doesnt_work()
   out2 <- mixkwdual(L)
-  expect_equal(out1$x,out2$x,tolerance = 1e-6)
+  expect_equal(out1$x,out2$x,tolerance = 0.001)
 })
 
 # This test comes from Issue #29.

@@ -127,3 +127,12 @@ logspace <- function (x, y, n)
 scale.cols <- function (A, b)
   t(t(A) * b)
 
+# Normalize the rows of A so that the largest entry in each row is 1.
+normalize.likelihoods <- function (A)
+  A / apply(A,1,max)
+
+# Compute B = exp(A) and normalize the rows of B so that the largest
+# entry in each row is 1.
+normalize.loglikelihoods <- function (A)
+  exp(A - apply(A,1,max))
+    

@@ -19,6 +19,8 @@
 #' univariate normals (with zero mean and standard deviations 1, 3 and
 #' 5), and a t-distribution with 2 degrees of freedom.
 #'
+#' @param log If \code{log = TRUE}, return the
+#' 
 #' @param normalize.rows If \code{normalize.rows = TRUE}, normalize
 #' the rows of the likelihood matrix so that the largest entry in each
 #' row is 1. The maximum-likelihood estimate of the mixture weights
@@ -38,7 +40,9 @@
 #' \item{L}{The n x m conditional likelihood matrix, in which
 #' individual entries (i,j) of the likelihood matrix are given by the
 #' normal density function with mean zero and variance \code{1 +
-#' s[j]^2}.}
+#' s[j]^2}. If \code{normalize.rows = TRUE}, the entries in each row
+#' are normalized such that the larger entry in each row is 1. If
+#' \code{log = TRUE}, the matrix of log-likelihoods is returned.}
 #' 
 #' @examples
 #' 
@@ -53,8 +57,8 @@
 #' 
 #' @export
 #' 
-simulatemixdata <- function (n, m, simtype = c("n","nt"), 
-                             normalize.rows = TRUE) {
+simulatemixdata <- function (n, m, simtype = c("n","nt"), log = FALSE,
+                             normalize.rows = !log) {
 
   # CHECK INPUTS
   # ------------
@@ -71,8 +75,11 @@ simulatemixdata <- function (n, m, simtype = c("n","nt"),
     stop("Argument \"simtype\" should be a character vector")
   simtype <- match.arg(simtype)
 
-  # Input argument normalize.rows should be TRUE or FALSE.
+  # Input arguments "log" and "normalize.rows" should be TRUE or FALSE.
+  verify.logical.arg(log)
   verify.logical.arg(normalize.rows)
+  if (log & normalize.rows)
+    stop("Arguments \"log\" and \"normalize.rows\" cannot both be TRUE.")
   
   # SIMULATE DATA FROM MIXTURE
   # --------------------------
@@ -104,14 +111,14 @@ simulatemixdata <- function (n, m, simtype = c("n","nt"),
   # error assigned to sample i. Here, all s.e.'s are assumed to be 1.
   L <- matrix(0,n,m)
   for (j in 1:m)
-    L[,j] <- dnorm(x,sd = sqrt(1 + s[j]^2))
+    L[,j] <- dnorm(x,sd = sqrt(1 + s[j]^2),log = log)
 
   # NORMALIZE LIKELIHOOD MATRIX
   # ---------------------------
   # Normalize the rows of the likelihood matrix so that the largest
   # entry in each row is 1.
   if (normalize.rows)
-    L <- L / apply(L,1,max)
+    L <- normalize.likelihoods(L)
 
   # Return the simulated data points (x), the standard deviations
   # specifying the mixture prior (s), and the conditional likelihood

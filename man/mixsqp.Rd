@@ -5,7 +5,7 @@
 \alias{mixsqp_control_default}
 \title{Maximum-likelihood estimation of mixture proportions using SQP}
 \usage{
-mixsqp(L, w = rep(1, nrow(L)), x0 = rep(1, ncol(L)),
+mixsqp(L, w = rep(1, nrow(L)), x0 = rep(1, ncol(L)), log = FALSE,
   control = list())
 
 mixsqp_control_default()
@@ -16,8 +16,13 @@ In the context of mixture-model fitting, \code{L[j,k]} should be
 the value of the kth mixture component density at the jth data
 point. \code{L} should be a numeric matrix with at least two
 columns, with all entries being non-negative and finite (and not
-missing). For large matrices, it is preferrable that the matrix is
-stored in double-precision; see \code{\link{storage.mode}}.}
+missing). In some cases, it is easier or more natural to compute
+\code{log(L)}; for example, it is often easier to compute the
+log-likelihood rather than the likelihood. Setting \code{log = TRUE}
+will tell \code{mixsqp} to interpret this input as the logarithm of
+the data matrix. Note that, for large matrices, it is preferrable
+that the matrix is stored in double-precision; see
+\code{\link{storage.mode}}.}
 
 \item{w}{An optional numeric vector, with one entry for each row of
 \code{L}, specifying the "weights" associated with the rows of
@@ -33,6 +38,9 @@ finite, non-missing, non-negative values, and all entries of
 objective evaluates to a finite value at \code{x0}). The vector
 will be normalized to sum to 1. By default, \code{x0} is the vector
 with all equal values.}
+
+\item{log}{When \code{log = TRUE}, the input matrix \code{L} is
+interpreted as containing the logarithm of the data matrix.}
 
 \item{control}{A list of parameters controlling the behaviour of
 the optimization algorithm. See \sQuote{Details}.}

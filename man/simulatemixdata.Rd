@@ -4,7 +4,8 @@
 \alias{simulatemixdata}
 \title{Create likelihood matrix from simulated data set}
 \usage{
-simulatemixdata(n, m, simtype = c("n", "nt"), normalize.rows = TRUE)
+simulatemixdata(n, m, simtype = c("n", "nt"), log = FALSE,
+  normalize.rows = !log)
 }
 \arguments{
 \item{n}{Positive integer specifying the number of samples to
@@ -20,6 +21,8 @@ univariate normals with mean zero and standard deviation 1, 3 and
 6. If \code{simtype = "nt"}, simulate from a mixture of three
 univariate normals (with zero mean and standard deviations 1, 3 and
 5), and a t-distribution with 2 degrees of freedom.}
+
+\item{log}{If \code{log = TRUE}, return the}
 
 \item{normalize.rows}{If \code{normalize.rows = TRUE}, normalize
 the rows of the likelihood matrix so that the largest entry in each
@@ -41,7 +44,9 @@ the \code{ashr} package.}
 \item{L}{The n x m conditional likelihood matrix, in which
 individual entries (i,j) of the likelihood matrix are given by the
 normal density function with mean zero and variance \code{1 +
-s[j]^2}.}
+s[j]^2}. If \code{normalize.rows = TRUE}, the entries in each row
+are normalized such that the larger entry in each row is 1. If
+\code{log = TRUE}, the matrix of log-likelihoods is returned.}
 }
 \description{
 Simulate a data set, then compute the conditional
