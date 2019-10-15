@@ -4,9 +4,9 @@ context("mixsqp")
 # is used for some of the tests to check whether the correct Rmosek
 # package (the one downloaded from mosek.com) is installed.
 skip_if_mixkwdual_doesnt_work <- function() {
-  testthat::skip_if_not_installed("REBayes")
-  testthat::skip_if_not_installed("Rmosek")
-  testthat::skip_if(!is.element("mosek",getNamespaceExports("Rmosek")))
+  skip_if_not_installed("REBayes")
+  skip_if_not_installed("Rmosek")
+  skip_if(!is.element("mosek_lptoprob",getNamespaceExports("Rmosek")))
 }
 
 test_that("Version number in mixsqp with verbose = TRUE is correct",{
