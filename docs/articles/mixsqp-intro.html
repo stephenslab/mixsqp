@@ -8,8 +8,8 @@
 <title>Illustration of mixsqp applied to a small data set, and a large one • mixsqp</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script><script src="../pkgdown.js"></script><meta property="og:title" content="Illustration of mixsqp applied to a small data set, and a large one">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Illustration of mixsqp applied to a small data set, and a large one">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
@@ -18,7 +18,7 @@
 <![endif]-->
 </head>
 <body>
-    <div class="container template-vignette">
+    <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
@@ -27,8 +27,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">mixsqp</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">mixsqp</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.121</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
@@ -55,17 +59,20 @@
 
       
       </header><div class="row">
-  <div class="col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1>Illustration of mixsqp applied to a small data set, and a large one</h1>
                         <h4 class="author">Youngseok Kim, Peter Carbonetto and Matthew Stephens</h4>
             
-            <h4 class="date">2018-12-10</h4>
-          </div>
+            <h4 class="date">2019-10-14</h4>
+      
+      <small class="dont-index">Source: <a href="https://github.com/stephenslab/mixsqp/blob/master/vignettes/mixsqp-intro.Rmd"><code>vignettes/mixsqp-intro.Rmd</code></a></small>
+      <div class="hidden name"><code>mixsqp-intro.Rmd</code></div>
+
+    </div>
 
     
     
-<div class="contents">
 <p>In this vignette, we illustrate the use of the sequential quadratic programming (SQP) algorithm implemented in <code>mixsqp</code>, and we compare its runtime and accuracy against an interior-point (IP) solver implemented by the <a href="https://www.mosek.com">MOSEK</a> commercial software (it is called by the “KWDual” function in the <a href="https://cran.r-project.org/package=REBayes">REBayes package</a>).</p>
 <p>If you do not have the Rmosek and REBayes packages installed on your computer, you may skip over these steps in the vignette.</p>
 <div id="environment-set-up" class="section level2">
@@ -73,8 +80,6 @@
 <a href="#environment-set-up" class="anchor"></a>Environment set-up</h2>
 <p>Load the <code>mixsqp</code> package.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(mixsqp)</code></pre></div>
-<p>Optionally, load the <code>Rmosek</code> package. (The Rmosek package is only used to check the version of MOSEK.)</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(Rmosek)</code></pre></div>
 <p>Next, initialize the sequence of pseudorandom numbers.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">1</span>)</code></pre></div>
 </div>
@@ -91,24 +96,30 @@
 <h2 class="hasAnchor">
 <a href="#fit-mixture-model" class="anchor"></a>Fit mixture model</h2>
 <p>Now we fit the mixture model using the SQP algorithm:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit.sqp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixSQP.html">mixsqp</a></span>(L)
-<span class="co"># Running mix-SQP algorithm 0.1-85 on 1000 x 20 matrix</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit.sqp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixsqp.html">mixsqp</a></span>(L)
+<span class="co"># Running mix-SQP algorithm 0.1-121 on 1000 x 20 matrix</span>
 <span class="co"># convergence tol. (SQP):     1.0e-08</span>
 <span class="co"># conv. tol. (active-set):    1.0e-10</span>
-<span class="co"># zero threshold (solution):  1.0e-06</span>
-<span class="co"># zero thresh. (search dir.): 1.0e-08</span>
+<span class="co"># zero threshold (solution):  1.0e-08</span>
+<span class="co"># zero thresh. (search dir.): 1.0e-15</span>
+<span class="co"># l.s. sufficient decrease:   1.0e-02</span>
+<span class="co"># step size reduction factor: 7.5e-01</span>
+<span class="co"># minimum step size:          1.0e-08</span>
 <span class="co"># max. iter (SQP):            1000</span>
-<span class="co"># max. iter (active-set):     100</span>
-<span class="co"># iter    objective max(rdual) nnz max.diff nqp nls</span>
-<span class="co">#    1 +7.43494e-01 +2.102e-01  20       NA  NA  NA</span>
-<span class="co">#    2 +7.10831e-01 +2.612e+00   4 3.44e-01  33   1</span>
-<span class="co">#    3 +6.62093e-01 +1.084e+00   4 1.08e-01   5   1</span>
-<span class="co">#    4 +6.45338e-01 +3.914e-01   5 2.39e-01  10   1</span>
-<span class="co">#    5 +6.35842e-01 +1.149e-01   4 3.58e-02   3   1</span>
-<span class="co">#    6 +6.31837e-01 +2.390e-02   5 2.06e-01   4   1</span>
-<span class="co">#    7 +6.28742e-01 +3.280e-03   4 7.64e-02   3   1</span>
-<span class="co">#    8 +6.28208e-01 +5.598e-05   4 8.00e-03   2   1</span>
-<span class="co">#    9 +6.28198e-01 -1.570e-08   4 1.13e-04   2   1</span>
+<span class="co"># max. iter (active-set):     21</span>
+<span class="co"># number of EM iterations:    4</span>
+<span class="co"># iter        objective max(rdual) nnz stepsize max.diff nqp nls</span>
+<span class="co">#    1 +6.825854615e-01  -- EM --   20 1.00e+00 3.43e-02  --  --</span>
+<span class="co">#    2 +6.608901307e-01  -- EM --   20 1.00e+00 1.12e-02  --  --</span>
+<span class="co">#    3 +6.501637781e-01  -- EM --   20 1.00e+00 8.83e-03  --  --</span>
+<span class="co">#    4 +6.441429557e-01  -- EM --   20 1.00e+00 7.64e-03  --  --</span>
+<span class="co">#    1 +6.441429557e-01 +7.692e-02  20  ------   ------   --  --</span>
+<span class="co">#    2 +6.398064355e-01 +3.950e-02  20 9.90e-01 4.28e-01  21   1</span>
+<span class="co">#    3 +6.296311434e-01 +5.905e-03  20 9.90e-01 4.84e-01  21   1</span>
+<span class="co">#    4 +6.282317544e-01 +1.663e-04  17 9.90e-01 5.86e-03  18   1</span>
+<span class="co">#    5 +6.281982044e-01 +1.773e-06   6 9.90e-01 2.75e-04  17   1</span>
+<span class="co">#    6 +6.281978492e-01 +1.774e-08   4 9.90e-01 2.98e-06   4   1</span>
+<span class="co">#    7 +6.281978456e-01 +1.774e-10   4 9.90e-01 2.98e-08   2   1</span>
 <span class="co"># Convergence criteria met---optimal solution found.</span></code></pre></div>
 <p>In this example, the SQP algorithm converged to a solution in a small number of iterations.</p>
 <p>By default, <code>mixsqp</code> outputs information on its progress. It begins by summarizing the optimization problem and the algorithm settings used. (Since we did not change these settings in the <code>mixsqp</code> call, all the settings shown here are the default settings.)</p>
@@ -126,10 +137,7 @@
 <p>If you run the IP algorithm, you should see that the IP and SQP solutions achieve nearly the same objective value.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at SQP solution: %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.sqp<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at IP solution:  %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.ip<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))
-<span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Difference in objectives:  %0.4e</span><span class="ch">\n</span><span class="st">"</span>,fit.sqp<span class="op">$</span>value <span class="op">-</span><span class="st"> </span>fit.ip<span class="op">$</span>value))
-<span class="co"># Objective at SQP solution: 0.6281978481946300</span>
-<span class="co"># Objective at IP solution:  0.6281978456083795</span>
-<span class="co"># Difference in objectives:  2.5863e-09</span></code></pre></div>
+<span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Difference in objectives:  %0.4e</span><span class="ch">\n</span><span class="st">"</span>,fit.sqp<span class="op">$</span>value <span class="op">-</span><span class="st"> </span>fit.ip<span class="op">$</span>value))</code></pre></div>
 </div>
 <div id="comparing-the-sqp-and-ip-solvers-in-a-large-data-set" class="section level2">
 <h2 class="hasAnchor">
@@ -140,40 +148,69 @@
 <span class="kw">dim</span>(L)
 <span class="co"># [1] 100000    100</span></code></pre></div>
 <p>Now we fit the model using the SQP algorithm:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">timing &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.sqp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixSQP.html">mixsqp</a></span>(L))
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">timing &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.sqp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixsqp.html">mixsqp</a></span>(L))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Computation took %0.2f seconds</span><span class="ch">\n</span><span class="st">"</span>,timing[<span class="st">"elapsed"</span>]))
-<span class="co"># Running mix-SQP algorithm 0.1-85 on 100000 x 100 matrix</span>
+<span class="co"># Running mix-SQP algorithm 0.1-121 on 100000 x 100 matrix</span>
 <span class="co"># convergence tol. (SQP):     1.0e-08</span>
 <span class="co"># conv. tol. (active-set):    1.0e-10</span>
-<span class="co"># zero threshold (solution):  1.0e-06</span>
-<span class="co"># zero thresh. (search dir.): 1.0e-08</span>
+<span class="co"># zero threshold (solution):  1.0e-08</span>
+<span class="co"># zero thresh. (search dir.): 1.0e-15</span>
+<span class="co"># l.s. sufficient decrease:   1.0e-02</span>
+<span class="co"># step size reduction factor: 7.5e-01</span>
+<span class="co"># minimum step size:          1.0e-08</span>
 <span class="co"># max. iter (SQP):            1000</span>
 <span class="co"># max. iter (active-set):     100</span>
-<span class="co"># iter    objective max(rdual) nnz max.diff nqp nls</span>
-<span class="co">#    1 +7.79069e-01 +2.447e-01 100       NA  NA  NA</span>
-<span class="co">#    2 +6.92758e-01 +2.219e+01   4 3.62e-01 100   1</span>
-<span class="co">#    3 +6.37165e-01 +9.824e+00   7 4.91e-01  47   1</span>
-<span class="co">#    4 +6.23319e-01 +4.545e+00   4 2.07e-01  14   1</span>
-<span class="co">#    5 +6.17706e-01 +1.251e+00   5 2.97e-01  13   1</span>
-<span class="co">#    6 +6.16019e-01 +2.574e-01   5 2.73e-01  14   1</span>
-<span class="co">#    7 +6.15240e-01 +4.100e-02   5 2.19e-01  35   1</span>
-<span class="co">#    8 +6.15066e-01 +4.111e-03   7 1.02e-01  24   1</span>
-<span class="co">#    9 +6.15053e-01 +2.241e-04   7 2.80e-03   2   1</span>
-<span class="co">#   10 +6.15052e-01 +9.288e-07   7 9.53e-04   2   1</span>
-<span class="co">#   11 +6.15052e-01 -1.543e-08   7 1.14e-05   2   1</span>
+<span class="co"># number of EM iterations:    4</span>
+<span class="co"># iter        objective max(rdual) nnz stepsize max.diff nqp nls</span>
+<span class="co">#    1 +6.740034242e-01  -- EM --  100 1.00e+00 8.05e-03  --  --</span>
+<span class="co">#    2 +6.466159203e-01  -- EM --  100 1.00e+00 2.22e-03  --  --</span>
+<span class="co">#    3 +6.355010165e-01  -- EM --  100 1.00e+00 1.58e-03  --  --</span>
+<span class="co">#    4 +6.297174676e-01  -- EM --  100 1.00e+00 1.45e-03  --  --</span>
+<span class="co">#    1 +6.297174676e-01 +7.931e-02 100  ------   ------   --  --</span>
+<span class="co">#    2 +6.267517521e-01 +9.881e-02 100 9.90e-01 4.94e-01 100   1</span>
+<span class="co">#    3 +6.161494734e-01 +1.676e-02  94 9.90e-01 1.63e-01 100   1</span>
+<span class="co">#    4 +6.152960256e-01 +2.925e-03  72 9.90e-01 4.85e-03 100   1</span>
+<span class="co">#    5 +6.152457037e-01 +8.155e-04   8 9.90e-01 1.96e-02 100   1</span>
+<span class="co">#    6 +6.152227140e-01 +5.817e-04   7 9.90e-01 4.14e-02 100   1</span>
+<span class="co">#    7 +6.152110142e-01 +5.803e-04   6 9.90e-01 1.41e-03 100   1</span>
+<span class="co">#    8 +6.152108509e-01 +5.803e-04   6 9.90e-01 1.84e-05 100   1</span>
+<span class="co">#    9 +6.153315474e-01 +3.887e-04   6 9.90e-01 5.14e-01 100   1</span>
+<span class="co">#   10 +6.150626441e-01 +6.364e-05   6 9.90e-01 5.14e-03 100   1</span>
+<span class="co">#   11 +6.150598215e-01 +3.018e-04   8 9.90e-01 8.00e-02 100   1</span>
+<span class="co">#   12 +6.150554886e-01 +1.460e-05   8 9.90e-01 1.15e-02 100   1</span>
+<span class="co">#   13 +6.150534507e-01 +4.006e-05  12 9.90e-01 1.68e-01 100   1</span>
+<span class="co">#   14 +6.150525127e-01 +2.982e-06  10 9.90e-01 1.71e-03 100   1</span>
+<span class="co">#   15 +6.150525031e-01 +2.981e-06   9 9.90e-01 1.70e-05 100   1</span>
+<span class="co">#   16 +6.150525031e-01 +2.981e-06   7 9.90e-01 1.70e-07 100   1</span>
+<span class="co">#   17 +6.150525031e-01 +2.981e-06   7 9.90e-01 1.68e-09 100   1</span>
+<span class="co">#   18 +6.150525031e-01 +2.981e-06   7 9.90e-01 2.16e-11 100   1</span>
+<span class="co">#   19 +6.150524911e-01 +1.830e-06   8 9.90e-01 1.54e-02 100   1</span>
+<span class="co">#   20 +6.150524684e-01 +1.808e-06   8 9.90e-01 1.54e-04 100   1</span>
+<span class="co">#   21 +6.150524682e-01 +1.808e-06   8 9.90e-01 1.54e-06 100   1</span>
+<span class="co">#   22 +6.150524682e-01 +1.808e-06   7 9.90e-01 1.54e-08 100   1</span>
+<span class="co">#   23 +6.150524682e-01 +1.808e-06   7 9.90e-01 1.57e-10 100   1</span>
+<span class="co">#   24 +6.150522753e-01 +8.089e-06   8 9.90e-01 1.30e-01 100   1</span>
+<span class="co">#   25 +6.150522459e-01 +7.095e-06   8 9.90e-01 1.30e-03 100   1</span>
+<span class="co">#   26 +6.150522456e-01 +7.085e-06   8 9.90e-01 1.30e-05 100   1</span>
+<span class="co">#   27 +6.150522456e-01 +7.085e-06   7 9.90e-01 1.30e-07 100   1</span>
+<span class="co">#   28 +6.150522456e-01 +7.085e-06   7 9.90e-01 1.41e-09 100   1</span>
+<span class="co">#   29 +6.150522456e-01 +7.085e-06   7 9.90e-01 1.32e-11 100   1</span>
+<span class="co">#   30 +6.150522456e-01 +7.085e-06   7 9.90e-01 1.49e-12 100   1</span>
+<span class="co">#   31 +6.150522456e-01 +7.085e-06   7 9.90e-01 6.24e-12 100   1</span>
+<span class="co">#   32 +6.150522462e-01 +1.060e-06   8 9.90e-01 2.89e-03 100   1</span>
+<span class="co">#   33 +6.150522430e-01 +1.061e-06   8 9.90e-01 3.11e-05 100   1</span>
+<span class="co">#   34 +6.150522429e-01 +1.061e-06   7 9.90e-01 3.10e-07 100   1</span>
+<span class="co">#   35 +6.150522396e-01 +7.583e-08   8 9.90e-01 1.62e-02  19   1</span>
+<span class="co">#   36 +6.150522315e-01 +7.675e-10   8 9.90e-01 1.62e-04   7   1</span>
 <span class="co"># Convergence criteria met---optimal solution found.</span>
-<span class="co"># Computation took 7.54 seconds</span></code></pre></div>
+<span class="co"># Computation took 25.36 seconds</span></code></pre></div>
 <p>If you have the REBayes package, you can also run the IP method:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">timing &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.ip  &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixkwdual.html">mixkwdual</a></span>(L))
-<span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Computation took %0.2f seconds</span><span class="ch">\n</span><span class="st">"</span>,timing[<span class="st">"elapsed"</span>]))
-<span class="co"># Computation took 14.45 seconds</span></code></pre></div>
+<span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Computation took %0.2f seconds</span><span class="ch">\n</span><span class="st">"</span>,timing[<span class="st">"elapsed"</span>]))</code></pre></div>
 <p>If you run the IP algorithm, you should find that the SQP algorithm was considerably faster than the IP solver, and it converged to a solution with nearly the same objective value as the IP solution.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at SQP solution: %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.sqp<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Objective at IP solution:  %0.16f</span><span class="ch">\n</span><span class="st">"</span>,fit.ip<span class="op">$</span>value,<span class="dt">digits =</span> <span class="dv">16</span>))
-<span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Difference in objectives:  %0.4e</span><span class="ch">\n</span><span class="st">"</span>,fit.sqp<span class="op">$</span>value <span class="op">-</span><span class="st"> </span>fit.ip<span class="op">$</span>value))
-<span class="co"># Objective at SQP solution: 0.6150522313978147</span>
-<span class="co"># Objective at IP solution:  0.6150522313757822</span>
-<span class="co"># Difference in objectives:  2.2032e-11</span></code></pre></div>
+<span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Difference in objectives:  %0.4e</span><span class="ch">\n</span><span class="st">"</span>,fit.sqp<span class="op">$</span>value <span class="op">-</span><span class="st"> </span>fit.ip<span class="op">$</span>value))</code></pre></div>
 </div>
 <div id="session-information" class="section level2">
 <h2 class="hasAnchor">
@@ -195,18 +232,17 @@
 <span class="co"># [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
 <span class="co"># </span>
 <span class="co"># other attached packages:</span>
-<span class="co"># [1] Rmosek_8.0.69 Matrix_1.2-12 mixsqp_0.1-85</span>
+<span class="co"># [1] mixsqp_0.1-121</span>
 <span class="co"># </span>
 <span class="co"># loaded via a namespace (and not attached):</span>
-<span class="co">#  [1] Rcpp_1.0.0      lattice_0.20-35 digest_0.6.17   rprojroot_1.3-2</span>
-<span class="co">#  [5] grid_3.4.3      backports_1.1.2 magrittr_1.5    evaluate_0.11  </span>
-<span class="co">#  [9] stringi_1.2.4   rmarkdown_1.10  tools_3.4.3     stringr_1.3.1  </span>
-<span class="co"># [13] REBayes_1.3     yaml_2.2.0      compiler_3.4.3  htmltools_0.3.6</span>
-<span class="co"># [17] knitr_1.20</span></code></pre></div>
-<p>If you used <code>REBayes</code> and <code>Rmosek</code> above, it is also helpful to record the version of MOSEK that was used.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="http://www.rdocumentation.org/packages/Rmosek/topics/mosek_version">mosek_version</a></span>()
-<span class="co"># [1] "MOSEK 8.1.0.27"</span></code></pre></div>
-</div>
+<span class="co">#  [1] Rcpp_1.0.1       knitr_1.23       xml2_1.2.0       magrittr_1.5    </span>
+<span class="co">#  [5] roxygen2_6.1.1   REBayes_1.8      MASS_7.3-48      lattice_0.20-35 </span>
+<span class="co">#  [9] R6_2.4.0         rlang_0.3.1      stringr_1.4.0    tools_3.4.3     </span>
+<span class="co"># [13] grid_3.4.3       xfun_0.7         htmltools_0.3.6  commonmark_1.7  </span>
+<span class="co"># [17] yaml_2.2.0       digest_0.6.18    assertthat_0.2.1 rprojroot_1.3-2 </span>
+<span class="co"># [21] pkgdown_1.1.0    crayon_1.3.4     Matrix_1.2-12    fs_1.2.7        </span>
+<span class="co"># [25] memoise_1.1.0    evaluate_0.13    rmarkdown_1.16   stringi_1.4.3   </span>
+<span class="co"># [29] compiler_3.4.3   Rmosek_9.0.96    desc_1.2.0       backports_1.1.2</span></code></pre></div>
 </div>
   </div>
 
@@ -237,6 +273,8 @@
 
       </footer>
 </div>
+
+  
 
   </body>
 </html>

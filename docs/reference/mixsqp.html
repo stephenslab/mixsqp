@@ -21,12 +21,15 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
 <meta property="og:title" content="Maximum-likelihood estimation of mixture proportions using SQP — mixsqp" />
 
 <meta property="og:description" content="The mixsqp function uses a Sequential Quadratic
@@ -34,9 +37,12 @@ Programming (SQP) algorithm to find the maximum likelihood
 estimates of mixture proportions in a (finite) mixture model. More
 generally, mixsqp solves the corresponding constrained,
 convex optimization problem, which is given below (see
-&#8216;Details&#8217;). See &#8216;References&#8217; for more details about
+&amp;#8216;Details&amp;#8217;). See &amp;#8216;References&amp;#8217; for more details about
 the SQP algorithm." />
 <meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -59,8 +65,12 @@ the SQP algorithm." />
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">mixsqp</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">mixsqp</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.121</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -79,6 +89,7 @@ the SQP algorithm." />
   <a href="https://github.com/stephenslab/mixsqp">Source</a>
 </li>
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -86,12 +97,15 @@ the SQP algorithm." />
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Maximum-likelihood estimation of mixture proportions using SQP</h1>
+    <small class="dont-index">Source: <a href='https://github.com/stephenslab/mixsqp/blob/master/R/mixsqp.R'><code>R/mixsqp.R</code></a></small>
+    <div class="hidden name"><code>mixsqp.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
     <p>The <code>mixsqp</code> function uses a Sequential Quadratic
 Programming (SQP) algorithm to find the maximum likelihood
@@ -101,13 +115,14 @@ convex optimization problem, which is given below (see
 &#8216;Details&#8217;). See &#8216;References&#8217; for more details about
 the SQP algorithm.</p>
     
+    </div>
 
-    <pre class="usage"><span class='fu'>mixsqp</span>(<span class='no'>L</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)), <span class='kw'>x0</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>ncol</span>(<span class='no'>L</span>)),
+    <pre class="usage"><span class='fu'>mixsqp</span>(<span class='no'>L</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)), <span class='kw'>x0</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>ncol</span>(<span class='no'>L</span>)), <span class='kw'>log</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>control</span> <span class='kw'>=</span> <span class='fu'>list</span>())
 
 <span class='fu'>mixsqp_control_default</span>()</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -117,8 +132,13 @@ In the context of mixture-model fitting, <code>L[j,k]</code> should be
 the value of the kth mixture component density at the jth data
 point. <code>L</code> should be a numeric matrix with at least two
 columns, with all entries being non-negative and finite (and not
-missing). For large matrices, it is preferrable that the matrix is
-stored in double-precision; see <code>storage.mode</code>.</p></td>
+missing). In some cases, it is easier or more natural to compute
+<code>log(L)</code>; for example, it is often easier to compute the
+log-likelihood rather than the likelihood. Setting <code>log = TRUE</code>
+will tell <code>mixsqp</code> to interpret this input as the logarithm of
+the data matrix. Note that, for large matrices, it is preferrable
+that the matrix is stored in double-precision; see
+<code>storage.mode</code>.</p></td>
     </tr>
     <tr>
       <th>w</th>
@@ -140,6 +160,11 @@ will be normalized to sum to 1. By default, <code>x0</code> is the vector
 with all equal values.</p></td>
     </tr>
     <tr>
+      <th>log</th>
+      <td><p>When <code>log = TRUE</code>, the input matrix <code>L</code> is
+interpreted as containing the logarithm of the data matrix.</p></td>
+    </tr>
+    <tr>
       <th>control</th>
       <td><p>A list of parameters controlling the behaviour of
 the optimization algorithm. See &#8216;Details&#8217;.</p></td>
@@ -149,7 +174,12 @@ the optimization algorithm. See &#8216;Details&#8217;.</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A list object with the following elements:</p>
-<dt>x</dt><dd><p>The solution to the convex optimization problem.</p></dd>
+<dt>x</dt><dd><p>If the SQP algorithm converges, this is the solution to
+the convex optimization problem. If the algorithm fails to
+converge, it is the best estimate of the solution achieved by the
+algorithm. Note that if the SQP algorithm terminates before
+reaching the solution, <code>x</code> may not satisfy the equality
+constraint; that is, the entries of <code>x</code> may not sum to 1.</p></dd>
 
 <dt>value</dt><dd><p>The value of the objective function, \(f(x)\), at
 <code>x</code>.</p></dd>
@@ -160,7 +190,7 @@ algorithm upon termination.</p></dd>
 <dt>progress</dt><dd><p>A data frame containing more detailed information
 about the algorithm's progress. The data frame has one row per SQP
 iteration. For an explanation of the columns, see the description
-of the <code>verbose</code> control paramter in &#8216;Details&#8217;. Missing
+of the <code>verbose</code> control parameter in &#8216;Details&#8217;. Missing
 values (<code>NA</code>'s) in the last row indicate that these quantities were
 not computed because convergence was reached before computing
 them. Also note that the storage of these quantities in the
@@ -177,14 +207,14 @@ Let \(L\) be a matrix with \(n\) rows and \(m\) columns
 containing only non-negative entries, and let \(w = (w_1,
 \ldots, w_n)\) be a vector of non-negative "weights". <code>mixsqp</code>
 computes the value of vector \(x = (x_1, \ldots, x_m)\)
-minimizing the following objective function,
-$$f(x) = -\sum_{j=1}^n w_j \log (\sum_{k=1}^m L_{jk} x_k),$$
-subject to the constraint that \(x\) lie within the simplex;
-that is, the entries of \(x\) are non-negative and sum to 1.
-Implicitly, there is an additional constraint \(L*x &gt; 0\) in
-order to ensure that the objective has a finite value. In practice,
-this constraint only needs to be checked for the initial estimate
-to ensure that it holds for all subsequent iterates.</p>
+minimizing the following objective function, $$f(x) =
+-\sum_{j=1}^n w_j \log (\sum_{k=1}^m L_{jk} x_k),$$ subject to the
+constraint that \(x\) lie within the simplex; that is, the
+entries of \(x\) are non-negative and sum to 1.  Implicitly,
+there is an additional constraint \(L*x &gt; 0\) in order to ensure
+that the objective has a finite value. In practice, this constraint
+only needs to be checked for the initial estimate to ensure that it
+holds for all subsequent iterates.</p>
 <p>If all weights are equal, solving this optimization problem
 corresponds to finding the maximum-likelihood estimate of the
 mixture proportions \(x\) given \(n\) independent data points
@@ -201,10 +231,7 @@ gradient does not change. A practical benefit of this property is
 that the optimization algorithm will behave similarly irrespective
 of the scale of <code>L</code>; for example, the same value for the
 convergence tolerance <code>convtol.sqp</code> will have the same effect
-at different scales. The one exception is the <code>eps</code> control
-parameter, and for this reason the effect of <code>eps</code> is
-automatically adjusted to reflect the scale of <code>L</code>; see the
-description of this parameter below for more details.</p>
+at different scales.</p>
 <p>A related feature is that the solution to the optimization problem
 is invariant to rescaling the rows of <code>L</code>; for example, the
 solution will remain the same after all the entries in a row of
@@ -222,7 +249,8 @@ multithreaded BLAS/LAPACK library (e.g., OpenBLAS).</p>
 <p>The <code>control</code> argument is a list in which any of the
 following named components will override the default optimization
 algorithm settings (as they are defined by
-<code>mixsqp_control_defaults</code>):</p><dl class='dl-horizontal'>
+<code>mixsqp_control_default</code>):</p>
+<dl class='dl-horizontal'>
     <dt><code>convtol.sqp</code></dt><dd><p>A small, non-negative number
 specifying the convergence tolerance for SQP algorithm; convergence
 is reached when the maximum dual residual in the Karush-Kuhn-Tucker
@@ -255,7 +283,7 @@ this tolerance parameter can affect how reliably the SQP
 convergence criterion is satisfied, as determined by
 <code>convtol.sqp</code>, so choose this parameter carefully.</p></dd>
     <dt><code>suffdecr.linesearch</code></dt><dd><p>This parameter determines how
-stringent t he "sufficient decrease" condition is for accepting a
+stringent the "sufficient decrease" condition is for accepting a
 step size in the backtracking line search. Larger values will make
 the condition more stringent. This should be a positive number less
 than 1.</p></dd>
@@ -266,26 +294,27 @@ of a less fine-grained search. Should be a positive number less than
 1.</p></dd>
     <dt><code>minstepsize</code></dt><dd><p>The smallest step size accepted by the
 line search step. Should be a number greater than 0 and at most 1.</p></dd>
+    <dt><code>identity.contrib.increase</code></dt><dd><p>When the Hessian is not
+positive definite, a multiple of the identity is added to the
+Hessian to ensure a unique search direction. The factor for
+increasing the identity contribution in this modified Hessian is
+determined by this control parameter.</p></dd>
     <dt><code>eps</code></dt><dd><p>A small, non-negative number that is added to the
 terms inside the logarithms to sidestep computing logarithms of
 zero. This prevents numerical problems at the cost of introducing a
 small inaccuracy in the solution. Increasing this number may lead
-to faster convergence but possibly a less accurate solution. Since
-an appropriate value of this number will depend on the "scale" of
-<code>L</code>, <code>eps</code> is automatically scaled separately for each
-row of <code>L</code>; specifically, the ith modified logarithm term
-becomes <code>log(L[i,]*x + ei)</code>, in which <code>ei</code> is set to
-<code>eps * max(L[i,])</code>.</p></dd>
-    <dt><code>delta</code></dt><dd><p>A small, non-negative number added to the
-diagonal of the Hessian to improve numerical stability (and
-possibly the speed) when computing the search directions in the
-active-set step.</p></dd>
+to faster convergence but possibly a less accurate solution.</p></dd>
     <dt><code>maxiter.sqp</code></dt><dd><p>Maximum number of SQP iterations to
 run before reporting a convergence failure; that is, the maximum
 number of quadratic subproblems that will be solved by the
 active-set method.</p></dd>
     <dt><code>maxiter.activeset</code></dt><dd><p>Maximum number of active-set
-iterations taken to solve each of the quadratic subproblems.</p></dd>
+iterations taken to solve each of the quadratic subproblems. If
+<code>NULL</code>, the maximum number of active-set iterations is set to
+<code>min(100,1 + ncol(L))</code>.</p></dd>
+    <dt><code>numiter.em</code></dt><dd><p>Number of expectation maximization (EM)
+updates to perform prior to running mix-SQP. This can help ensure
+convergence of mix-SQP when the initial solution is very poor.</p></dd>
     <dt><code>verbose</code></dt><dd><p>If <code>verbose = TRUE</code>, the algorithm's
 progress and a summary of the optimization settings are printed to
 the console. The algorithm's progress is displayed in a table with
@@ -312,7 +341,7 @@ using sequential quadratic programming. arXiv:1806.01412
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p><code>mixobjective</code>, <code>mixkwdual</code></p>
+    <div class='dont-index'><p><code><a href='mixobjective.html'>mixobjective</a></code>, <code><a href='mixkwdual.html'>mixkwdual</a></code></p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -321,28 +350,31 @@ using sequential quadratic programming. arXiv:1806.01412
 <span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fl'>10</span>
 <span class='no'>w</span> <span class='kw'>&lt;-</span> <span class='fu'>rep</span>(<span class='fl'>1</span>,<span class='no'>n</span>)/<span class='no'>n</span>
 <span class='no'>L</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='simulatemixdata.html'>simulatemixdata</a></span>(<span class='no'>n</span>,<span class='no'>m</span>)$<span class='no'>L</span>
-<span class='no'>out.mixsqp</span> <span class='kw'>&lt;-</span> <span class='fu'>mixsqp</span>(<span class='no'>L</span>,<span class='no'>w</span>)</div><div class='output co'>#&gt; Running mix-SQP algorithm 0.1-92 on 100000 x 10 matrix
+<span class='no'>out.mixsqp</span> <span class='kw'>&lt;-</span> <span class='fu'>mixsqp</span>(<span class='no'>L</span>,<span class='no'>w</span>)</div><div class='output co'>#&gt; Running mix-SQP algorithm 0.1-121 on 100000 x 10 matrix
 #&gt; convergence tol. (SQP):     1.0e-08
 #&gt; conv. tol. (active-set):    1.0e-10
-#&gt; zero threshold (solution):  1.0e-06
-#&gt; zero thresh. (search dir.): 1.0e-08
+#&gt; zero threshold (solution):  1.0e-08
+#&gt; zero thresh. (search dir.): 1.0e-15
 #&gt; l.s. sufficient decrease:   1.0e-02
-#&gt; step size reduction factor: 5.0e-01
-#&gt; minimum step size:          1.0e-04
+#&gt; step size reduction factor: 7.5e-01
+#&gt; minimum step size:          1.0e-08
 #&gt; max. iter (SQP):            1000
-#&gt; max. iter (active-set):     100
+#&gt; max. iter (active-set):     11
+#&gt; number of EM iterations:    4
 #&gt; iter        objective max(rdual) nnz stepsize max.diff nqp nls
-#&gt;    1 +7.726636683e-01 +2.756e-01  10       NA       NA  NA  NA
-#&gt;    2 +6.530469427e-01 +4.736e+00   5 1.00e+00 3.38e-01  13   1
-#&gt;    3 +6.048392150e-01 +2.156e+00   5 1.00e+00 4.67e-02   8   1
-#&gt;    4 +5.998755485e-01 +9.136e-01   5 1.00e+00 8.23e-03   2   1
-#&gt;    5 +5.997560223e-01 +2.970e-01   5 1.00e+00 1.60e-03   2   1
-#&gt;    6 +5.996968174e-01 +1.645e-01   5 1.00e+00 4.96e-03   2   1
-#&gt;    7 +5.995150384e-01 +7.147e-02   5 1.00e+00 9.18e-03   2   1
-#&gt;    8 +5.991903721e-01 +1.949e-02   5 1.00e+00 8.83e-03   2   1
-#&gt;    9 +5.989876049e-01 +1.944e-03   5 1.00e+00 3.62e-03   2   1
-#&gt;   10 +5.989593530e-01 +2.152e-05   5 1.00e+00 3.94e-04   2   1
-#&gt;   11 +5.989590146e-01 -1.537e-08   5 1.00e+00 4.32e-06   2   1
+#&gt;    1 +6.649406820e-01  -- EM --   10 1.00e+00 7.79e-02  --  --
+#&gt;    2 +6.336404132e-01  -- EM --   10 1.00e+00 2.61e-02  --  --
+#&gt;    3 +6.201431123e-01  -- EM --   10 1.00e+00 2.41e-02  --  --
+#&gt;    4 +6.131770626e-01  -- EM --   10 1.00e+00 2.06e-02  --  --
+#&gt;    1 +6.131770626e-01 +8.704e-02  10  ------   ------   --  --
+#&gt;    2 +6.125714821e-01 +2.906e-01  10 9.90e-01 3.66e-01   9   1
+#&gt;    3 +6.004655232e-01 +1.172e-01  10 9.90e-01 2.09e-02   8   1
+#&gt;    4 +5.993709711e-01 +4.116e-02   8 9.90e-01 7.18e-03   8   1
+#&gt;    5 +5.990641805e-01 +7.853e-03   5 9.90e-01 6.37e-03   5   1
+#&gt;    6 +5.989652368e-01 +4.132e-04   5 9.90e-01 1.55e-03   2   1
+#&gt;    7 +5.989591137e-01 +5.103e-06   5 9.90e-01 8.35e-05   2   1
+#&gt;    8 +5.989590371e-01 +5.118e-08   5 9.90e-01 1.03e-06   3   1
+#&gt;    9 +5.989590364e-01 +5.119e-10   5 9.90e-01 1.03e-08   3   1
 #&gt; Convergence criteria met---optimal solution found.</div><div class='input'><span class='no'>f</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='mixobjective.html'>mixobjective</a></span>(<span class='no'>L</span>,<span class='no'>out.mixsqp</span>$<span class='no'>x</span>,<span class='no'>w</span>)
 <span class='fu'>print</span>(<span class='no'>f</span>,<span class='kw'>digits</span> <span class='kw'>=</span> <span class='fl'>16</span>)</div><div class='output co'>#&gt; [1] 0.5989590363728408</div><div class='input'>
 # We can also compare this result with solution found from an 
@@ -386,5 +418,8 @@ using sequential quadratic programming. arXiv:1806.01412
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

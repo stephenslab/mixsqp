@@ -36,7 +36,7 @@ repository useful for your work, please cite:
 
 ## License
 
-Copyright (c) 2017-2018, Youngseok Kim, Peter Carbonetto, Matthew
+Copyright (c) 2017-2019, Youngseok Kim, Peter Carbonetto, Matthew
 Stephens and Mihai Anitescu.
 
 All source code and software in this repository are made available
@@ -160,8 +160,11 @@ Run this line of R code to build the website (make sure you have an
 Internet connection while running the code):
 
 ```R
-pkgdown::build_site(mathjax = FALSE)
+library(pkgdown)
+build_site(mathjax = FALSE)
 ```
+
+Version 1.1.0 of pkgdown was used.
 
 ### Other developer notes
 

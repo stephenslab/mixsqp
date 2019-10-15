@@ -21,17 +21,23 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
 <meta property="og:title" content="Compute objective optimized by mixsqp. — mixobjective" />
 
 <meta property="og:description" content="See mixsqp for a full description of the
 objective function optimized by the mix-SQP algorithm." />
 <meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -54,8 +60,12 @@ objective function optimized by the mix-SQP algorithm." />
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">mixsqp</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">mixsqp</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.121</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -74,6 +84,7 @@ objective function optimized by the mix-SQP algorithm." />
   <a href="https://github.com/stephenslab/mixsqp">Source</a>
 </li>
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -81,20 +92,24 @@ objective function optimized by the mix-SQP algorithm." />
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Compute objective optimized by mixsqp.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/stephenslab/mixsqp/blob/master/R/objective.R'><code>R/objective.R</code></a></small>
+    <div class="hidden name"><code>mixobjective.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
-    <p>See <code><a href='mixSQP.html'>mixsqp</a></code> for a full description of the
+    <p>See <code><a href='mixsqp.html'>mixsqp</a></code> for a full description of the
 objective function optimized by the mix-SQP algorithm.</p>
     
+    </div>
 
     <pre class="usage"><span class='fu'>mixobjective</span>(<span class='no'>L</span>, <span class='no'>x</span>, <span class='kw'>w</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>L</span>)))</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -111,7 +126,7 @@ double-precision; see <code>storage.mode</code>.</p></td>
     <tr>
       <th>x</th>
       <td><p>The point at which the objective is evaluated in
-<code>mixobjective</code>; see argument <code>x0</code> in <code><a href='mixSQP.html'>mixsqp</a></code>
+<code>mixobjective</code>; see argument <code>x0</code> in <code><a href='mixsqp.html'>mixsqp</a></code>
 for details.</p></td>
     </tr>
     <tr>
@@ -133,7 +148,7 @@ returned.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p><code><a href='mixSQP.html'>mixsqp</a></code></p>
+    <div class='dont-index'><p><code><a href='mixsqp.html'>mixsqp</a></code></p></div>
     
 
   </div>
@@ -162,5 +177,8 @@ returned.</p>
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+
