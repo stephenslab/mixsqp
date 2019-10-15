@@ -374,8 +374,8 @@ void backtrackinglinesearch (double f, const mat& L, const vec& w,
     // Check whether the new candidate solution (y) satisfies the
     // sufficient decrease condition, and remains feasible. If so,
     // accept this candidate solution.
-    if (y.min() >= 0 &
-	fnew + sum(y) <= f + sum(x) + suffdecr*stepsize*dot(p,g + 1))
+    if ((y.min() >= 0) &
+	(fnew + sum(y) <= f + sum(x) + suffdecr*stepsize*dot(p,g + 1)))
       break;
     newstepsize = stepsizereduce * stepsize;
     if (newstepsize < minstepsize) {
