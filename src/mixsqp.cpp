@@ -259,7 +259,7 @@ double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
     
     // Check that the search direction is close to zero (according to
     // the "zerothresholdsearchdir" parameter).
-    if ((p.max() <= zerothresholdsearchdir) &
+    if ((p.max() <= zerothresholdsearchdir) &&
 	(-p.min() <= zerothresholdsearchdir)) {
         
       // If all the Lagrange multiplers in the working set (that is,
@@ -338,7 +338,7 @@ void computeactivesetsearchdir (const mat& H, const vec& y, vec& p,
     // Attempt to compute the Cholesky factorization of the modified
     // Hessian. If this fails, increase the contribution of the
     // identity matrix in the modified Hessian.
-    if (chol(R,B) | (a*ainc > amax))
+    if (chol(R,B) || (a*ainc > amax))
       break;
     else if (a <= 0)
       a = a0;
@@ -374,7 +374,7 @@ void backtrackinglinesearch (double f, const mat& L, const vec& w,
     // Check whether the new candidate solution (y) satisfies the
     // sufficient decrease condition, and remains feasible. If so,
     // accept this candidate solution.
-    if ((y.min() >= 0) &
+    if ((y.min() >= 0) &&
 	(fnew + sum(y) <= f + sum(x) + suffdecr*stepsize*dot(p,g + 1)))
       break;
     newstepsize = stepsizereduce * stepsize;
