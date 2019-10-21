@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">mixsqp</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.121</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.2.3</span>
       </span>
     </div>
 
@@ -140,8 +140,8 @@
 <a href="#testing-the-package" class="anchor"></a>Testing the package</h3>
 <p>To install and test the mixsqp R package, run the following commands in the shell:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">R</span> CMD build mixsqp
-<span class="ex">R</span> CMD INSTALL mixsqp_0.1-121.tar.gz
-<span class="ex">R</span> CMD check --as-cran mixsqp_0.1-121.tar.gz</code></pre></div>
+<span class="ex">R</span> CMD INSTALL mixsqp_0.2-3.tar.gz
+<span class="ex">R</span> CMD check --as-cran mixsqp_0.2-3.tar.gz</code></pre></div>
 <p>Note that these commands require that the dependencies have already been installed. See the <a href="DESCRIPTION" class="uri">DESCRIPTION</a> file for details.</p>
 </div>
 <div id="updating-the-c-source-and-documentation" class="section level3">
@@ -153,7 +153,9 @@
 <h3 class="hasAnchor">
 <a href="#updating-the-pkgdown-site" class="anchor"></a>Updating the pkgdown site</h3>
 <p>Run this line of R code to build the website (make sure you have an Internet connection while running the code):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pkgdown<span class="op">::</span><span class="kw"><a href="https://pkgdown.r-lib.org/reference/build_site.html">build_site</a></span>(<span class="dt">mathjax =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(pkgdown)
+<span class="kw"><a href="https://pkgdown.r-lib.org/reference/build_site.html">build_site</a></span>(<span class="dt">mathjax =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<p>Version 1.1.0 of pkgdown was used.</p>
 </div>
 <div id="other-developer-notes" class="section level3">
 <h3 class="hasAnchor">

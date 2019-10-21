@@ -29,7 +29,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mixsqp</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.121</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.2.3</span>
       </span>
     </div>
 
@@ -64,7 +64,7 @@
       <h1>Illustration of mixsqp applied to a small data set, and a large one</h1>
                         <h4 class="author">Youngseok Kim, Peter Carbonetto and Matthew Stephens</h4>
             
-            <h4 class="date">2019-10-14</h4>
+            <h4 class="date">2019-10-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/stephenslab/mixsqp/blob/master/vignettes/mixsqp-intro.Rmd"><code>vignettes/mixsqp-intro.Rmd</code></a></small>
       <div class="hidden name"><code>mixsqp-intro.Rmd</code></div>
@@ -97,7 +97,7 @@
 <a href="#fit-mixture-model" class="anchor"></a>Fit mixture model</h2>
 <p>Now we fit the mixture model using the SQP algorithm:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit.sqp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixsqp.html">mixsqp</a></span>(L)
-<span class="co"># Running mix-SQP algorithm 0.1-121 on 1000 x 20 matrix</span>
+<span class="co"># Running mix-SQP algorithm 0.2-3 on 1000 x 20 matrix</span>
 <span class="co"># convergence tol. (SQP):     1.0e-08</span>
 <span class="co"># conv. tol. (active-set):    1.0e-10</span>
 <span class="co"># zero threshold (solution):  1.0e-08</span>
@@ -150,7 +150,7 @@
 <p>Now we fit the model using the SQP algorithm:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">timing &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.sqp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixsqp.html">mixsqp</a></span>(L))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Computation took %0.2f seconds</span><span class="ch">\n</span><span class="st">"</span>,timing[<span class="st">"elapsed"</span>]))
-<span class="co"># Running mix-SQP algorithm 0.1-121 on 100000 x 100 matrix</span>
+<span class="co"># Running mix-SQP algorithm 0.2-3 on 100000 x 100 matrix</span>
 <span class="co"># convergence tol. (SQP):     1.0e-08</span>
 <span class="co"># conv. tol. (active-set):    1.0e-10</span>
 <span class="co"># zero threshold (solution):  1.0e-08</span>
@@ -203,7 +203,7 @@
 <span class="co">#   35 +6.150522396e-01 +7.583e-08   8 9.90e-01 1.62e-02  19   1</span>
 <span class="co">#   36 +6.150522315e-01 +7.675e-10   8 9.90e-01 1.62e-04   7   1</span>
 <span class="co"># Convergence criteria met---optimal solution found.</span>
-<span class="co"># Computation took 25.36 seconds</span></code></pre></div>
+<span class="co"># Computation took 23.92 seconds</span></code></pre></div>
 <p>If you have the REBayes package, you can also run the IP method:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">timing &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.ip  &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixkwdual.html">mixkwdual</a></span>(L))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Computation took %0.2f seconds</span><span class="ch">\n</span><span class="st">"</span>,timing[<span class="st">"elapsed"</span>]))</code></pre></div>
@@ -232,7 +232,7 @@
 <span class="co"># [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
 <span class="co"># </span>
 <span class="co"># other attached packages:</span>
-<span class="co"># [1] mixsqp_0.1-121</span>
+<span class="co"># [1] mixsqp_0.2-3</span>
 <span class="co"># </span>
 <span class="co"># loaded via a namespace (and not attached):</span>
 <span class="co">#  [1] Rcpp_1.0.1       knitr_1.23       xml2_1.2.0       magrittr_1.5    </span>
