@@ -65,19 +65,21 @@ test_that(paste("mix-SQP gives correct solutions for 2 x 2 and",
   expect_equal(out$x,c(0.5,0.5),tolerance = 1e-8)
   
   # In this second example, any solution of the form (x1,x2,0) gives
-  # the same value for the objective.
+  # the same value for the objective, and the third mixture weight
+  # should be exactly zero.
   L <- rbind(c(1,1,e),
              c(1,1,1))
   capture.output(out1 <- mixsqp(L,x0 = c(1,1,0)))
   capture.output(out2 <- mixsqp(L,x0 = c(0,1,1)))
   expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
   expect_equal(out2$status,mixsqp:::mixsqp.status.converged)
-  expect_equal(out1$x[3],0,tolerance = 1e-8)
-  expect_equal(out2$x[3],0,tolerance = 1e-8)
+  expect_equal(out1$x[3],0,tolerance = 0)
+  expect_equal(out2$x[3],0,tolerance = 0)
 })
 
 test_that(paste("mix-SQP and KWDual return the same solution for",
-                "1000 x 10 likelihood matrix"),{
+                "1000 x 10 likelihood matrix, and mix-SQP correctly",
+                "estimates the nonzeros"),{
 
   # Simulate a 1,000 x 10 likelihood matrix. Note that I add row and
   # column names to the matrix to check that the column names are
@@ -104,6 +106,10 @@ test_that(paste("mix-SQP and KWDual return the same solution for",
   # solutions, should be nearly identical.
   expect_equal(out1$x,out2$x,tolerance = 1e-4)
   expect_equal(out1$value,out2$value,tolerance = 1e-8)
+
+  # The very small mixture weights estimated by KWDual are exactly
+  # zero in the mix-SQP output.
+  expect_equal(out1$x == 0,out2$x < 1e-4)
 })
 
 test_that(paste("mix-SQP & KWDual return the same solution for",
@@ -156,7 +162,7 @@ test_that(paste("mix-SQP returns the same solution regardless whether",
   expect_equal(out1$x,out2$x,tolerance = 1e-8)
 })
 
-test_that(paste("mix-SQP returns the correct solution with log-likelihoods",
+test_that(paste("mix-SQP returns the correct solution when log-likelihoods",
                 "are provided"),{
   
   # Simulate a 100 x 10 likelihood matrix as well as different weights

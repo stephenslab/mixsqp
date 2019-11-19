@@ -75,12 +75,12 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   // computations below.
   vec  g(m);    // Vector of length m storing the gradient.
   vec  ghat(m); // Vector of length m storing gradient of subproblem.
-  vec  p(m);    // Vector of length m storing the search direction.
   vec  u(n);    // Vector of length n storing L*x + eps or its log.
   mat  H(m,m);  // m x m matrix storing Hessian.
   mat  Z(n,m);  // n x m matrix Z = D*L, where D = diag(1/(L*x+e)).
   uvec t(m);    // Temporary unsigned int. vector result of length m.
-  vec  y(m);    // Vector of length m storing y
+  vec  y(m);    // Vector of length m storing y, the active-set update.
+  vec  xnew(m); // Vector of length m storing the line search update.
   vec  d(m);    // Vector of length m storing absolute
                 // differences between between two solution
 	        // estimates.
@@ -150,18 +150,17 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     y      = x;
     nqp(i) = activesetqp(H,ghat,y,t,maxiteractiveset,zerothresholdsearchdir,
 			 convtolactiveset,identitycontribincrease);
-    p = y - x;
     
     // BACKTRACKING LINE SEARCH
     // ------------------------
-    backtrackinglinesearch(obj(i),L,w,g,x,p,eps,suffdecr,stepsizereduce,
-			   minstepsize,nls(i),stepsize(i),y,u);
+    backtrackinglinesearch(obj(i),L,w,g,x,y,eps,suffdecr,stepsizereduce,
+			   minstepsize,nls(i),stepsize(i),xnew,u);
     
     // UPDATE THE SOLUTION
     // -------------------
-    d       = abs(x - y);
+    d       = abs(x - xnew);
     dmax(i) = d.max();
-    x = y;
+    x = xnew;
   }
 
   // CONSTRUCT OUTPUT
@@ -351,15 +350,16 @@ void computeactivesetsearchdir (const mat& H, const vec& y, vec& p,
 }
 
 // This implements the backtracking line search algorithm from p. 37
-// of Nocedal & Wright, Numerical Optimization, 2nd ed, 2006.
+// of Nocedal & Wright, Numerical Optimization, 2nd ed, 2006, in which
+// the search direction is given by y - x.
 void backtrackinglinesearch (double f, const mat& L, const vec& w,
-			     const vec& g, const vec& x, const vec& p,
+			     const vec& g, const vec& x, const vec& y,
 			     const vec& eps, double suffdecr,
 			     double stepsizereduce, double minstepsize, 
-			     double& nls, double& stepsize, vec& y, vec& u) {
+			     double& nls, double& stepsize, vec& xnew, vec& u) {
   double fnew;
   double newstepsize;
-  stepsize = 0.99;
+  stepsize = 1;
   nls      = 0;
 
   // Iteratively reduce the step size until either (1) we can't reduce
@@ -367,15 +367,15 @@ void backtrackinglinesearch (double f, const mat& L, const vec& w,
   // or (2) the new candidate solution satisfies the "sufficient
   // decrease" condition.
   while (true) {
-    y    = x + stepsize*p;
-    fnew = mixobjective(L,w,y,eps,u);
+    xnew = stepsize*y + (1-stepsize)*x;
+    fnew = mixobjective(L,w,xnew,eps,u);
     nls++;
 
-    // Check whether the new candidate solution (y) satisfies the
+    // Check whether the new candidate solution (xnew) satisfies the
     // sufficient decrease condition, and remains feasible. If so,
     // accept this candidate solution.
-    if ((y.min() >= 0) &&
-	(fnew + sum(y) <= f + sum(x) + suffdecr*stepsize*dot(p,g + 1)))
+    if ((xnew.min() >= 0) &&
+	(fnew + sum(xnew) <= f + sum(x) + suffdecr*stepsize*dot(y - x,g + 1)))
       break;
     newstepsize = stepsizereduce * stepsize;
     if (newstepsize < minstepsize) {
@@ -383,10 +383,10 @@ void backtrackinglinesearch (double f, const mat& L, const vec& w,
       // We need to terminate backtracking line search because we have
       // arrived at the smallest allowable step size.
       stepsize = minstepsize;
-      y        = x + stepsize*p;
-      if (y.min() < 0) {
+      xnew     = stepsize*y + (1-stepsize)*x;
+      if (xnew.min() < 0) {
 	stepsize = 0;
-	y        = x;
+	xnew     = x;
       }
       break;
     }
