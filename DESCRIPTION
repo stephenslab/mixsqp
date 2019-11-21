@@ -2,7 +2,7 @@ Encoding: UTF-8
 Type: Package
 Package: mixsqp
 Version: 0.2-4
-Date: 2019-11-19
+Date: 2019-11-21
 Title: Sequential Quadratic Programming for Fast Maximum-Likelihood
     Estimation of Mixture Proportions
 Authors@R: c(person("Youngseok","Kim",role="aut",
@@ -16,14 +16,16 @@ Authors@R: c(person("Youngseok","Kim",role="aut",
 URL: https://github.com/stephenslab/mixsqp
 BugReports: https://github.com/stephenslab/mixsqp/issues
 Depends: R (>= 3.3.0)
-Description: Provides optimization algorithms based on sequential
+Description: Provides an optimization method based on sequential
   quadratic programming (SQP) for maximum likelihood estimation of the
   mixture proportions in a finite mixture model where the component
-  densities are known. The algorithms are expected to obtain solutions
+  densities are known. The algorithm is expected to obtain solutions
   that are at least as accurate as the state-of-the-art MOSEK
   interior-point solver (called by function "KWDual" in the 'REBayes'
   package), and they are expected to arrive at solutions more quickly
-  in large data sets. The algorithms are described in Y. Kim,
+  when the number of samples is large and the number of mixture
+  components is small. This implements the "mix-SQP" algorithm
+  (without the low-rank approximation) described in Y. Kim,
   P. Carbonetto, M. Stephens & M. Anitescu (2018) <arXiv:1806.01412>.
 License: MIT + file LICENSE
 Imports:
