@@ -307,6 +307,7 @@ double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
       // Move to the new "inner loop" iterate (y) along the search
       // direction.
       y += alpha * p;
+      y.elem(find(y < 0)).fill(0);
       if (add_to_working_set) {
 	t(S(k)) = 0;
 	y(S(k)) = 0;
