@@ -232,6 +232,7 @@ double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
   uvec   S(m);
   uvec   i0(m);
   uvec   i1(m);
+  bool   add_to_working_set;
   
   // Any co-ordinates belonging to the working set should be set to zero.
   i0 = find(t == 0);
@@ -255,6 +256,7 @@ double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
 
     // Reset the step size.
     alpha = 1;
+    add_to_working_set = false;
     
     // Check that the search direction is close to zero (according to
     // the "zerothresholdsearchdir" parameter).
@@ -276,7 +278,7 @@ double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
       // it from the working set.
       k    = i0(b(i0).index_min());
       t(k) = 1;
-
+      
     // In this next part, we consider adding a co-ordinate to the
     // working set (but only if there are two or more non-zero
     // co-ordinates).
@@ -289,7 +291,7 @@ double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
         p0.elem(i0).fill(0);
       S = find(p0 < -1e-15);
       if (!S.is_empty()) {
-        z = -y.elem(S)/p.elem(S);
+        z = -y.elem(S)/p0.elem(S);
         k = z.index_min();
         if (z(k) < 1) {
 
@@ -298,13 +300,17 @@ double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
           // co-ordinates).
           alpha = z(k);
 	  if (i1.n_elem >= 2)
-	    t(S(k)) = 0;
+  	    add_to_working_set = true;
         }
       }
       
       // Move to the new "inner loop" iterate (y) along the search
       // direction.
       y += alpha * p;
+      if (add_to_working_set) {
+	t(S(k)) = 0;
+	y(S(k)) = 0;
+      }
     }
   }
 
