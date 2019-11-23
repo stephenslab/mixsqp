@@ -382,7 +382,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 
   # Print a brief summary of the analysis, if requested.
   if (verbose) {
-    cat(sprintf("Running mix-SQP algorithm 0.2-4 on %d x %d matrix\n",n,m))
+    cat(sprintf("Running mix-SQP algorithm 0.2-5 on %d x %d matrix\n",n,m))
     cat(sprintf("convergence tol. (SQP):     %0.1e\n",convtol.sqp))
     cat(sprintf("conv. tol. (active-set):    %0.1e\n",convtol.activeset))
     cat(sprintf("zero threshold (solution):  %0.1e\n",zero.threshold.solution))
@@ -500,12 +500,12 @@ mixsqp_control_default <- function()
   list(convtol.sqp               = 1e-8,
        convtol.activeset         = 1e-10,
        zero.threshold.solution   = 1e-8,
-       zero.threshold.searchdir  = 1e-15,
+       zero.threshold.searchdir  = 1e-10,
        suffdecr.linesearch       = 0.01,
        stepsizereduce            = 0.75,
        minstepsize               = 1e-8,
        identity.contrib.increase = 10,
-       eps                       = 0,
+       eps                       = 1e-10,
        maxiter.sqp               = 1000,
        maxiter.activeset         = NULL,
        numiter.em                = 4,

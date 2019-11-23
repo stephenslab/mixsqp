@@ -26,16 +26,6 @@ test_that(paste("mix-SQP allows zero likelihoods, but reports an error",
   expect_error(mixsqp(L,x0 = c(0,0,1)))
 })
 
-test_that("eps parameter automatically adjusts according to scale of L",{
-  set.seed(1)
-  n   <- 1000
-  m   <- 10
-  L   <- simulatemixdata(n,m)$L
-  capture.output(out1 <- mixsqp(L))
-  capture.output(out2 <- mixsqp(L/1e10))
-  expect_equal(out1$x,out2$x,tolerance = 1e-6)
-})
-
 test_that(paste("mix-SQP converges to correct solution even when initial",
                 "estimate is very poor"),{
   e <- 1e-8
