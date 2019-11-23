@@ -182,7 +182,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
 // vector of length n used to store an intermediate result used in the
 // calculation of the objective.
 double mixobjective (const mat& L, const vec& w, const vec& x, const vec& e,
-		     vec& u) {
+		     const vec& s, vec& u) {
   u = L*x + e;
   if (u.min() <= 0)
     Rcpp::stop("Halting because the objective function has a non-finite value (logarithms of numbers less than or equal to zero) at the current estimate of the solution");
@@ -276,7 +276,7 @@ double activesetqp (const mat& H, const vec& g, vec& y, uvec& t,
       // it from the working set.
       k    = i0(b(i0).index_min());
       t(k) = 1;
-
+      
     // In this next part, we consider adding a co-ordinate to the
     // working set (but only if there are two or more non-zero
     // co-ordinates).

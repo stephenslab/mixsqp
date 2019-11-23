@@ -12,16 +12,16 @@ mixsqp_control_default()
 }
 \arguments{
 \item{L}{Matrix specifying the optimization problem to be solved.
-In the context of mixture-model fitting, \code{L[j,k]} should be
-the value of the kth mixture component density at the jth data
-point. \code{L} should be a numeric matrix with at least two
-columns, with all entries being non-negative and finite (and not
-missing). In some cases, it is easier or more natural to compute
-\code{log(L)}; for example, it is often easier to compute the
-log-likelihood rather than the likelihood. Setting \code{log = TRUE}
-will tell \code{mixsqp} to interpret this input as the logarithm of
-the data matrix. Note that, for large matrices, it is preferrable
-that the matrix is stored in double-precision; see
+In the context of mixture-model fitting, \code{L[j,k]} should be a
+non-negative number giving the value of the kth mixture component
+density at the jth data point. \code{L} should be a numeric matrix
+with at least two columns, with all entries being finite finite
+(and not missing). In some cases, it is easier or more natural to
+compute \code{log(L)}; for example, it is often easier to compute
+the log-likelihood rather than the likelihood. Setting \code{log =
+TRUE} will tell \code{mixsqp} to interpret this input as the
+logarithm of the data matrix. Note that, for large matrices, it is
+preferrable that the matrix is stored in double-precision; see
 \code{\link{storage.mode}}.}
 
 \item{w}{An optional numeric vector, with one entry for each row of
@@ -84,18 +84,17 @@ the SQP algorithm.
 }
 \details{
 \code{mixsqp} solves the following optimization problem.
-Let \eqn{L} be a matrix with \eqn{n} rows and \eqn{m} columns
-containing only non-negative entries, and let \eqn{w = (w_1,
-\ldots, w_n)} be a vector of non-negative "weights". \code{mixsqp}
-computes the value of vector \eqn{x = (x_1, \ldots, x_m)}
-minimizing the following objective function, \deqn{f(x) =
--\sum_{j=1}^n w_j \log (\sum_{k=1}^m L_{jk} x_k),} subject to the
-constraint that \eqn{x} lie within the simplex; that is, the
-entries of \eqn{x} are non-negative and sum to 1.  Implicitly,
-there is an additional constraint \eqn{L*x > 0} in order to ensure
-that the objective has a finite value. In practice, this constraint
-only needs to be checked for the initial estimate to ensure that it
-holds for all subsequent iterates.
+Let \eqn{L} be a matrix with \eqn{n} rows and \eqn{m} columns, and
+let \eqn{w = (w_1, \ldots, w_n)} be a vector of non-negative
+"weights". \code{mixsqp} computes the value of vector \eqn{x =
+(x_1, \ldots, x_m)} minimizing the following objective function,
+\deqn{f(x) = -\sum_{i=1}^n w_i \log (\sum_{j=1}^m L_{ij} x_j) /
+sum_{i=1}^n w_i,} subject to the constraint that \eqn{x} lie within
+the simplex; that is, the entries of \eqn{x} are non-negative and
+sum to 1.  Implicitly, there is an additional constraint \eqn{L*x >
+0} in order to ensure that the objective has a finite value. In
+practice, this constraint only needs to be checked for the initial
+estimate to ensure that it holds for all subsequent iterates.
 
 If all weights are equal, solving this optimization problem
 corresponds to finding the maximum-likelihood estimate of the

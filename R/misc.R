@@ -46,9 +46,9 @@ verify.maxiter.arg <- function (x, arg.name = deparse(substitute(x))) {
 # named "L". If the matrix is not valid, an error is reported;
 # otherwise, TRUE is returned.
 verify.likelihood.matrix <- function (L) {
-  msg <- paste("Input argument \"L\" should be a numeric matrix with >= 2",
-               "columns, >= 1 rows, all its entries should be non-negative,",
-               "finite and not NA, and some entries should be positive")
+msg <- paste("Input argument \"L\" should be a numeric matrix with >= 2",
+             "columns, >= 1 rows, all its entries should be non-negative,",
+             "finite and not NA, and some entries should be positive")
   if (!is.matrix(L))
     stop(msg)
   else if (!(nrow(L) >= 1 &
@@ -128,11 +128,14 @@ scale.cols <- function (A, b)
   t(t(A) * b)
 
 # Normalize the rows of A so that the largest entry in each row is 1.
-normalize.likelihoods <- function (A)
-  A / apply(A,1,max)
+normalize.likelihoods <- function (A) {
+  s <- apply(A,1,max)
+  return(list(A = A/s,s = log(s)))
+}
 
 # Compute B = exp(A) and normalize the rows of B so that the largest
 # entry in each row is 1.
-normalize.loglikelihoods <- function (A)
-  exp(A - apply(A,1,max))
-    
+normalize.loglikelihoods <- function (A) {
+  s <- apply(A,1,max)
+  return(list(A = exp(A - s),s = s))
+}

@@ -9,6 +9,8 @@ skip_if_mixkwdual_doesnt_work <- function() {
   skip_if(!is.element("mosek_lptoprob",getNamespaceExports("Rmosek")))
 }
 
+test_that("mixobjective with log = TRUE and log = FALSE give same "
+
 test_that("Version number in mixsqp with verbose = TRUE is correct",{
   L <- rbind(c(1,1,0),
              c(1,1,1))

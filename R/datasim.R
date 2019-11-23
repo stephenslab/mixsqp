@@ -116,9 +116,10 @@ simulatemixdata <- function (n, m, simtype = c("n","nt"), log = FALSE,
   # NORMALIZE LIKELIHOOD MATRIX
   # ---------------------------
   # Normalize the rows of the likelihood matrix so that the largest
-  # entry in each row is 1.
+  # entry in each row is 1. (Note that "log" cannot be TRUE when
+  # normalize.row = TRUE.)
   if (normalize.rows)
-    L <- normalize.likelihoods(L)
+    L <- normalize.likelihoods(L)$A
 
   # Return the simulated data points (x), the standard deviations
   # specifying the mixture prior (s), and the conditional likelihood
