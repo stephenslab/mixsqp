@@ -206,7 +206,7 @@ inline void feasible_stepsize (const vec& x, const vec& p, int& j, double& a) {
 
 // This implements the active-set method from p. 472 of of Nocedal &
 // Wright, Numerical Optimization, 2nd ed, 2006.
-iint activesetqp (const mat& H, const vec& g, vec& y, int maxiter,
+int activesetqp (const mat& H, const vec& g, vec& y, int maxiter,
 		  double zerosearchdir, double tol, double ainc) {
   int    m = g.n_elem;
   int    k;
