@@ -19,11 +19,11 @@ double compute_objective (const mat& L, const vec& w, const vec& x,
 			  const vec& e);
 void   compute_grad      (const mat& L, const vec& w, const vec& x,
 			  const vec& e, vec& g, mat& H, mat& Z);
-uint   activesetqp       (const mat& H, const vec& g, vec& y, int maxiter,
+int    activesetqp       (const mat& H, const vec& g, vec& y, int maxiter,
 			  double zerosearchdir, double tol, double ainc);
 void   compute_activeset_searchdir (const mat& H, const vec& y, vec& p, mat& B,
 				    double ainc);
-uint   backtracking_line_search (double f, const mat& L, const vec& w,
+int    backtracking_line_search (double f, const mat& L, const vec& w,
 				 const vec& g, const vec& x, const vec& y,
 				 const vec& e, double suffdecr, double beta,
 				 double amin, double& a, vec& xnew);
@@ -66,7 +66,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   // Initialize the solution.
   vec    x = x0;
   double status = 1;
-  uint   i;
+  int    i;
   
   // Initialize storage for matrices and vectors used in the
   // computations below.
@@ -206,11 +206,11 @@ inline void feasible_stepsize (const vec& x, const vec& p, int& j, double& a) {
 
 // This implements the active-set method from p. 472 of of Nocedal &
 // Wright, Numerical Optimization, 2nd ed, 2006.
-uint activesetqp (const mat& H, const vec& g, vec& y, int maxiter,
+iint activesetqp (const mat& H, const vec& g, vec& y, int maxiter,
 		  double zerosearchdir, double tol, double ainc) {
   int    m = g.n_elem;
   int    k;
-  uint   iter;
+  int    iter;
   double a;
   vec    b(m);
   vec    p(m);
@@ -362,14 +362,14 @@ void compute_activeset_searchdir (const mat& H, const vec& y, vec& p,
 // This implements the backtracking line search algorithm from p. 37
 // of Nocedal & Wright, Numerical Optimization, 2nd ed, 2006.
 // the search direction is given by p = y - x.
-uint backtracking_line_search (double f, const mat& L, const vec& w,
-			       const vec& g, const vec& x, const vec& y,
-			       const vec& e, double suffdecr, double beta,
-			       double amin, double& a, vec& xnew) {
+int backtracking_line_search (double f, const mat& L, const vec& w,
+			      const vec& g, const vec& x, const vec& y,
+			      const vec& e, double suffdecr, double beta,
+			      double amin, double& a, vec& xnew) {
   int    k;
   double afeas;
   double fnew;
-  uint   nls = 0;
+  int    nls = 0;
   
   // Determine the largest step size maintaining feasibility; if it is
   // larger than the minimum step size, return the minimum step size
