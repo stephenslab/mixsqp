@@ -177,6 +177,24 @@ test_that(paste("mix-SQP returns the correct solution when log-likelihoods",
   expect_equal(out1$x,out2$x,tolerance = 1e-8)
 })
 
+test_that("mix-SQP successfully \"escapes\" a sparse initial estimate",{
+  set.seed(1)
+  n <- 100
+  m <- 10
+  out <- simulate_data_koenker(n,m)
+  L   <- out$L
+  w   <- out$w
+  x0  <- c(1,rep(0,m - 1))
+  capture.output(fit1 <- mixsqp(L,w,x0,control = list(numiter.em = 0)))
+  expect_equal(fit1$status,mixsqp:::mixsqp.status.converged)
+
+  # Compare mix-SQP solution to KWDual.
+  skip_if_mixkwdual_doesnt_work()
+  fit2 <- mixkwdual(L,w)
+  expect_equal(fit1$x,fit2$x,tolerance = 1e-4)
+  expect_lte(fit1$value,fit2$value)
+})
+
 test_that(paste("mix-SQP gives correct solution for Beckett & Diaconis",
                 "tack rolling example"),{
 
@@ -193,7 +211,7 @@ test_that(paste("mix-SQP gives correct solution for Beckett & Diaconis",
   # be as good or greater.
   expect_equal(out$status,mixsqp:::mixsqp.status.converged)
   expect_equal(tacks$x,out$x,tolerance = 5e-4)
-  expect_lte(out$value,mixobjective(L,tacks$x,w) + 1e-6)
+  expect_lte(out$value,mixobjective(L,tacks$x,w))
 })
 
 # This is mainly to test post-processing of the output when the

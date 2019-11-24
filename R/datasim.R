@@ -125,3 +125,17 @@ simulatemixdata <- function (n, m, simtype = c("n","nt"), log = FALSE,
   # matrix (L).
   return(list(x = x,s = s,L = L))
 }
+
+# Roger Koenker's code for simulating an n x m data matrix. This is
+# used for testing only.
+simulate_data_koenker <- function (n, m) {
+  k <- floor(n/4)
+  x <- c(rnorm(n - 2*k),3*rnorm(k),6*rnorm(k))
+  w <- rep(1/n,n)
+  s <- c(0,logspace(1/10,2*sqrt(max(x^2 - 1)),m - 1))
+  L <- matrix(0,n,m)
+  for (i in 1:m) 
+    L[,i] <- dnorm(x,sd = sqrt(1 + s[i]^2))
+  return(list(L = L,w = w))
+}
+
