@@ -16,7 +16,7 @@ using namespace arma;
 // FUNCTION DECLARATIONS
 // ---------------------
 double compute_objective (const mat& L, const vec& w, const vec& x,
-			  const vec& e, vec& u);
+			  const vec& e);
 void   compute_grad      (const mat& L, const vec& w, const vec& x,
 			  const vec& e, vec& g, mat& H, mat& Z);
 uint   activesetqp       (const mat& H, const vec& g, vec& y, int maxiter,
@@ -26,7 +26,7 @@ void   compute_activeset_searchdir (const mat& H, const vec& y, vec& p, mat& B,
 uint   backtracking_line_search (double f, const mat& L, const vec& w,
 				 const vec& g, const vec& x, const vec& y,
 				 const vec& e, double suffdecr, double beta,
-				 double amin, double& a, vec& xnew, vec& u);
+				 double amin, double& a, vec& xnew);
 
 // FUNCTION DEFINITIONS
 // --------------------
@@ -72,13 +72,12 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
   // computations below.
   vec  g(m);
   vec  ghat(m);
-  vec  u(n);
   mat  H(m,m);
   mat  Z(n,m);
   uvec j(m);
   vec  y(m);
-  vec  xnew(m);
   vec  d(m);
+  vec  xnew(m);
   
   // Repeat until the convergence criterion is met, or until we reach
   // the maximum number of (outer loop) iterations.
@@ -89,7 +88,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     x(j).fill(0);
     
     // Compute the value of the objective at x.
-    obj(i) = compute_objective(L,w,x,eps,u);
+    obj(i) = compute_objective(L,w,x,eps);
 
     // Compute the gradient and Hessian.
     compute_grad(L,w,x,eps,g,H,Z);
@@ -140,7 +139,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& x0,
     // Run backtracking line search.
     nls(i) = (double) backtracking_line_search(obj(i),L,w,g,x,y,eps,suffdecr,
 					       stepsizereduce,minstepsize,
-					       stepsize(i),xnew,u);
+					       stepsize(i),xnew);
     
     // Update the solution.
     d       = abs(x - xnew);
@@ -173,8 +172,8 @@ inline double min (double a, double b) {
 
 // Compute the value of the (unmodified) objective at x.
 double compute_objective (const mat& L, const vec& w, const vec& x,
-			  const vec& e, vec& u) {
-  u = L*x + e;
+			  const vec& e) {
+  vec u = L*x + e;
   if (u.min() <= 0)
     Rcpp::stop("Objective is -Inf");
   return -sum(w % log(u));
@@ -218,7 +217,7 @@ uint activesetqp (const mat& H, const vec& g, vec& y, int maxiter,
   vec    bs(m);
   vec    ps(m);
   mat    Hs(m,m);
-  mat    B(m,m);
+  mat    Bs(m,m);
   uvec   i(m);
   uvec   j(m);
   bool   add_to_working_set;
@@ -246,7 +245,7 @@ uint activesetqp (const mat& H, const vec& g, vec& y, int maxiter,
 
     // Solve the quadratic subproblem to obtain a search direction.
     p.fill(0);
-    compute_activeset_searchdir(Hs,bs,ps,B,ainc);
+    compute_activeset_searchdir(Hs,bs,ps,Bs,ainc);
     p(i) = ps;
 
     // Reset the step size.
@@ -292,7 +291,8 @@ uint activesetqp (const mat& H, const vec& g, vec& y, int maxiter,
 	  add_to_working_set = true;
       }
       
-      // Move to the new iteration along the search direction.
+      // Move to the new iteration along the search direction. The new
+      // iterate must have only positive entries.
       y += a*p;
       j  = find(y < 0);
       y(j).fill(0);
@@ -365,17 +365,17 @@ void compute_activeset_searchdir (const mat& H, const vec& y, vec& p,
 uint backtracking_line_search (double f, const mat& L, const vec& w,
 			       const vec& g, const vec& x, const vec& y,
 			       const vec& e, double suffdecr, double beta,
-			       double amin, double& a, vec& xnew, vec& u) {
+			       double amin, double& a, vec& xnew) {
   int    k;
   double afeas;
   double fnew;
   uint   nls = 0;
-  vec    p = y - x;
   
   // Determine the largest step size maintaining feasibility; if it is
   // larger than the minimum step size, return the minimum step size
   // that maintains feasibility of the solution. Otherwise, continue
   // to backtracking line search.
+  vec p = y - x;
   feasible_stepsize(x,p,k,afeas);
   if (afeas <= amin)
     xnew = afeas*y + (1 - afeas)*x;
@@ -390,7 +390,7 @@ uint backtracking_line_search (double f, const mat& L, const vec& w,
     // decrease" condition.
     while (true) {
       xnew = a*y + (1 - a)*x;
-      fnew = compute_objective(L,w,xnew,e,u);
+      fnew = compute_objective(L,w,xnew,e);
       nls++;
 
       // Check whether the new candidate solution satisfies the
