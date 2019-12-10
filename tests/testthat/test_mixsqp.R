@@ -59,8 +59,8 @@ test_that(paste("mix-SQP gives correct solutions for 2 x 2 and",
   # should be exactly zero.
   L <- rbind(c(1,1,e),
              c(1,1,1))
-  capture.output(out1 <- mixsqp(L,x0 = c(1,1,0)))
-  capture.output(out2 <- mixsqp(L,x0 = c(0,1,1)))
+  capture.output(out1 <- mixsqp(L,x0 = c(1,1,0),control = list(eps = 0)))
+  capture.output(out2 <- mixsqp(L,x0 = c(0,1,1),control = list(eps = 0)))
   expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
   expect_equal(out2$status,mixsqp:::mixsqp.status.converged)
   expect_equal(out1$x[3],0,tolerance = 0)

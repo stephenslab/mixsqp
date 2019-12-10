@@ -140,6 +140,12 @@ algorithm settings (as they are defined by
 
 \describe{
 
+item{\code{normalized.rows}}{When \code{normalize.rows = TRUE}, the
+rows of the data matrix \code{L} are automatically scaled so that
+the largest entry in each row is 1. This is the recommended setting
+for better stability of the optimization. When \code{log = TRUE},
+this setting is ignored becase the rows are already normalized.}
+
 \item{\code{convtol.sqp}}{A small, non-negative number
 specifying the convergence tolerance for SQP algorithm; convergence
 is reached when the maximum dual residual in the Karush-Kuhn-Tucker
