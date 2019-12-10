@@ -70,14 +70,21 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' 
 #' \describe{
 #'
-#' item{\code{normalized.rows}}{When \code{normalize.rows = TRUE}, the
+#' \item{\code{normalize.rows}}{When \code{normalize.rows = TRUE}, the
 #' rows of the data matrix \code{L} are automatically scaled so that
 #' the largest entry in each row is 1. This is the recommended setting
 #' for better stability of the optimization. When \code{log = TRUE},
 #' this setting is ignored becase the rows are already normalized.
 #' Note that the objective is computed on the original (unnormalized)
 #' matrix to make the results easier to interpret.}
-#' 
+#'
+#' \item{force.sparse.init}{The computational complexity of the SQP
+#' updates grows rapidly by the number of nonzeros in the current
+#' solution estimate. When \code{force.sparse.init = TRUE}, and there
+#' are more than 20 nonzeros in the solution before beginning the SQP
+#' updates, only the 20 largest entries are kept, the rest are forced
+#' to zero.}
+#'
 #' \item{\code{convtol.sqp}}{A small, non-negative number
 #' specifying the convergence tolerance for SQP algorithm; convergence
 #' is reached when the maximum dual residual in the Karush-Kuhn-Tucker
@@ -307,6 +314,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
     stop("Argument \"control\" contains unknown parameter names")
   control <- modifyList(control0,control,keep.null = TRUE)
   normalize.rows            <- control$normalize.rows
+  force.sparse.init         <- control$force.sparse.init
   convtol.sqp               <- control$convtol.sqp
   convtol.activeset         <- control$convtol.activeset
   zero.threshold.solution   <- control$zero.threshold.solution
@@ -361,11 +369,12 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
     stop(paste("Behavior of algorithm will be unpredictable if",
                "zero.threshold > 1/m, where m = ncol(X)"))
   
-  # Input arguments "normalize.rows" and "verbose" should be TRUE or
-  # FALSE.
+  # Input arguments "normalize.rows", "force.sparse.init" and
+  # "verbose" should be TRUE or FALSE.
   verify.logical.arg(normalize.rows)
+  verify.logical.arg(force.sparse.init)
   verify.logical.arg(verbose)
-
+  
   # When all the entries of one or more columns are zero, the mixture
   # weights associated with those columns are necessarily zero. Here
   # we handle this situation.
@@ -394,15 +403,16 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # If requested, normalize the rows of L. Note that the rows will
   # already be normalized when log = TRUE.
   if (normalize.rows & !log) {
-    z <- apply(L,1,max)
-    L <- L / z
-    z <- log(z)
+    out <- normalize.rows(L)
+    L   <- out$A
+    z   <- log(out$z)
+    rm(out)
   } else
     z <- rep(0,n)
   
   # Print a brief summary of the analysis, if requested.
   if (verbose) {
-    cat(sprintf("Running mix-SQP algorithm 0.2-10 on %d x %d matrix\n",n,m))
+    cat(sprintf("Running mix-SQP algorithm 0.2-11 on %d x %d matrix\n",n,m))
     cat(sprintf("convergence tol. (SQP):     %0.1e\n",convtol.sqp))
     cat(sprintf("conv. tol. (active-set):    %0.1e\n",convtol.activeset))
     cat(sprintf("zero threshold (solution):  %0.1e\n",zero.threshold.solution))
@@ -424,26 +434,26 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   x   <- x0
   eps <- rep(eps,n)
   if (numiter.em > 0) {
-    progress.em <- data.frame(objective = rep(0,numiter.em),
-                              max.rdual = rep(as.numeric(NA),numiter.em),
-                              nnz       = rep(as.numeric(NA),numiter.em),
-                              stepsize  = rep(1,numiter.em),
-                              max.diff  = rep(0,numiter.em),
-                              nqp       = rep(as.numeric(NA),numiter.em),
-                              nls       = rep(as.numeric(NA),numiter.em))
-    for (i in 1:numiter.em) {
-      xprev <- x
-      x     <- mixem.update(L,w,x,eps)
-      progress.em[i,"objective"] <- mixobj(L,w,x,z,eps)
-      progress.em[i,"max.diff"]  <- max(abs(x - xprev))
-      progress.em[i,"nnz"]       <- sum(x >= zero.threshold.solution)
-      if (verbose)
-        cat(sprintf("%4d %+0.9e  -- EM -- %4d 1.00e+00 %0.2e  --  --\n",
-                    i,progress.em[i,"objective"],progress.em[i,"nnz"],
-                    progress.em[i,"max.diff"]))
-    }
+    out         <- run.mixem.updates(L,w,x,z,numiter.em,eps,
+                                     zero.threshold.solution,verbose)
+    x           <- out$x
+    progress.em <- out$progress
+    rm(out)
   } else
     progress.em <- NULL
+
+  # MAKE SOLUTION SPARSE
+  # --------------------
+  # If force.sparse.init = TRUE, and there are more than 20 nonzeros
+  # in the current solution estimate, force the solution estimate to
+  # have exactly 20 nonzeros.
+  if (force.sparse.init & sum(x > 0) > 20) {
+    x0   <- x
+    i    <- order(x0,decreasing = TRUE)[1:20]
+    x[]  <- 0
+    x[i] <- x0[i]
+    x    <- x/sum(x)
+  }
 
   # SOLVE OPTIMIZATION PROBLEM USING mix-SQP
   # ----------------------------------------
@@ -520,6 +530,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 #' 
 mixsqp_control_default <- function()
   list(normalize.rows            = TRUE,
+       force.sparse.init         = TRUE,
        convtol.sqp               = 1e-8,
        convtol.activeset         = 1e-10,
        zero.threshold.solution   = 1e-8,
@@ -531,8 +542,32 @@ mixsqp_control_default <- function()
        eps                       = 1e-8,
        maxiter.sqp               = 1000,
        maxiter.activeset         = NULL,
-       numiter.em                = 4,
+       numiter.em                = 10,
        verbose                   = TRUE)
+
+# This function is used within mixsqp to run several EM updates.
+run.mixem.updates <- function (L, w, x, z, numiter, eps,
+                               zero.threshold, verbose) {
+  progress <- data.frame(objective = rep(0,numiter),
+                         max.rdual = rep(as.numeric(NA),numiter),
+                         nnz       = rep(as.numeric(NA),numiter),
+                         stepsize  = rep(1,numiter),
+                         max.diff  = rep(0,numiter),
+                         nqp       = rep(as.numeric(NA),numiter),
+                         nls       = rep(as.numeric(NA),numiter))
+  for (i in 1:numiter) {
+    x0 <- x
+    x  <- mixem.update(L,w,x,eps)
+    progress[i,"objective"] <- mixobj(L,w,x,z,eps)
+    progress[i,"max.diff"]  <- max(abs(x - x0))
+    progress[i,"nnz"]       <- sum(x >= zero.threshold)
+    if (verbose)
+      cat(sprintf("%4d %+0.9e  -- EM -- %4d 1.00e+00 %0.2e  --  --\n",
+                  i,progress[i,"objective"],progress[i,"nnz"],
+                  progress[i,"max.diff"]))
+  }
+  return(list(x = x,progress = progress))
+}
 
 # Perform a single expectation maximization (EM) update.
 mixem.update <- function (L, w, x, e) {

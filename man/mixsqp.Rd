@@ -140,13 +140,20 @@ algorithm settings (as they are defined by
 
 \describe{
 
-item{\code{normalized.rows}}{When \code{normalize.rows = TRUE}, the
+\item{\code{normalize.rows}}{When \code{normalize.rows = TRUE}, the
 rows of the data matrix \code{L} are automatically scaled so that
 the largest entry in each row is 1. This is the recommended setting
 for better stability of the optimization. When \code{log = TRUE},
 this setting is ignored becase the rows are already normalized.
 Note that the objective is computed on the original (unnormalized)
 matrix to make the results easier to interpret.}
+
+\item{force.sparse.init}{The computational complexity of the SQP
+updates grows rapidly by the number of nonzeros in the current
+solution estimate. When \code{force.sparse.init = TRUE}, and there
+are more than 20 nonzeros in the solution before beginning the SQP
+updates, only the 20 largest entries are kept, the rest are forced
+to zero.}
 
 \item{\code{convtol.sqp}}{A small, non-negative number
 specifying the convergence tolerance for SQP algorithm; convergence

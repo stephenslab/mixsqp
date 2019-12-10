@@ -135,4 +135,12 @@ normalize.likelihoods <- function (A)
 # entry in each row is 1.
 normalize.loglikelihoods <- function (A)
   exp(A - apply(A,1,max))
-    
+
+# Normalize the rows of matrix A such that the maximum entry in each
+# row is 1. The return value is a list containing the normalized
+# matrix and the vector of normalizing factors. Note that all entries
+# in the matrix A must be non-negative.
+normalize.rows <- function (A) {
+  z <- apply(A,1,max)
+  return(list(A = A/z,z = z))
+}

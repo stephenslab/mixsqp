@@ -101,7 +101,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& z,
     // Note that only the dual residuals (gmin's) corresponding to the
     // nonzero co-ordinates are relevant.
     gmin(i) = 1 + g.min();
-    nnz(i)  = sum(j);
+    nnz(i)  = sum(x > 0);
     if (verbose) {
       if (i == 0)
         Rprintf("%4d %+0.9e %+0.3e%4d  ------   ------   --  --\n",
