@@ -148,7 +148,7 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' \item{\code{maxiter.activeset}}{Maximum number of active-set
 #' iterations taken to solve each of the quadratic subproblems. If
 #' \code{NULL}, the maximum number of active-set iterations is set to
-#' \code{min(100,1 + ncol(L))}.}
+#' \code{min(20,1 + ncol(L))}.}
 #'
 #' \item{\code{numiter.em}}{Number of expectation maximization (EM)
 #' updates to perform prior to running mix-SQP. This can help ensure
@@ -324,7 +324,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # If the maximum number of active-set iterations is set to NULL, set
   # it to be equal to 1 + ncol(L), or 100, whichever is smaller.
   if (is.null(maxiter.activeset))
-    maxiter.activeset <- min(100,m + 1)
+    maxiter.activeset <- min(20,m + 1)
   
   # Input arguments "maxiter.sqp" and "maxiter.activeset" should be
   # scalars that are integers greater than zero.
@@ -402,7 +402,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # Print a brief summary of the analysis, if requested.
   if (verbose) {
-    cat(sprintf("Running mix-SQP algorithm 0.2-9 on %d x %d matrix\n",n,m))
+    cat(sprintf("Running mix-SQP algorithm 0.2-10 on %d x %d matrix\n",n,m))
     cat(sprintf("convergence tol. (SQP):     %0.1e\n",convtol.sqp))
     cat(sprintf("conv. tol. (active-set):    %0.1e\n",convtol.activeset))
     cat(sprintf("zero threshold (solution):  %0.1e\n",zero.threshold.solution))

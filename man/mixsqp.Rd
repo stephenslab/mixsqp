@@ -144,7 +144,9 @@ item{\code{normalized.rows}}{When \code{normalize.rows = TRUE}, the
 rows of the data matrix \code{L} are automatically scaled so that
 the largest entry in each row is 1. This is the recommended setting
 for better stability of the optimization. When \code{log = TRUE},
-this setting is ignored becase the rows are already normalized.}
+this setting is ignored becase the rows are already normalized.
+Note that the objective is computed on the original (unnormalized)
+matrix to make the results easier to interpret.}
 
 \item{\code{convtol.sqp}}{A small, non-negative number
 specifying the convergence tolerance for SQP algorithm; convergence
@@ -216,7 +218,7 @@ active-set method.}
 \item{\code{maxiter.activeset}}{Maximum number of active-set
 iterations taken to solve each of the quadratic subproblems. If
 \code{NULL}, the maximum number of active-set iterations is set to
-\code{min(100,1 + ncol(L))}.}
+\code{min(20,1 + ncol(L))}.}
 
 \item{\code{numiter.em}}{Number of expectation maximization (EM)
 updates to perform prior to running mix-SQP. This can help ensure
