@@ -85,6 +85,8 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' updates, only the 20 largest entries are kept, the rest are forced
 #' to zero.}
 #'
+#' \item{\code{tol.rrqr}}{Describe this control parameter here.}
+#' 
 #' \item{\code{convtol.sqp}}{A small, non-negative number
 #' specifying the convergence tolerance for SQP algorithm; convergence
 #' is reached when the maximum dual residual in the Karush-Kuhn-Tucker
@@ -315,6 +317,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   control <- modifyList(control0,control,keep.null = TRUE)
   normalize.rows            <- control$normalize.rows
   force.sparse.init         <- control$force.sparse.init
+  tol.rrqr                  <- control$tol.rrqr
   convtol.sqp               <- control$convtol.sqp
   convtol.activeset         <- control$convtol.activeset
   zero.threshold.solution   <- control$zero.threshold.solution
@@ -347,6 +350,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # non-negative scalars. Additionally, "zero.threshold.solution"
   # should be less than 1/m. Also, post a warning if eps is within
   # range of the largest value in one of the rows of the matrix L.
+  verify.nonneg.scalar.arg(tol.rrqr)
   verify.nonneg.scalar.arg(convtol.sqp)
   verify.nonneg.scalar.arg(convtol.activeset)
   verify.nonneg.scalar.arg(numiter.em)
@@ -412,7 +416,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # Print a brief summary of the analysis, if requested.
   if (verbose) {
-    cat(sprintf("Running mix-SQP algorithm 0.3-0 on %d x %d matrix\n",n,m))
+    cat(sprintf("Running mix-SQP algorithm 0.3-1 on %d x %d matrix\n",n,m))
     cat(sprintf("convergence tol. (SQP):     %0.1e\n",convtol.sqp))
     cat(sprintf("conv. tol. (active-set):    %0.1e\n",convtol.activeset))
     cat(sprintf("zero threshold (solution):  %0.1e\n",zero.threshold.solution))
@@ -424,15 +428,30 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
     cat(sprintf("max. iter (SQP):            %d\n",maxiter.sqp))
     cat(sprintf("max. iter (active-set):     %d\n",maxiter.activeset))
     cat(sprintf("number of EM iterations:    %d\n",numiter.em))
-
-    # Print the column labels for reporting the algorithm's progress.
-    cat("iter        objective max(rdual) nnz stepsize max.diff nqp nls\n")
   }
+
+  # COMPUTE LOW-RANK FACTORIZATION
+  # ------------------------------
+  if (tol.rrqr > 0) {
+    if (verbose)
+      cat(sprintf("Computing low-rank QR factorization of %d x %d matrix.\n",
+                  n,m))
+    out.rrqr <- rrqr(L,tol.rrqr)
+    if (verbose)
+      cat(sprintf("Rank of %d x %d matrix is estimated to be %d.\n",
+                  n,m,ncol(out.rrqr$Q)))
+  }
+
+  # INITIALIZE SOLUTION
+  # -------------------
+  x   <- x0
+  eps <- rep(eps,n)
   
   # RUN A FEW ITERATIONS OF EM
   # --------------------------
-  x   <- x0
-  eps <- rep(eps,n)
+  # Print the column labels for reporting the algorithm's progress.
+  if (verbose)
+    cat("iter        objective max(rdual) nnz stepsize max.diff nqp nls\n")
   if (numiter.em > 0) {
     out         <- run.mixem.updates(L,w,x,z,numiter.em,eps,
                                      zero.threshold.solution,verbose)
@@ -447,13 +466,8 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # If force.sparse.init = TRUE, and there are more than 20 nonzeros
   # in the current solution estimate, force the solution estimate to
   # have exactly 20 nonzeros.
-  if (force.sparse.init & sum(x > 0) > 20) {
-    x0   <- x
-    i    <- order(x0,decreasing = TRUE)[1:20]
-    x[]  <- 0
-    x[i] <- x0[i]
-    x    <- x/sum(x)
-  }
+  if (force.sparse.init & sum(x > 0) > 20)
+    x <- force.sparse(x,20)
 
   # SOLVE OPTIMIZATION PROBLEM USING mix-SQP
   # ----------------------------------------
@@ -531,6 +545,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 mixsqp_control_default <- function()
   list(normalize.rows            = TRUE,
        force.sparse.init         = TRUE,
+       tol.rrqr                  = 1e-8,
        convtol.sqp               = 1e-8,
        convtol.activeset         = 1e-10,
        zero.threshold.solution   = 1e-8,
@@ -544,6 +559,17 @@ mixsqp_control_default <- function()
        maxiter.activeset         = NULL,
        numiter.em                = 10,
        verbose                   = TRUE)
+
+# Return x such that the top n entries are the same (up to a constant
+# of proportionality), and the remaining entries are zero.
+force.sparse <- function (x, n) {
+  i    <- order(x,decreasing = TRUE)
+  i    <- i[1:n]
+  y    <- x
+  y[]  <- 0
+  y[i] <- x[i]
+  return(y/sum(y))
+}
 
 # This function is used within mixsqp to run several EM updates.
 run.mixem.updates <- function (L, w, x, z, numiter, eps,

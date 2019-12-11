@@ -155,6 +155,8 @@ are more than 20 nonzeros in the solution before beginning the SQP
 updates, only the 20 largest entries are kept, the rest are forced
 to zero.}
 
+\item{\code{tol.rrqr}}{Describe this control parameter here.}
+
 \item{\code{convtol.sqp}}{A small, non-negative number
 specifying the convergence tolerance for SQP algorithm; convergence
 is reached when the maximum dual residual in the Karush-Kuhn-Tucker

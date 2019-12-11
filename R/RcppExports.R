@@ -5,3 +5,7 @@ mixsqp_rcpp <- function(L, w, z, x0, convtolsqp, convtolactiveset, zerothreshold
     .Call('_mixsqp_mixsqp_rcpp', PACKAGE = 'mixsqp', L, w, z, x0, convtolsqp, convtolactiveset, zerothresholdsolution, zerothresholdsearchdir, suffdecr, stepsizereduce, minstepsize, identitycontribincrease, eps, maxitersqp, maxiteractiveset, verbose)
 }
 
+rrqr_rcpp <- function(x, tol) {
+    .Call('_mixsqp_rrqr_rcpp', PACKAGE = 'mixsqp', x, tol)
+}
+
