@@ -155,7 +155,11 @@ are more than 20 nonzeros in the solution before beginning the SQP
 updates, only the 20 largest entries are kept, the rest are forced
 to zero.}
 
-\item{\code{tol.rrqr}}{Describe this control parameter here.}
+\item{\code{tol.svd}}{Setting used to determine rank of low-rank
+SVD approximation to the data matrix, L. The rank of the singular
+value decomposition is determined by the number of singular values
+surpassing \code{tol.svd}. When \code{tol.svd = 0}, computations
+are done using full L matrix.}
 
 \item{\code{convtol.sqp}}{A small, non-negative number
 specifying the convergence tolerance for SQP algorithm; convergence

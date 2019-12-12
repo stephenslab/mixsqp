@@ -85,7 +85,11 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' updates, only the 20 largest entries are kept, the rest are forced
 #' to zero.}
 #'
-#' \item{\code{tol.rrqr}}{Describe this control parameter here.}
+#' \item{\code{tol.svd}}{Setting used to determine rank of low-rank
+#' SVD approximation to the data matrix, L. The rank of the singular
+#' value decomposition is determined by the number of singular values
+#' surpassing \code{tol.svd}. When \code{tol.svd = 0}, computations
+#' are done using full L matrix.}
 #' 
 #' \item{\code{convtol.sqp}}{A small, non-negative number
 #' specifying the convergence tolerance for SQP algorithm; convergence
@@ -317,7 +321,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   control <- modifyList(control0,control,keep.null = TRUE)
   normalize.rows            <- control$normalize.rows
   force.sparse.init         <- control$force.sparse.init
-  tol.rrqr                  <- control$tol.rrqr
+  tol.svd                   <- control$tol.svd
   convtol.sqp               <- control$convtol.sqp
   convtol.activeset         <- control$convtol.activeset
   zero.threshold.solution   <- control$zero.threshold.solution
@@ -350,7 +354,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # non-negative scalars. Additionally, "zero.threshold.solution"
   # should be less than 1/m. Also, post a warning if eps is within
   # range of the largest value in one of the rows of the matrix L.
-  verify.nonneg.scalar.arg(tol.rrqr)
+  verify.nonneg.scalar.arg(tol.svd)
   verify.nonneg.scalar.arg(convtol.sqp)
   verify.nonneg.scalar.arg(convtol.activeset)
   verify.nonneg.scalar.arg(numiter.em)
@@ -402,7 +406,10 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
     L  <- L[,nonzero.cols]
     x0 <- x0[nonzero.cols]
     x0 <- x0/sum(x0)
-  }
+    m0 <- m
+    m  <- length(nonzero.cols)
+  } else
+    m0 <- m
 
   # If requested, normalize the rows of L. Note that the rows will
   # already be normalized when log = TRUE.
@@ -416,7 +423,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # Print a brief summary of the analysis, if requested.
   if (verbose) {
-    cat(sprintf("Running mix-SQP algorithm 0.3-2 on %d x %d matrix\n",n,m))
+    cat(sprintf("Running mix-SQP algorithm 0.3-3 on %d x %d matrix\n",n,m))
     cat(sprintf("convergence tol. (SQP):     %0.1e\n",convtol.sqp))
     cat(sprintf("conv. tol. (active-set):    %0.1e\n",convtol.activeset))
     cat(sprintf("zero threshold (solution):  %0.1e\n",zero.threshold.solution))
@@ -430,21 +437,38 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
     cat(sprintf("number of EM iterations:    %d\n",numiter.em))
   }
 
-  # COMPUTE LOW-RANK FACTORIZATION
-  # ------------------------------
-  if (tol.rrqr > 0) {
+  # COMPUTE LOW-RANK SVD
+  # --------------------
+  U <- matrix(0,n,1)
+  V <- matrix(0,m,1)
+  use.svd <- FALSE
+  if (tol.svd > 0) {
     if (verbose)
-      cat(sprintf("Computing low-rank QR factorization of %d x %d matrix.\n",
-                  n,m))
-    out.rrqr <- rrqr(L,tol.rrqr)
+      cat(sprintf("Computing SVD of %d x %d matrix.\n",n,m))
+    out <- rrsvd(L,tol.svd)
     if (verbose)
-      cat(sprintf("Rank of %d x %d matrix is estimated to be %d.\n",
-                  n,m,ncol(out.rrqr$Q)))
+      cat(sprintf("Rank of matrix is estimated to be %d.\n",ncol(out$U)))
+    if (ncol(out$U) < m) {
+
+      # Only use the SVD of L if it might be worthwhile to do so.
+      U       <- out$U
+      V       <- out$V
+      use.svd <- TRUE
+    }
+    rm(out)
   }
 
   # INITIALIZE SOLUTION
   # -------------------
-  x   <- x0
+  x <- x0
+
+  # Adjust the numerical safeguard to accommodate negative entries in
+  # the SVD reconstruction of L, or L itself (if we ever allow it).
+  browser()
+  if (use.svd)
+    eps <- eps - min(0,min(tcrossprod(U,V)))
+  else
+    eps <- eps - min(0,min(L))
   eps <- rep(eps,n)
   
   # RUN A FEW ITERATIONS OF EM
@@ -513,7 +537,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # If necessary, insert the zero mixture weights associated with the
   # columns of zeros.
-  if (length(nonzero.cols) < m) {
+  if (m < m0) {
     xnz <- x
     x   <- rep(0,m)
     x[nonzero.cols] <- xnz
@@ -545,7 +569,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 mixsqp_control_default <- function()
   list(normalize.rows            = TRUE,
        force.sparse.init         = TRUE,
-       tol.rrqr                  = 1e-8,
+       tol.svd                   = 1e-8,
        convtol.sqp               = 1e-8,
        convtol.activeset         = 1e-10,
        zero.threshold.solution   = 1e-8,
@@ -559,6 +583,23 @@ mixsqp_control_default <- function()
        maxiter.activeset         = NULL,
        numiter.em                = 10,
        verbose                   = TRUE)
+
+# Compute a low-rank approximation U*V' to rectangular matrix X, such
+# that X is an n x m matrix, U is an n x k matrix, and V is an m x k
+# matrix, where k <= min(n,m). The rank, k, is determined by the
+# number of singular values surpassing the tolerance, "tol".
+rrsvd <- function (X, tol) {
+  out <- svd(X)
+  i <- which(out$d > tol)
+  if (length(i) < 2)
+    i <- 1:2
+  d <- out$d[i]
+  U <- out$u[,i]
+  V <- out$v[,i]
+  U <- scale.cols(U,sqrt(d))
+  V <- scale.cols(V,sqrt(d))
+  return(list(U = U,V = V))
+}
 
 # Return x such that the top n entries are the same (up to a constant
 # of proportionality), and the remaining entries are zero.

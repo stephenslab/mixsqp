@@ -1,7 +1,7 @@
 Encoding: UTF-8
 Type: Package
 Package: mixsqp
-Version: 0.3-2
+Version: 0.3-3
 Date: 2019-12-12
 Title: Sequential Quadratic Programming for Fast Maximum-Likelihood
     Estimation of Mixture Proportions
@@ -39,8 +39,7 @@ Suggests:
     rmarkdown
 LinkingTo:
     Rcpp,
-    RcppArmadillo,
-    RcppEigen
+    RcppArmadillo
 LazyData: true
 NeedsCompilation: yes
 VignetteBuilder: knitr
