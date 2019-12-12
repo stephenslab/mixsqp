@@ -464,7 +464,6 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 
   # Adjust the numerical safeguard to accommodate negative entries in
   # the SVD reconstruction of L, or L itself (if we ever allow it).
-  browser()
   if (use.svd)
     eps <- eps - min(0,min(tcrossprod(U,V)))
   else
