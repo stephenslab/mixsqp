@@ -33,8 +33,8 @@ List rrqr_rcpp (const NumericMatrix& x, double tol) {
     k = qr.rank();
   
   // Return the Q and R factors of the truncated decomposition. 
-  MatrixXd R = qr.matrixQR().triangularView<Upper>();
-  MatrixXd Q = qr.matrixQ();
+  MatrixXd R = qr.matrixR().triangularView<Upper>();
+  MatrixXd Q = qr.householderQ();
   R *= qr.colsPermutation().inverse();
   return List::create(Named("Q") = Q.leftCols(k),
 		      Named("R") = R.topRows(k));
