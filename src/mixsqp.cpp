@@ -42,13 +42,17 @@ int    backtracking_line_search (double f, const mat& L, const mat& U,
 // [[Rcpp::export]]
 List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
 		  const arma::vec& w, const arma::vec& z, const arma::vec& x0,
-		  int n, int m, bool usesvd, double convtolsqp,
-		  double convtolactiveset, double zerothresholdsolution,
-		  double zerothresholdsearchdir, double suffdecr,
-		  double stepsizereduce, double minstepsize,
+		  bool usesvd, double convtolsqp, double convtolactiveset,
+		  double zerothresholdsolution, double zerothresholdsearchdir,
+		  double suffdecr, double stepsizereduce, double minstepsize,
 		  double identitycontribincrease, const arma::vec& eps,
 		  int maxitersqp, int maxiteractiveset, bool verbose) {
   
+  // Get the number of rows (n) and columns (m) of the conditional
+  // likelihood matrix.
+  int n = L.n_rows;
+  int m = L.n_cols;
+
   // PREPARE DATA STRUCTURES
   // -----------------------
   // Initialize storage for the outputs obj, gmin, nnz, nqp and dmax.
