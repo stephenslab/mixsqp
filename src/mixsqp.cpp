@@ -15,18 +15,21 @@ using namespace arma;
 
 // FUNCTION DECLARATIONS
 // ---------------------
-double compute_objective (const mat& L, const vec& w, const vec& x,
-			  const vec& z, const vec& e);
-void   compute_grad      (const mat& L, const vec& w, const vec& x,
-			  const vec& e, vec& g, mat& H, mat& Z);
+double compute_objective (const mat& L, const mat& U, const mat& V,
+			  const vec& w, const vec& x, const vec& z,
+			  const vec& e, bool usesvd);
+void   compute_grad      (const mat& L, const mat& U, const mat& V,
+			  const vec& w, const vec& x, const vec& e,
+			  vec& g, mat& H, mat& Z, bool usesvd);
 int    activesetqp       (const mat& H, const vec& g, vec& y, int maxiter,
 			  double zerosearchdir, double tol, double ainc);
 void   compute_activeset_searchdir (const mat& H, const vec& y, vec& p, mat& B,
 				    double ainc);
-int    backtracking_line_search (double f, const mat& L, const vec& w,
-				 const vec& z, const vec& g, const vec& x, 
-				 const vec& y, const vec& e, double suffdecr, 
-				 double beta, double amin, double& a, 
+int    backtracking_line_search (double f, const mat& L, const mat& U,
+				 const mat& V, const vec& w, const vec& z,
+				 const vec& g, const vec& x, const vec& y,
+				 const vec& e, bool usesvd, double suffdecr, 
+				 double beta, double amin, double& a,
 				 vec& xnew);
 
 // FUNCTION DEFINITIONS
@@ -37,19 +40,15 @@ int    backtracking_line_search (double f, const mat& L, const vec& w,
 // mixsqp_rcpp is called inside the mixsqp function.
 // 
 // [[Rcpp::export]]
-List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& z, 
-		  const arma::vec& x0, double convtolsqp, 
-		  double convtolactiveset, double zerothresholdsolution, 
-		  double zerothresholdsearchdir, double suffdecr, 
+List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
+		  const arma::vec& w, const arma::vec& z, const arma::vec& x0,
+		  int n, int m, bool usesvd, double convtolsqp,
+		  double convtolactiveset, double zerothresholdsolution,
+		  double zerothresholdsearchdir, double suffdecr,
 		  double stepsizereduce, double minstepsize,
 		  double identitycontribincrease, const arma::vec& eps,
 		  int maxitersqp, int maxiteractiveset, bool verbose) {
   
-  // Get the number of rows (n) and columns (m) of the conditional
-  // likelihood matrix.
-  int n = L.n_rows;
-  int m = L.n_cols;
-
   // PREPARE DATA STRUCTURES
   // -----------------------
   // Initialize storage for the outputs obj, gmin, nnz, nqp and dmax.
@@ -90,10 +89,10 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& z,
     x(j).fill(0);
     
     // Compute the value of the objective at x.
-    obj(i) = compute_objective(L,w,x,z,eps);
+    obj(i) = compute_objective(L,U,V,w,x,z,eps,usesvd);
 
     // Compute the gradient and Hessian.
-    compute_grad(L,w,x,eps,g,H,Z);
+    compute_grad(L,U,V,w,x,eps,g,H,Z,usesvd);
     
     // Report on the algorithm's progress. Here we compute: the
     // smallest gradient value (gmin), which is used as a convergence
@@ -139,9 +138,9 @@ List mixsqp_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& z,
 				  identitycontribincrease);
     
     // Run backtracking line search.
-    nls(i) = (double) backtracking_line_search(obj(i),L,w,z,g,x,y,eps,suffdecr,
-					       stepsizereduce,minstepsize,
-					       stepsize(i),xnew);
+    nls(i) = (double) backtracking_line_search(obj(i),L,U,V,w,z,g,x,y,eps,
+					       usesvd,suffdecr,stepsizereduce,
+					       minstepsize,stepsize(i),xnew);
     
     // Update the solution.
     d       = abs(x - xnew);
@@ -173,19 +172,32 @@ inline double min (double a, double b) {
 }
 
 // Compute the value of the (unmodified) objective at x.
-double compute_objective (const mat& L, const vec& w, const vec& x,
-			  const vec& z, const vec& e) {
-  vec u = L*x + e;
+double compute_objective (const mat& L, const mat& U, const mat& V,
+			  const vec& w, const vec& x, const vec& z,
+			  const vec& e, bool usesvd) {
+  vec u;
+  if (usesvd) {
+    u = U*(trans(V)*x) + e;
+  } else {
+    u = L*x + e;
+  }
   if (u.min() <= 0)
     Rcpp::stop("Objective is -Inf");
   return -sum(w % (z + log(u)));
 }
 
 // Compute the gradient and Hessian of the (unmodified) objective at x.
-void compute_grad (const mat& L, const vec& w, const vec& x, const vec& e,
-		   vec& g, mat& H, mat& Z) {
-  vec u = L*x + e;
-  g = -trans(L)*(w/u);
+void compute_grad (const mat& L, const mat& U, const mat& V, const vec& w,
+		   const vec& x, const vec& e, vec& g, mat& H, mat& Z,
+		   bool usesvd) {
+  vec u;
+  if (usesvd) {
+    u = U*(trans(V)*x) + e;
+    g = -V * (trans(U) * (w/u));
+  } else {
+    u = L*x + e;
+    g = -trans(L) * (w/u);
+  } 
   Z = L;
   Z.each_col() %= (sqrt(w)/u);
   H = trans(Z) * Z;
@@ -364,10 +376,12 @@ void compute_activeset_searchdir (const mat& H, const vec& y, vec& p,
 // This implements the backtracking line search algorithm from p. 37
 // of Nocedal & Wright, Numerical Optimization, 2nd ed, 2006.
 // the search direction is given by p = y - x.
-int backtracking_line_search (double f, const mat& L, const vec& w,
-			      const vec& z, const vec& g, const vec& x, 
-			      const vec& y, const vec& e, double suffdecr, 
-			      double beta, double amin, double& a, vec& xnew) {
+int backtracking_line_search (double f, const mat& L, const mat& U,
+			      const mat& V, const vec& w, const vec& z,
+			      const vec& g, const vec& x, const vec& y,
+			      const vec& e, bool usesvd, double suffdecr, 
+			      double beta, double amin, double& a,
+			      vec& xnew) {
   int    k;
   double afeas;
   double fnew;
@@ -392,7 +406,7 @@ int backtracking_line_search (double f, const mat& L, const vec& w,
     // decrease" condition.
     while (true) {
       xnew = a*y + (1 - a)*x;
-      fnew = compute_objective(L,w,xnew,z,e);
+      fnew = compute_objective(L,U,V,w,xnew,z,e,usesvd);
       nls++;
 
       // Check whether the new candidate solution satisfies the

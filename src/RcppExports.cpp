@@ -2,21 +2,25 @@
 // Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #include <RcppArmadillo.h>
-#include <RcppEigen.h>
 #include <Rcpp.h>
 
 using namespace Rcpp;
 
 // mixsqp_rcpp
-List mixsqp_rcpp(const arma::mat& L, const arma::vec& w, const arma::vec& z, const arma::vec& x0, double convtolsqp, double convtolactiveset, double zerothresholdsolution, double zerothresholdsearchdir, double suffdecr, double stepsizereduce, double minstepsize, double identitycontribincrease, const arma::vec& eps, int maxitersqp, int maxiteractiveset, bool verbose);
-RcppExport SEXP _mixsqp_mixsqp_rcpp(SEXP LSEXP, SEXP wSEXP, SEXP zSEXP, SEXP x0SEXP, SEXP convtolsqpSEXP, SEXP convtolactivesetSEXP, SEXP zerothresholdsolutionSEXP, SEXP zerothresholdsearchdirSEXP, SEXP suffdecrSEXP, SEXP stepsizereduceSEXP, SEXP minstepsizeSEXP, SEXP identitycontribincreaseSEXP, SEXP epsSEXP, SEXP maxitersqpSEXP, SEXP maxiteractivesetSEXP, SEXP verboseSEXP) {
+List mixsqp_rcpp(const arma::mat& L, const arma::mat& U, const arma::mat& V, const arma::vec& w, const arma::vec& z, const arma::vec& x0, int n, int m, bool usesvd, double convtolsqp, double convtolactiveset, double zerothresholdsolution, double zerothresholdsearchdir, double suffdecr, double stepsizereduce, double minstepsize, double identitycontribincrease, const arma::vec& eps, int maxitersqp, int maxiteractiveset, bool verbose);
+RcppExport SEXP _mixsqp_mixsqp_rcpp(SEXP LSEXP, SEXP USEXP, SEXP VSEXP, SEXP wSEXP, SEXP zSEXP, SEXP x0SEXP, SEXP nSEXP, SEXP mSEXP, SEXP usesvdSEXP, SEXP convtolsqpSEXP, SEXP convtolactivesetSEXP, SEXP zerothresholdsolutionSEXP, SEXP zerothresholdsearchdirSEXP, SEXP suffdecrSEXP, SEXP stepsizereduceSEXP, SEXP minstepsizeSEXP, SEXP identitycontribincreaseSEXP, SEXP epsSEXP, SEXP maxitersqpSEXP, SEXP maxiteractivesetSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::mat& >::type L(LSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type U(USEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type V(VSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type w(wSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type z(zSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type x0(x0SEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< bool >::type usesvd(usesvdSEXP);
     Rcpp::traits::input_parameter< double >::type convtolsqp(convtolsqpSEXP);
     Rcpp::traits::input_parameter< double >::type convtolactiveset(convtolactivesetSEXP);
     Rcpp::traits::input_parameter< double >::type zerothresholdsolution(zerothresholdsolutionSEXP);
@@ -29,26 +33,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type maxitersqp(maxitersqpSEXP);
     Rcpp::traits::input_parameter< int >::type maxiteractiveset(maxiteractivesetSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(mixsqp_rcpp(L, w, z, x0, convtolsqp, convtolactiveset, zerothresholdsolution, zerothresholdsearchdir, suffdecr, stepsizereduce, minstepsize, identitycontribincrease, eps, maxitersqp, maxiteractiveset, verbose));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rrqr_rcpp
-List rrqr_rcpp(const NumericMatrix& x, double tol);
-RcppExport SEXP _mixsqp_rrqr_rcpp(SEXP xSEXP, SEXP tolSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const NumericMatrix& >::type x(xSEXP);
-    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
-    rcpp_result_gen = Rcpp::wrap(rrqr_rcpp(x, tol));
+    rcpp_result_gen = Rcpp::wrap(mixsqp_rcpp(L, U, V, w, z, x0, n, m, usesvd, convtolsqp, convtolactiveset, zerothresholdsolution, zerothresholdsearchdir, suffdecr, stepsizereduce, minstepsize, identitycontribincrease, eps, maxitersqp, maxiteractiveset, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_mixsqp_mixsqp_rcpp", (DL_FUNC) &_mixsqp_mixsqp_rcpp, 16},
-    {"_mixsqp_rrqr_rcpp", (DL_FUNC) &_mixsqp_rrqr_rcpp, 2},
+    {"_mixsqp_mixsqp_rcpp", (DL_FUNC) &_mixsqp_mixsqp_rcpp, 21},
     {NULL, NULL, 0}
 };
 
