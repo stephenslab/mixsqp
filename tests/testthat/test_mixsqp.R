@@ -177,6 +177,24 @@ test_that(paste("mix-SQP returns the correct solution when log-likelihoods",
   expect_equal(out1$x,out2$x,tolerance = 1e-8)
 })
 
+test_that(paste("mix-SQP returns the same solution when using full data",
+                "matrix and the low-rank SVD approximation"),{
+
+  # Simulate a 1,000 x 40 likelihood matrix.
+  set.seed(1)
+  L <- simulatemixdata(1000,40)$L
+  w <- runif(1000)
+  w <- w/sum(w)
+
+  # Apply mix-SQP to normalized and unnormalized data sets.
+  capture.output(out1 <- mixsqp(L,w,control = list(tol.svd = 0)))
+  capture.output(out2 <- mixsqp(L,w,control = list(tol.svd = 1e-8)))
+
+  # The outputted solutions should be nearly identical.
+  expect_equal(out1$value,out2$value,tolerance = 1e-8)
+  expect_equal(out1$x,out2$x,tolerance = 1e-8)
+})
+
 test_that("mix-SQP successfully \"escapes\" a sparse initial estimate",{
   set.seed(1)
   n <- 100
