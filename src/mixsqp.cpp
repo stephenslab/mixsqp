@@ -74,12 +74,16 @@ List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
   vec  g(m);
   vec  ghat(m);
   mat  H(m,m);
-  mat  Z(n,m);
   uvec j(m);
   vec  y(m);
   vec  d(m);
   vec  xnew(m);
-  
+  mat  Z;
+  if (usesvd)
+    Z = L;
+  else
+    Z = U;
+      
   // Repeat until the convergence criterion is met, or until we reach
   // the maximum number of (outer loop) iterations.
   for (i = 0; i < maxitersqp; i++) {
@@ -177,10 +181,11 @@ double compute_objective (const mat& L, const mat& U, const mat& V,
 			  const vec& e, bool usesvd) {
   vec u;
   if (usesvd) {
-    u = U*(trans(V)*x) + e;
+    u = U*(trans(V)*x);
   } else {
-    u = L*x + e;
+    u = L*x;
   }
+  u += e;
   if (u.min() <= 0)
     Rcpp::stop("Objective is -Inf");
   return -sum(w % (z + log(u)));
@@ -194,13 +199,16 @@ void compute_grad (const mat& L, const mat& U, const mat& V, const vec& w,
   if (usesvd) {
     u = U*(trans(V)*x) + e;
     g = -V * (trans(U) * (w/u));
+    Z = U;
+    Z.each_col() %= (sqrt(w)/u);
+    H = V * (trans(Z) * Z) * trans(V);
   } else {
     u = L*x + e;
     g = -trans(L) * (w/u);
+    Z = L;
+    Z.each_col() %= (sqrt(w)/u);
+    H = trans(Z) * Z;
   } 
-  Z = L;
-  Z.each_col() %= (sqrt(w)/u);
-  H = trans(Z) * Z;
 }
 
 // Return the largest step size maintaining feasibility (x >= 0) for
