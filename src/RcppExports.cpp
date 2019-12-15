@@ -35,28 +35,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// randomized_svd
-Rcpp::List randomized_svd(const arma::mat& L, int k, int oversampling_parameter, int power_iteration_parameter, double relative_tolerance, std::string sampling_distribution, std::string return_type, bool rsvd_verbose);
-RcppExport SEXP _mixsqp_randomized_svd(SEXP LSEXP, SEXP kSEXP, SEXP oversampling_parameterSEXP, SEXP power_iteration_parameterSEXP, SEXP relative_toleranceSEXP, SEXP sampling_distributionSEXP, SEXP return_typeSEXP, SEXP rsvd_verboseSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::mat& >::type L(LSEXP);
-    Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    Rcpp::traits::input_parameter< int >::type oversampling_parameter(oversampling_parameterSEXP);
-    Rcpp::traits::input_parameter< int >::type power_iteration_parameter(power_iteration_parameterSEXP);
-    Rcpp::traits::input_parameter< double >::type relative_tolerance(relative_toleranceSEXP);
-    Rcpp::traits::input_parameter< std::string >::type sampling_distribution(sampling_distributionSEXP);
-    Rcpp::traits::input_parameter< std::string >::type return_type(return_typeSEXP);
-    Rcpp::traits::input_parameter< bool >::type rsvd_verbose(rsvd_verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(randomized_svd(L, k, oversampling_parameter, power_iteration_parameter, relative_tolerance, sampling_distribution, return_type, rsvd_verbose));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_mixsqp_mixsqp_rcpp", (DL_FUNC) &_mixsqp_mixsqp_rcpp, 19},
-    {"_mixsqp_randomized_svd", (DL_FUNC) &_mixsqp_randomized_svd, 8},
     {NULL, NULL, 0}
 };
 
