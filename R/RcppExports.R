@@ -5,3 +5,7 @@ mixsqp_rcpp <- function(L, U, V, w, z, x0, usesvd, convtolsqp, convtolactiveset,
     .Call('_mixsqp_mixsqp_rcpp', PACKAGE = 'mixsqp', L, U, V, w, z, x0, usesvd, convtolsqp, convtolactiveset, zerothresholdsolution, zerothresholdsearchdir, suffdecr, stepsizereduce, minstepsize, identitycontribincrease, eps, maxitersqp, maxiteractiveset, verbose)
 }
 
+randomized_svd <- function(L, k, oversampling_parameter, power_iteration_parameter, relative_tolerance, sampling_distribution, return_type, rsvd_verbose) {
+    .Call('_mixsqp_randomized_svd', PACKAGE = 'mixsqp', L, k, oversampling_parameter, power_iteration_parameter, relative_tolerance, sampling_distribution, return_type, rsvd_verbose)
+}
+

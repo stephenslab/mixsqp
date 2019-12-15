@@ -280,7 +280,7 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' 
 #' @export
 #' 
-mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
+mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)), use.svd = NULL,
                     log = FALSE, control = list()) {
   
   # CHECK & PROCESS INPUTS
@@ -439,23 +439,44 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 
   # COMPUTE TRUNCATED SVD
   # ---------------------
-  U <- matrix(0,n,1)
-  V <- matrix(0,m,1)
-  use.svd <- FALSE
-  if (tol.svd > 0) {
-    if (verbose)
-      cat(sprintf("Computing SVD of %d x %d matrix.\n",n,m))
-    out <- tsvd(L,tol.svd)
-    if (verbose)
-      cat(sprintf("Rank of matrix is estimated to be %d.\n",ncol(out$U)))
-    if (ncol(out$U) < m) {
-
-      # Only use the SVD of L if it might be worthwhile to do so.
-      U       <- out$U
-      V       <- out$V
-      use.svd <- TRUE
+  # if use.svd, we perform rsvd
+  if (use.svd == TRUE) {
+    num_sv                = 30
+    oversampling_param    = 1
+    power_iteration_param = 1
+    sdist                 = "normal"
+    return_type           = "qb"
+    verbose_rsvd          = TRUE
+    out <- randomized_svd(L, num_sv, oversampling_param, power_iteration_param,
+                          tol.svd, sdist, return_type, verbose_rsvd)
+    U       <- out$Q
+    V       <- out$Bt
+    lmin    <- 0
+  # if not use.svd, we skip rsvd
+  } else if (use.svd == FALSE) {
+    U <- matrix(0,n,1)
+    V <- matrix(0,m,1)
+  # if use.svd == NULL, we determine if we use it
+  } else if (use.svd == NULL) {
+    U <- matrix(0,n,1)
+    V <- matrix(0,m,1)
+    use.svd <- FALSE
+    if (tol.svd > 0) {
+      if (verbose)
+        cat(sprintf("Computing SVD of %d x %d matrix.\n",n,m))
+      out <- tsvd(L,tol.svd)
+      if (verbose)
+        cat(sprintf("Rank of matrix is estimated to be %d.\n",ncol(out$U)))
+      if (ncol(out$U) < m) {
+        
+        # Only use the SVD of L if it might be worthwhile to do so.
+        U       <- out$U
+        V       <- out$V
+        lmin    <- min(0,tcrossprod(U,V)) # lmin_safeguard
+        use.svd <- TRUE
+      }
+      rm(out)
     }
-    rm(out)
   }
 
   # INITIALIZE SOLUTION
@@ -465,7 +486,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # Adjust the numerical safeguard to accommodate negative entries in
   # the SVD reconstruction of L, or L itself (if we ever allow it).
   if (use.svd)
-    eps <- eps - min(0,min(tcrossprod(U,V)))
+    eps <- eps - lmin
   else
     eps <- eps - min(0,min(L))
   eps <- rep(eps,n)

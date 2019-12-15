@@ -5,8 +5,8 @@
 \alias{mixsqp_control_default}
 \title{Maximum-likelihood estimation of mixture proportions using SQP}
 \usage{
-mixsqp(L, w = rep(1, nrow(L)), x0 = rep(1, ncol(L)), log = FALSE,
-  control = list())
+mixsqp(L, w = rep(1, nrow(L)), x0 = rep(1, ncol(L)), use.svd = NULL,
+  log = FALSE, control = list())
 
 mixsqp_control_default()
 }
@@ -155,11 +155,11 @@ are more than 20 nonzeros in the solution before beginning the SQP
 updates, only the 20 largest entries are kept, the rest are forced
 to zero.}
 
-\item{\code{tol.svd}}{Setting used to determine rank of low-rank
-SVD approximation to the data matrix, L. The rank of the singular
-value decomposition is determined by the number of singular values
-surpassing \code{tol.svd}. When \code{tol.svd = 0}, computations
-are done using full L matrix.}
+\item{\code{tol.svd}}{Setting used to determine rank of truncated
+SVD approximation for L. The rank of the truncated singular value
+decomposition is determined by the number of singular values
+surpassing \code{tol.svd}. When \code{tol.svd = 0}, all computations
+are performed using full L matrix.}
 
 \item{\code{convtol.sqp}}{A small, non-negative number
 specifying the convergence tolerance for SQP algorithm; convergence
