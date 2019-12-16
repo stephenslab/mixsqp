@@ -38,11 +38,11 @@ Rcpp::List randomized_svd(const arma::mat& L, int k,
   int l         = k + oversampling_parameter;
   
   // check if rsvd is necessary
-  if (n < m) {
+  /*if (n < m) {
     // if n < m, rsvd is not necessary for our purpose
     return Rcpp::List::create(Rcpp::Named("status") = "fail",
                               Rcpp::Named("reason") = "n < m");
-  }
+  }*/
   if (m < k) {
     // decrease k
     return Rcpp::List::create(Rcpp::Named("status") = "fail",
