@@ -1,5 +1,4 @@
 src/*.o
 src/*.so
 .Rproj.user
-R/.DS_Store
-src/.DS_Store
+.DS_Store
