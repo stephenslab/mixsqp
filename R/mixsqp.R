@@ -88,8 +88,9 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' \item{\code{tol.svd}}{Setting used to determine rank of truncated
 #' SVD approximation for L. The rank of the truncated singular value
 #' decomposition is determined by the number of singular values
-#' surpassing \code{tol.svd}. When \code{tol.svd = 0}, all computations
-#' are performed using full L matrix.}
+#' surpassing \code{tol.svd}. When \code{tol.svd = 0} or when \code{L}
+#' has 4 or fewer columns, all computations are performed using full L
+#' matrix.}
 #' 
 #' \item{\code{convtol.sqp}}{A small, non-negative number
 #' specifying the convergence tolerance for SQP algorithm; convergence
@@ -423,7 +424,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # Print a brief summary of the analysis, if requested.
   if (verbose) {
-    cat(sprintf("Running mix-SQP algorithm 0.3-7 on %d x %d matrix\n",n,m))
+    cat(sprintf("Running mix-SQP algorithm 0.3-8 on %d x %d matrix\n",n,m))
     cat(sprintf("convergence tol. (SQP):     %0.1e\n",convtol.sqp))
     cat(sprintf("conv. tol. (active-set):    %0.1e\n",convtol.activeset))
     cat(sprintf("zero threshold (solution):  %0.1e\n",zero.threshold.solution))
@@ -442,7 +443,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   U <- matrix(0,n,1)
   V <- matrix(0,m,1)
   use.svd <- FALSE
-  if (tol.svd > 0) {
+  if (tol.svd > 0 & m > 4) {
     if (verbose)
       cat(sprintf("Computing SVD of %d x %d matrix.\n",n,m))
     out <- tsvd(L,tol.svd)

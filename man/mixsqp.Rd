@@ -158,8 +158,9 @@ to zero.}
 \item{\code{tol.svd}}{Setting used to determine rank of truncated
 SVD approximation for L. The rank of the truncated singular value
 decomposition is determined by the number of singular values
-surpassing \code{tol.svd}. When \code{tol.svd = 0}, all computations
-are performed using full L matrix.}
+surpassing \code{tol.svd}. When \code{tol.svd = 0} or when \code{L}
+has 4 or fewer columns, all computations are performed using full L
+matrix.}
 
 \item{\code{convtol.sqp}}{A small, non-negative number
 specifying the convergence tolerance for SQP algorithm; convergence
