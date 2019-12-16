@@ -109,6 +109,12 @@ Rcpp::List randomized_svd(const arma::mat& L, int k,
     return Rcpp::List::create(Rcpp::Named("Q") = Q,
                               Rcpp::Named("Bt") = V.cols(0,k_new - 1) * (U.cols(0,k_new - 1)).t(),
                               Rcpp::Named("status") = "truncated");
+  } else if (return_type == std::string("mixsqp")) {
+    U.each_row()       %= arma::sqrt(s).t(); 
+    V.each_row()       %= arma::sqrt(s).t(); 
+    return Rcpp::List::create(Rcpp::Named("U") = Q * U.cols(0,k_new - 1),
+                              Rcpp::Named("V") = V.cols(0,k_new - 1),
+                              Rcpp::Named("status") = "truncated");
   } else {
     return Rcpp::List::create(Rcpp::Named("status") = "fail",
                               Rcpp::Named("reason") = "invalid return type");
