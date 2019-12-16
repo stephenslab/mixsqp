@@ -107,7 +107,7 @@ Rcpp::List randomized_svd(const arma::mat& L, int k,
   } else if (return_type == std::string("qb")) {
     U.each_row()       %= s.t(); 
     return Rcpp::List::create(Rcpp::Named("Q") = Q,
-                              Rcpp::Named("Bt") = V.cols(0,k_new) * (U.cols(0,k_new)).t(),
+                              Rcpp::Named("Bt") = V.cols(0,k_new - 1) * (U.cols(0,k_new - 1)).t(),
                               Rcpp::Named("status") = "truncated");
   } else {
     return Rcpp::List::create(Rcpp::Named("status") = "fail",
