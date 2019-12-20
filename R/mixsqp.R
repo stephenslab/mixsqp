@@ -277,6 +277,7 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' @useDynLib mixsqp
 #'
 #' @importFrom utils modifyList
+#' @importFrom irlba irlba
 #' @importFrom Rcpp evalCpp
 #' 
 #' @export
@@ -447,18 +448,22 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
     if (verbose)
       cat(sprintf("Computing SVD of %d x %d matrix.\n",n,m))
     timing <- system.time(out <- tsvd(L,tol.svd))
-    if (verbose) {
-      cat(sprintf("SVD computation took %0.2f seconds.\n",timing["elapsed"]))
-      cat(sprintf("Rank of matrix is estimated to be %d.\n",ncol(out$U)))
-    }
-    if (ncol(out$U) < m) {
+    if (is.null(out))
+      cat("Matrix is not low-rank; falling back to full matrix.\n")
+    else {
+      if (verbose) {
+        cat(sprintf("SVD computation took %0.2f seconds.\n",timing["elapsed"]))
+        cat(sprintf("Rank of matrix is estimated to be %d.\n",ncol(out$U)))
+      }
+      if (ncol(out$U) < m) {
 
-      # Only use the SVD of L if it might be worthwhile to do so.
-      U       <- out$U
-      V       <- out$V
-      use.svd <- TRUE
+        # Only use the SVD of L if it might be worthwhile to do so.
+        U       <- out$U
+        V       <- out$V
+        use.svd <- TRUE
+      }
+      rm(out)
     }
-    rm(out)
   }
 
   # INITIALIZE SOLUTION
@@ -575,7 +580,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 mixsqp_control_default <- function()
   list(normalize.rows            = TRUE,
        force.sparse.init         = TRUE,
-       tol.svd                   = 1e-8,
+       tol.svd                   = 1e-6,
        convtol.sqp               = 1e-8,
        convtol.activeset         = 1e-10,
        zero.threshold.solution   = 1e-8,
@@ -589,23 +594,6 @@ mixsqp_control_default <- function()
        maxiter.activeset         = NULL,
        numiter.em                = 10,
        verbose                   = TRUE)
-
-# Compute a truncated SVD approximation U*V' to rectangular matrix X,
-# such that X is an n x m matrix, U is an n x k matrix, and V is an m
-# x k matrix, where k <= min(n,m). The rank, k, is determined by the
-# number of singular values surpassing the tolerance, "tol".
-tsvd <- function (X, tol) {
-  out <- svd(X)
-  i <- which(out$d > tol)
-  if (length(i) < 2)
-    i <- 1:2
-  d <- out$d[i]
-  U <- out$u[,i]
-  V <- out$v[,i]
-  U <- scale.cols(U,sqrt(d))
-  V <- scale.cols(V,sqrt(d))
-  return(list(U = U,V = V))
-}
 
 # Return x such that the top n entries are the same (up to a constant
 # of proportionality), and the remaining entries are zero.

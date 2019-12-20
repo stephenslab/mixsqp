@@ -30,6 +30,7 @@ Description: Provides an optimization method based on sequential
 License: MIT + file LICENSE
 Imports:
     stats,
+    irlba,
     Rcpp (>= 0.12.15)
 Suggests:
     REBayes,
