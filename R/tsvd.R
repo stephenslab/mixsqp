@@ -9,15 +9,14 @@
 # If irlba fails, the return value is NULL.
 #
 tsvd <- function (X, tol) {
-  r   <- min(dim(X))
-  k   <- 2
-  out <- NULL
+  r <- min(dim(X))
+  k <- 2
 
   # Iteratively increase the number of singular vectors in the SVD
   # until it is accurate enough (based on the tolerance setting,
   # "tol"), or until we hit an upper limit.
   while (TRUE) {
-    out <- tryCatch(irlba(X,k,tol = 0.01*tol),
+    out <- tryCatch(irlba(X,k,tol = 1,svtol = 0.01*tol),
                     error   = function (e) NULL,
                     warning = function (e) NULL)
     if (is.null(out))
