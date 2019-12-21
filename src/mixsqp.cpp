@@ -48,9 +48,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
 		  double identitycontribincrease, const arma::vec& eps,
 		  int maxitersqp, int maxiteractiveset, bool verbose) {
   
-  // Get the number of rows (n) and columns (m) of the conditional
-  // likelihood matrix.
-  int n = L.n_rows;
+  // Get the number columns of the data matrix.
   int m = L.n_cols;
 
   // PREPARE DATA STRUCTURES
