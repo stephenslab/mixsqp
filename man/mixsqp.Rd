@@ -5,8 +5,13 @@
 \alias{mixsqp_control_default}
 \title{Maximum-likelihood estimation of mixture proportions using SQP}
 \usage{
-mixsqp(L, w = rep(1, nrow(L)), x0 = rep(1, ncol(L)), log = FALSE,
-  control = list())
+mixsqp(
+  L,
+  w = rep(1, nrow(L)),
+  x0 = rep(1, ncol(L)),
+  log = FALSE,
+  control = list()
+)
 
 mixsqp_control_default()
 }

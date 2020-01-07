@@ -4,8 +4,13 @@
 \alias{simulatemixdata}
 \title{Create likelihood matrix from simulated data set}
 \usage{
-simulatemixdata(n, m, simtype = c("n", "nt"), log = FALSE,
-  normalize.rows = !log)
+simulatemixdata(
+  n,
+  m,
+  simtype = c("n", "nt"),
+  log = FALSE,
+  normalize.rows = !log
+)
 }
 \arguments{
 \item{n}{Positive integer specifying the number of samples to

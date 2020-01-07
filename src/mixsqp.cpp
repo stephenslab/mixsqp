@@ -134,7 +134,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
     // This is also a good point to check for a user interrupt; if the
     // user requests an interrupt, then an exception is thrown and
     // control is returned to the R console.
-    Rcpp::checkUserInterrupt();
+    checkUserInterrupt();
     
     // Solve the quadratic subproblem to obtain a search direction.
     ghat   = g - H*x + 1;
@@ -189,7 +189,7 @@ double compute_objective (const mat& L, const mat& U, const mat& V,
   }
   u += e;
   if (u.min() <= 0)
-    Rcpp::stop("Objective is -Inf");
+    stop("Objective is -Inf");
   return -sum(w % (z + log(u)));
 }
 
