@@ -182,11 +182,10 @@ double compute_objective (const mat& L, const mat& U, const mat& V,
 			  const vec& w, const vec& x, const vec& z,
 			  const vec& e, bool usesvd) {
   vec u;
-  if (usesvd) {
+  if (usesvd)
     u = U*(trans(V)*x);
-  } else {
+  else
     u = L*x;
-  }
   u += e;
   if (u.min() <= 0)
     stop("Objective is -Inf");
@@ -403,9 +402,10 @@ int backtracking_line_search (double f, const mat& L, const mat& U,
   // to backtracking line search.
   vec p = y - x;
   feasible_stepsize(x,p,k,afeas);
-  if (afeas <= amin)
+  if (afeas <= amin) {
+    a    = afeas;
     xnew = afeas*y + (1 - afeas)*x;
-  else {
+  } else {
 
     // Set the initial step size.
     a = min(1,afeas);
