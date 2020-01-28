@@ -447,13 +447,16 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   if (tol.svd > 0 & m > 4) {
     if (verbose)
       cat(sprintf("Computing SVD of %d x %d matrix.\n",n,m))
-    timing <- system.time(out <- tsvd(L,tol.svd),gcFirst = FALSE)
+    t1  <- proc.time()
+    out <- tsvd(L,tol.svd)
+    t2  <- proc.time()
     if (is.null(out)) {
       if (verbose)
         cat("Matrix is not low-rank; falling back to full matrix.\n")
     } else {
       if (verbose) {
-        cat(sprintf("SVD computation took %0.2f seconds.\n",timing["elapsed"]))
+        cat(sprintf("SVD computation took %0.2f seconds.\n",
+                    t2["elapsed"] - t1["elapsed"]))
         cat(sprintf("Rank of matrix is estimated to be %d.\n",ncol(out$U)))
       }
       if (ncol(out$U) < m) {
@@ -484,35 +487,36 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # Print the column labels for reporting the algorithm's progress.
   if (verbose)
     cat("iter        objective max(rdual) nnz stepsize max.diff nqp nls\n")
-  timing <- system.time({
-    if (numiter.em > 0) {
-      out         <- run.mixem.updates(L,w,x,z,numiter.em,eps,
-                                       zero.threshold.solution,verbose)
-      x           <- out$x
-      progress.em <- out$progress
-      rm(out)
-    } else
-      progress.em <- NULL
+  t1 <- proc.time()
+  if (numiter.em > 0) {
+    out         <- run.mixem.updates(L,w,x,z,numiter.em,eps,
+                                     zero.threshold.solution,verbose)
+    x           <- out$x
+    progress.em <- out$progress
+    rm(out)
+  } else
+    progress.em <- NULL
 
-    # MAKE SOLUTION SPARSE
-    # --------------------
-    # If force.sparse.init = TRUE, and there are more than 20 nonzeros
-    # in the current solution estimate, force the solution estimate to
-    # have exactly 20 nonzeros.
-    if (force.sparse.init & sum(x > 0) > 20)
-      x <- force.sparse(x,20)
+  # MAKE SOLUTION SPARSE
+  # --------------------
+  # If force.sparse.init = TRUE, and there are more than 20 nonzeros
+  # in the current solution estimate, force the solution estimate to
+  # have exactly 20 nonzeros.
+  if (force.sparse.init & sum(x > 0) > 20)
+    x <- force.sparse(x,20)
   
-    # SOLVE OPTIMIZATION PROBLEM USING mix-SQP
-    # ----------------------------------------
-    out <- mixsqp_rcpp(L,U,V,w,z,x,use.svd,convtol.sqp,convtol.activeset,
+  # SOLVE OPTIMIZATION PROBLEM USING mix-SQP
+  # ----------------------------------------
+  out <- mixsqp_rcpp(L,U,V,w,z,x,use.svd,convtol.sqp,convtol.activeset,
                      zero.threshold.solution,zero.threshold.searchdir,
                      suffdecr.linesearch,stepsizereduce,minstepsize,
                      identity.contrib.increase,eps,maxiter.sqp,
                      maxiter.activeset,verbose)
-  },gcFirst = FALSE)
+  t2 <- proc.time()
   if (verbose)
-    cat(sprintf("Optimization took %0.2f seconds.\n",timing["elapsed"]))
-  
+    cat(sprintf("Optimization took %0.2f seconds.\n",
+                t2["elapsed"] - t1["elapsed"]))
+ 
   # Make sure solution sums to 1.
   x <- drop(out$x)
   x <- x/sum(x)
