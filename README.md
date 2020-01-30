@@ -158,8 +158,7 @@ Run this line of R code to build the website (make sure you have an
 Internet connection while running the code):
 
 ```R
-library(pkgdown)
-build_site()
+pkgdown::build_site()
 ```
 
 Version 1.4.1 of pkgdown was used.

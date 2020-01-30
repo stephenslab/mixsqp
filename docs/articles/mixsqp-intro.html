@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mixsqp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.18</span>
       </span>
     </div>
 
@@ -171,7 +171,7 @@
 <span id="cb9-12"><a href="#cb9-12"></a><span class="co"># max. iter (active-set):     20</span></span>
 <span id="cb9-13"><a href="#cb9-13"></a><span class="co"># number of EM iterations:    10</span></span>
 <span id="cb9-14"><a href="#cb9-14"></a><span class="co"># Computing SVD of 100000 x 100 matrix.</span></span>
-<span id="cb9-15"><a href="#cb9-15"></a><span class="co"># SVD computation took 2.84 seconds.</span></span>
+<span id="cb9-15"><a href="#cb9-15"></a><span class="co"># SVD computation took 3.31 seconds.</span></span>
 <span id="cb9-16"><a href="#cb9-16"></a><span class="co"># Rank of matrix is estimated to be 24.</span></span>
 <span id="cb9-17"><a href="#cb9-17"></a><span class="co"># iter        objective max(rdual) nnz stepsize max.diff nqp nls</span></span>
 <span id="cb9-18"><a href="#cb9-18"></a><span class="co">#    1 +6.740173241e-01  -- EM --  100 1.00e+00 8.05e-03  --  --</span></span>
@@ -193,9 +193,9 @@
 <span id="cb9-34"><a href="#cb9-34"></a><span class="co">#    7 +6.150581385e-01 +4.132e-08   7 1.00e+00 7.18e-04   2   1</span></span>
 <span id="cb9-35"><a href="#cb9-35"></a><span class="co">#    8 +6.150581378e-01 +1.808e-08   7 5.62e-01 2.61e-07   2   3</span></span>
 <span id="cb9-36"><a href="#cb9-36"></a><span class="co">#    9 +6.150581375e-01 +7.909e-09   7 5.62e-01 1.14e-07   2   3</span></span>
-<span id="cb9-37"><a href="#cb9-37"></a><span class="co"># Optimization took 3.49 seconds.</span></span>
+<span id="cb9-37"><a href="#cb9-37"></a><span class="co"># Optimization took 3.59 seconds.</span></span>
 <span id="cb9-38"><a href="#cb9-38"></a><span class="co"># Convergence criteria met---optimal solution found.</span></span>
-<span id="cb9-39"><a href="#cb9-39"></a><span class="co"># Computation took 7.22 seconds</span></span></code></pre></div>
+<span id="cb9-39"><a href="#cb9-39"></a><span class="co"># Computation took 7.82 seconds</span></span></code></pre></div>
 <p>If you have the REBayes package, you can also run the IP method:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>timing &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span>(fit.ip  &lt;-<span class="st"> </span><span class="kw"><a href="../reference/mixkwdual.html">mixkwdual</a></span>(L))</span>
 <span id="cb10-2"><a href="#cb10-2"></a><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"Computation took %0.2f seconds</span><span class="ch">\n</span><span class="st">"</span>,timing[<span class="st">"elapsed"</span>]))</span></code></pre></div>
@@ -224,7 +224,7 @@
 <span id="cb12-14"><a href="#cb12-14"></a><span class="co"># [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span id="cb12-15"><a href="#cb12-15"></a><span class="co"># </span></span>
 <span id="cb12-16"><a href="#cb12-16"></a><span class="co"># other attached packages:</span></span>
-<span id="cb12-17"><a href="#cb12-17"></a><span class="co"># [1] mixsqp_0.3-17</span></span>
+<span id="cb12-17"><a href="#cb12-17"></a><span class="co"># [1] mixsqp_0.3-18</span></span>
 <span id="cb12-18"><a href="#cb12-18"></a><span class="co"># </span></span>
 <span id="cb12-19"><a href="#cb12-19"></a><span class="co"># loaded via a namespace (and not attached):</span></span>
 <span id="cb12-20"><a href="#cb12-20"></a><span class="co">#  [1] Rcpp_1.0.3       knitr_1.26       magrittr_1.5     REBayes_1.8     </span></span>

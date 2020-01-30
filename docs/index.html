@@ -43,7 +43,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">mixsqp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.18</span>
       </span>
     </div>
 
@@ -75,26 +75,26 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="mixsqp-r-package-for-fast-maximum-likelihood-estimation-of-mixture-proportions-using-sequential-quadratic-programming" class="section level1">
+<div id="mixsqp-fast-maximum-likelihood-estimation-of-mixture-proportions-using-sequential-quadratic-programming" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#mixsqp-r-package-for-fast-maximum-likelihood-estimation-of-mixture-proportions-using-sequential-quadratic-programming" class="anchor"></a>mixsqp: R package for fast maximum-likelihood estimation of mixture proportions using sequential quadratic programming</h1></div>
+<a href="#mixsqp-fast-maximum-likelihood-estimation-of-mixture-proportions-using-sequential-quadratic-programming" class="anchor"></a>mixsqp: Fast maximum-likelihood estimation of mixture proportions using sequential quadratic programming</h1></div>
 
 <p>The mixsqp R package provides algorithms based on <a href="https://neos-guide.org/content/sequential-quadratic-programming">sequential quadratic programming</a> for maximum likelihood estimation of the mixture proportions in a finite mixture model where the component densities are known. The SQP algorithm is expected to obtain solutions that are at least as accurate as the state-of-the-art MOSEK interior-point solver (called via the “KWDual” function in the <a href="https://cran.r-project.org/package=REBayes">REBayes package</a>), and is expected to compute these solutions much more quickly in large data sets.</p>
-<p>For more details on the SQP algorithm, please see <a href="https://arxiv.org/abs/1806.01412">our paper on arXiv</a>.</p>
-<p>See also the <a href="https://github.com/stephenslab/mixsqp-paper">Julia implementation</a>, which, at time of writing, is faster than the R implementation, particularly for large data sets.</p>
+<p>For more details on the methods, please see the <a href="https://doi.org/10.1080/10618600.2019.1689985">journal paper</a> or the <a href="https://arxiv.org/abs/1806.01412">arXiv preprint</a>.</p>
+<p>The methods were originally implemented in <a href="https://julialang.org">Julia</a>; please see <a href="https://github.com/stephenslab/mixsqp-paper">here</a> for the Julia implementation.</p>
 <p>If you find a bug, or you have a question or feedback on our work, please post an <a href="https://github.com/stephenslab/mixsqp/issues">issue</a>.</p>
 <div id="citing-this-work" class="section level2">
 <h2 class="hasAnchor">
 <a href="#citing-this-work" class="anchor"></a>Citing this work</h2>
 <p>If you find the mixsqp package or any of the source code in this repository useful for your work, please cite:</p>
 <blockquote>
-<p>Youngseok Kim, Peter Carbonetto, Matthew Stephens and Mihai Anitescu. <em>A fast algorithm for maximum likelihood estimation of mixture proportions using sequential quadratic programming.</em> <a href="https://arxiv.org/abs/1806.01412">arXiv:1806.01412</a>.</p>
+<p>Youngseok Kim, Peter Carbonetto, Matthew Stephens and Mihai Anitescu. <a href="https://doi.org/10.1080/10618600.2019.1689985">A fast algorithm for maximum likelihood estimation of mixture proportions using sequential quadratic programming.</a> To appear in the <em>Journal of Computational and Graphical Statistics.</em></p>
 </blockquote>
 </div>
 <div id="license" class="section level2">
 <h2 class="hasAnchor">
 <a href="#license" class="anchor"></a>License</h2>
-<p>Copyright (c) 2017-2019, Youngseok Kim, Peter Carbonetto, Matthew Stephens and Mihai Anitescu.</p>
+<p>Copyright (c) 2017-2020, Youngseok Kim, Peter Carbonetto, Matthew Stephens and Mihai Anitescu.</p>
 <p>All source code and software in this repository are made available under the terms of the <a href="https://opensource.org/licenses/mit-license.html">MIT license</a>.</p>
 </div>
 <div id="quick-start" class="section level2">
@@ -119,12 +119,11 @@
 <p>Alternatively, to install the latest version of the mixsqp package from GitHub, use <a href="https://github.com/r-lib/devtools">devtools</a>:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"devtools"</span>)</span>
 <span id="cb6-2"><a href="#cb6-2"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(devtools)</span>
-<span id="cb6-3"><a href="#cb6-3"></a><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"stephenslab/mixsqp"</span>)</span></code></pre></div>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"stephenslab/mixsqp"</span>,<span class="dt">build_vignettes =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
 <p>This command should automatically install all required packages if they are not installed already.</p>
 <p>If you have cloned the repository locally, you can install the package with the <code>install_local</code> function from devtools. Assuming your working directory contains the mixsqp repository, run this code to install the package:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(devtools)</span>
-<span id="cb7-2"><a href="#cb7-2"></a><span class="kw"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="dt">pattern =</span> <span class="st">"mixsqp"</span>) <span class="co"># Should output "mixsqp".</span></span>
-<span id="cb7-3"><a href="#cb7-3"></a><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_local</a></span>(<span class="st">"mixsqp"</span>)</span></code></pre></div>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_local</a></span>(<span class="st">"mixsqp"</span>)</span></code></pre></div>
 <div id="additional-setup-notes" class="section level3">
 <h3 class="hasAnchor">
 <a href="#additional-setup-notes" class="anchor"></a>Additional setup notes</h3>
@@ -145,8 +144,8 @@
 <a href="#testing-the-package" class="anchor"></a>Testing the package</h3>
 <p>To install and test the mixsqp R package, run the following commands in the shell:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1"></a><span class="ex">R</span> CMD build mixsqp</span>
-<span id="cb9-2"><a href="#cb9-2"></a><span class="ex">R</span> CMD INSTALL mixsqp_0.3-17.tar.gz</span>
-<span id="cb9-3"><a href="#cb9-3"></a><span class="ex">R</span> CMD check --as-cran mixsqp_0.3-17.tar.gz</span></code></pre></div>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="ex">R</span> CMD INSTALL mixsqp_0.3-18.tar.gz</span>
+<span id="cb9-3"><a href="#cb9-3"></a><span class="ex">R</span> CMD check --as-cran mixsqp_0.3-18.tar.gz</span></code></pre></div>
 <p>Note that these commands require that the dependencies have already been installed. See the <a href="DESCRIPTION">DESCRIPTION</a> file for details.</p>
 </div>
 <div id="updating-the-c-source-and-documentation" class="section level3">
@@ -158,8 +157,7 @@
 <h3 class="hasAnchor">
 <a href="#updating-the-pkgdown-site" class="anchor"></a>Updating the pkgdown site</h3>
 <p>Run this line of R code to build the website (make sure you have an Internet connection while running the code):</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(pkgdown)</span>
-<span id="cb10-2"><a href="#cb10-2"></a><span class="kw"><a href="https://pkgdown.r-lib.org/reference/build_site.html">build_site</a></span>()</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>pkgdown<span class="op">::</span><span class="kw"><a href="https://pkgdown.r-lib.org/reference/build_site.html">build_site</a></span>()</span></code></pre></div>
 <p>Version 1.4.1 of pkgdown was used.</p>
 </div>
 <div id="other-developer-notes" class="section level3">

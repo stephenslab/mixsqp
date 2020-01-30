@@ -13,6 +13,3 @@ are known. To learn more, visit
 \url{https://github.com/stephenslab/mixsqp}, and see the help for
 function \code{\link{mixsqp}}.
 }
-\details{
-For more information
-}
