@@ -1,15 +1,20 @@
-citHeader("To cite the mixsqp package in publications, please use:")
+citHeader("To cite the mixsqp package, please use:")
 
-citEntry(entry   = "Unpublished",
-         title   = 
-	   paste("A fast algorithm for maximum likelihood estimation of",
-                 "mixture proportions using sequential quadratic programming"),
-         author  = "Peter Carbonetto and Matthew Stephens",
-         journal = "arXiv",
-         note    = "1806.01412",
-         year    = "2018",
+citEntry(entry = "Article",
+         title = paste("A fast algorithm for maximum likelihood estimation",
+                       "of mixture proportions using sequential quadratic",
+                       "programming"),
+         author = personList(as.person("Youngseok Kim"),
+                             as.person("Peter Carbonetto"),
+                             as.person("Matthew Stephens"),
+                             as.person("Mihai Anitescu")),
+         journal = "Journal of Computational and Graphical Statistics",
+         year = "2020",
+         url = "https://doi.org/10.1080/10618600.2019.1689985",
          textVersion = 
            paste("Youngseok Kim, Peter Carbonetto, Matthew Stephens and",
-                 "Mihai Anitescu (2018). A fast algorithm for maximum",
+                 "Mihai Anitescu (2020). A fast algorithm for maximum",
                  "likelihood estimation of mixture proportions using",
-                 "sequential quadratic programming. arXiv:1806.01412."))
+                 "sequential quadratic programming. To appear in the",
+                 "Journal of Computational and Graphical Statistics,",
+                 "doi:10.1080/10618600.2019.1689985"))
