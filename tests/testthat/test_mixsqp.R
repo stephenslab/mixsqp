@@ -403,6 +403,11 @@ test_that("mix-SQP works for difficult ashr example with binomial likelihood",{
   #   out    <- ash(rep(0,length(x)),1,lik = lik_binom(x,n,link = "logit"),
   #                 mode = "estimate")
   #
+  #  
+  # Note that, in this example, the number of EM iterations is
+  # increased to 20. Ideally, mix-SQP would converge with a smaller
+  # number of EM iterations. Therefore, this is a "difficult" example
+  # for mix-SQP.
   load("ashr.binom.example.RData")
   skip_if_mixkwdual_doesnt_work()
   out1 <- mixsqp(L,control = list(numiter.em = 20))
