@@ -2,7 +2,7 @@
 // system is singular or close to singular.
 #define ARMA_DONT_PRINT_ERRORS
 
-#include <RcppArmadillo.h>
+#include "mixem.h"
 
 using namespace Rcpp;
 using namespace arma;
@@ -68,6 +68,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
   
   // Initialize storage for matrices and vectors used in the
   // computations below.
+  vec  xold(m);
   vec  g(m);
   vec  ghat(m);
   mat  H(m,m);
@@ -75,6 +76,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
   vec  y(m);
   vec  d(m);
   vec  xnew(m);
+  mat  P = L;
   mat  Z;
   if (usesvd)
     Z = L;
@@ -85,6 +87,12 @@ List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
   // the maximum number of (outer loop) iterations.
   for (i = 0; i < maxitersqp; i++) {
 
+    // Store the current estimate of the mixture weights.
+    xold = x;
+    
+    // Run a single EM update.
+    mixem_update(L,w,x,P);
+    
     // Zero any co-ordinates that are below the specified threshold.
     j = find(x <= zerothresholdsolution);
     x(j).fill(0);
@@ -143,8 +151,9 @@ List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
 					       usesvd,suffdecr,stepsizereduce,
 					       minstepsize,stepsize(i),xnew);
     
-    // Update the solution.
-    d       = abs(x - xnew);
+    // Update the solution, and store the largest change in the
+    // mixture weights.
+    d       = abs(xnew - xold);
     dmax(i) = d.max();
     x       = xnew;
   }

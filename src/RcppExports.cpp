@@ -7,16 +7,15 @@
 using namespace Rcpp;
 
 // mixem_rcpp
-arma::vec mixem_rcpp(const arma::mat& L, const arma::vec& w, const arma::vec& x0, const arma::vec& eps);
-RcppExport SEXP _mixsqp_mixem_rcpp(SEXP LSEXP, SEXP wSEXP, SEXP x0SEXP, SEXP epsSEXP) {
+arma::vec mixem_rcpp(const arma::mat& L, const arma::vec& w, const arma::vec& x0);
+RcppExport SEXP _mixsqp_mixem_rcpp(SEXP LSEXP, SEXP wSEXP, SEXP x0SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::mat& >::type L(LSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type w(wSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type x0(x0SEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type eps(epsSEXP);
-    rcpp_result_gen = Rcpp::wrap(mixem_rcpp(L, w, x0, eps));
+    rcpp_result_gen = Rcpp::wrap(mixem_rcpp(L, w, x0));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -51,7 +50,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_mixsqp_mixem_rcpp", (DL_FUNC) &_mixsqp_mixem_rcpp, 4},
+    {"_mixsqp_mixem_rcpp", (DL_FUNC) &_mixsqp_mixem_rcpp, 3},
     {"_mixsqp_mixsqp_rcpp", (DL_FUNC) &_mixsqp_mixsqp_rcpp, 19},
     {NULL, NULL, 0}
 };
