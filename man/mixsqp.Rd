@@ -240,8 +240,10 @@ iterations taken to solve each of the quadratic subproblems. If
 \code{min(20,1 + ncol(L))}.}
 
 \item{\code{numiter.em}}{Number of expectation maximization (EM)
-updates to perform prior to running mix-SQP. This can help ensure
-convergence of mix-SQP when the initial solution is very poor.}
+updates to perform prior to running mix-SQP. This "pre-fitting"
+step can help to provide a better initialization to mix-SQP, and
+at a low computational cost since the EM updates are relatively
+inexpensive.}
 
 \item{\code{verbose}}{If \code{verbose = TRUE}, the algorithm's
 progress and a summary of the optimization settings are printed to

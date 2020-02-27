@@ -4,12 +4,6 @@
 
 #include <RcppArmadillo.h>
 
-// This depends statement is needed to tell R where to find the
-// additional header files.
-//
-// [[Rcpp::depends(RcppArmadillo)]]
-//
-
 using namespace Rcpp;
 using namespace arma;
 
@@ -39,6 +33,7 @@ int    backtracking_line_search (double f, const mat& L, const mat& U,
 // accompanying the mixsqp R function and, in particular, see how
 // mixsqp_rcpp is called inside the mixsqp function.
 // 
+// [[Rcpp::depends(RcppArmadillo)]]
 // [[Rcpp::export]]
 List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
 		  const arma::vec& w, const arma::vec& z, const arma::vec& x0,

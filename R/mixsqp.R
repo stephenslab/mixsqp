@@ -165,8 +165,10 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' \code{min(20,1 + ncol(L))}.}
 #'
 #' \item{\code{numiter.em}}{Number of expectation maximization (EM)
-#' updates to perform prior to running mix-SQP. This can help ensure
-#' convergence of mix-SQP when the initial solution is very poor.}
+#' updates to perform prior to running mix-SQP. This "pre-fitting"
+#' step can help to provide a better initialization to mix-SQP, and
+#' at a low computational cost since the EM updates are relatively
+#' inexpensive.}
 #' 
 #' \item{\code{verbose}}{If \code{verbose = TRUE}, the algorithm's
 #' progress and a summary of the optimization settings are printed to
@@ -425,7 +427,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # Print a brief summary of the analysis, if requested.
   if (verbose) {
-    cat(sprintf("Running mix-SQP algorithm 0.3-20 on %d x %d matrix\n",n,m))
+    cat(sprintf("Running mix-SQP algorithm 0.3-21 on %d x %d matrix\n",n,m))
     cat(sprintf("convergence tol. (SQP):     %0.1e\n",convtol.sqp))
     cat(sprintf("conv. tol. (active-set):    %0.1e\n",convtol.activeset))
     cat(sprintf("zero threshold (solution):  %0.1e\n",zero.threshold.solution))
@@ -623,7 +625,8 @@ run.mixem.updates <- function (L, w, x, z, numiter, eps,
                          nls       = rep(as.numeric(NA),numiter))
   for (i in 1:numiter) {
     x0 <- x
-    x  <- mixem.update(L,w,x,eps)
+    x  <- drop(mixem_rcpp(L,w,x0,eps))
+    
     progress[i,"objective"] <- mixobj(L,w,x,z,eps)
     progress[i,"max.diff"]  <- max(abs(x - x0))
     progress[i,"nnz"]       <- sum(x >= zero.threshold)
@@ -633,20 +636,4 @@ run.mixem.updates <- function (L, w, x, z, numiter, eps,
                   progress[i,"max.diff"]))
   }
   return(list(x = x,progress = progress))
-}
-
-# Perform a single expectation maximization (EM) update.
-mixem.update <- function (L, w, x, e) {
-
-  # E STEP
-  # ------
-  # Compute the n x m matrix of posterior mixture assignment
-  # probabilities (L is an n x m matrix).
-  P <- scale.cols(L,x) + e
-  P <- P / rowSums(P)
-
-  # M STEP
-  # ------
-  # Update the mixture weights.
-  return(drop(w %*% P))
 }
