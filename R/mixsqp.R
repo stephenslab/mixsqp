@@ -166,9 +166,8 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #'
 #' \item{\code{numiter.em}}{Number of expectation maximization (EM)
 #' updates to perform prior to running mix-SQP. This "pre-fitting"
-#' step can help to provide a better initialization to mix-SQP, and
-#' at a low computational cost since the EM updates are relatively
-#' inexpensive.}
+#' step can help to improve the convergence of mix-SQP at a small
+#' computational cost.}
 #' 
 #' \item{\code{verbose}}{If \code{verbose = TRUE}, the algorithm's
 #' progress and a summary of the optimization settings are printed to
@@ -626,7 +625,6 @@ run.mixem.updates <- function (L, w, x, z, numiter, eps,
   for (i in 1:numiter) {
     x0 <- x
     x  <- drop(mixem_rcpp(L,w,x0))
-    
     progress[i,"objective"] <- mixobj(L,w,x,z,eps)
     progress[i,"max.diff"]  <- max(abs(x - x0))
     progress[i,"nnz"]       <- sum(x >= zero.threshold)
