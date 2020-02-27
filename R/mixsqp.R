@@ -426,7 +426,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # Print a brief summary of the analysis, if requested.
   if (verbose) {
-    cat(sprintf("Running mix-SQP algorithm 0.3-23 on %d x %d matrix\n",n,m))
+    cat(sprintf("Running mix-SQP algorithm 0.3-24 on %d x %d matrix\n",n,m))
     cat(sprintf("convergence tol. (SQP):     %0.1e\n",convtol.sqp))
     cat(sprintf("conv. tol. (active-set):    %0.1e\n",convtol.activeset))
     cat(sprintf("zero threshold (solution):  %0.1e\n",zero.threshold.solution))
@@ -624,10 +624,10 @@ run.mixem.updates <- function (L, w, x, z, numiter, eps,
                          nls       = rep(as.numeric(NA),numiter))
   for (i in 1:numiter) {
     x0 <- x
-    x  <- drop(mixem_rcpp(L,w,x0))
+    x  <- drop(mixem_update_rcpp(L,w,x0))
     progress[i,"objective"] <- mixobj(L,w,x,z,eps)
     progress[i,"max.diff"]  <- max(abs(x - x0))
-    progress[i,"nnz"]       <- sum(x >= zero.threshold)
+    progress[i,"nnz"]       <- sum(x > zero.threshold)
     if (verbose)
       cat(sprintf("%4d %+0.9e  -- EM -- %4d 1.00e+00 %0.2e  --  --\n",
                   i,progress[i,"objective"],progress[i,"nnz"],

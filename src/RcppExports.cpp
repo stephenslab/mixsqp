@@ -7,15 +7,31 @@
 using namespace Rcpp;
 
 // mixem_rcpp
-arma::vec mixem_rcpp(const arma::mat& L, const arma::vec& w, const arma::vec& x0);
-RcppExport SEXP _mixsqp_mixem_rcpp(SEXP LSEXP, SEXP wSEXP, SEXP x0SEXP) {
+List mixem_rcpp(const arma::mat& L, const arma::vec& w, const arma::vec& x0, int numiter, double zerothresholdsolution, bool verbose);
+RcppExport SEXP _mixsqp_mixem_rcpp(SEXP LSEXP, SEXP wSEXP, SEXP x0SEXP, SEXP numiterSEXP, SEXP zerothresholdsolutionSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::mat& >::type L(LSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type w(wSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type x0(x0SEXP);
-    rcpp_result_gen = Rcpp::wrap(mixem_rcpp(L, w, x0));
+    Rcpp::traits::input_parameter< int >::type numiter(numiterSEXP);
+    Rcpp::traits::input_parameter< double >::type zerothresholdsolution(zerothresholdsolutionSEXP);
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(mixem_rcpp(L, w, x0, numiter, zerothresholdsolution, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mixem_update_rcpp
+arma::vec mixem_update_rcpp(const arma::mat& L, const arma::vec& w, const arma::vec& x0);
+RcppExport SEXP _mixsqp_mixem_update_rcpp(SEXP LSEXP, SEXP wSEXP, SEXP x0SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type L(LSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type w(wSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type x0(x0SEXP);
+    rcpp_result_gen = Rcpp::wrap(mixem_update_rcpp(L, w, x0));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -50,7 +66,8 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_mixsqp_mixem_rcpp", (DL_FUNC) &_mixsqp_mixem_rcpp, 3},
+    {"_mixsqp_mixem_rcpp", (DL_FUNC) &_mixsqp_mixem_rcpp, 6},
+    {"_mixsqp_mixem_update_rcpp", (DL_FUNC) &_mixsqp_mixem_update_rcpp, 3},
     {"_mixsqp_mixsqp_rcpp", (DL_FUNC) &_mixsqp_mixsqp_rcpp, 19},
     {NULL, NULL, 0}
 };
