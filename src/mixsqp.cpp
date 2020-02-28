@@ -2,6 +2,7 @@
 // system is singular or close to singular.
 #define ARMA_DONT_PRINT_ERRORS
 
+#include "objective.h"
 #include "mixem.h"
 
 using namespace Rcpp;
@@ -9,9 +10,6 @@ using namespace arma;
 
 // FUNCTION DECLARATIONS
 // ---------------------
-double compute_objective (const mat& L, const mat& U, const mat& V,
-			  const vec& w, const vec& x, const vec& z,
-			  const vec& e, bool usesvd);
 void   compute_grad      (const mat& L, const mat& U, const mat& V,
 			  const vec& w, const vec& x, const vec& e,
 			  vec& g, mat& H, mat& Z, bool usesvd);
@@ -179,21 +177,6 @@ inline double min (double a, double b) {
   else
     y = b;
   return y;
-}
-
-// Compute the value of the (unmodified) objective at x.
-double compute_objective (const mat& L, const mat& U, const mat& V,
-			  const vec& w, const vec& x, const vec& z,
-			  const vec& e, bool usesvd) {
-  vec u;
-  if (usesvd)
-    u = U*(trans(V)*x);
-  else
-    u = L*x;
-  u += e;
-  if (u.min() <= 0)
-    stop("Objective is -Inf");
-  return -sum(w % (z + log(u)));
 }
 
 // Compute the gradient and Hessian of the (unmodified) objective at x.
