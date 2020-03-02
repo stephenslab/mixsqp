@@ -5,7 +5,7 @@ mixem_rcpp <- function(L, w, z, x0, eps, numiter, zerothresholdsolution, verbose
     .Call('_mixsqp_mixem_rcpp', PACKAGE = 'mixsqp', L, w, z, x0, eps, numiter, zerothresholdsolution, verbose)
 }
 
-mixsqp_rcpp <- function(L, U, V, w, z, x0, usesvd, convtolsqp, convtolactiveset, zerothresholdsolution, zerothresholdsearchdir, suffdecr, stepsizereduce, minstepsize, identitycontribincrease, eps, maxitersqp, maxiteractiveset, verbose) {
-    .Call('_mixsqp_mixsqp_rcpp', PACKAGE = 'mixsqp', L, U, V, w, z, x0, usesvd, convtolsqp, convtolactiveset, zerothresholdsolution, zerothresholdsearchdir, suffdecr, stepsizereduce, minstepsize, identitycontribincrease, eps, maxitersqp, maxiteractiveset, verbose)
+mixsqp_rcpp <- function(L, U, V, w, z, x0, usesvd, runem, convtolsqp, convtolactiveset, zerothresholdsolution, zerothresholdsearchdir, suffdecr, stepsizereduce, minstepsize, identitycontribincrease, eps, maxitersqp, maxiteractiveset, verbose) {
+    .Call('_mixsqp_mixsqp_rcpp', PACKAGE = 'mixsqp', L, U, V, w, z, x0, usesvd, runem, convtolsqp, convtolactiveset, zerothresholdsolution, zerothresholdsearchdir, suffdecr, stepsizereduce, minstepsize, identitycontribincrease, eps, maxitersqp, maxiteractiveset, verbose)
 }
 

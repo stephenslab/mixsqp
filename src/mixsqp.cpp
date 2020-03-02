@@ -35,9 +35,10 @@ int    backtracking_line_search (double f, const mat& L, const mat& U,
 // [[Rcpp::export]]
 List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
 		  const arma::vec& w, const arma::vec& z, const arma::vec& x0,
-		  bool usesvd, double convtolsqp, double convtolactiveset,
-		  double zerothresholdsolution, double zerothresholdsearchdir,
-		  double suffdecr, double stepsizereduce, double minstepsize,
+		  bool usesvd, bool runem, double convtolsqp, 
+		  double convtolactiveset, double zerothresholdsolution, 
+		  double zerothresholdsearchdir, double suffdecr, 
+		  double stepsizereduce, double minstepsize,
 		  double identitycontribincrease, const arma::vec& eps,
 		  int maxitersqp, int maxiteractiveset, bool verbose) {
   
@@ -89,7 +90,8 @@ List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
     xold = x;
     
     // Run a single EM update.
-    mixem_update(L,w,x,P);
+    if (runem)
+      mixem_update(L,w,x,P);
     
     // Zero any co-ordinates that are below the specified threshold.
     j = find(x <= zerothresholdsolution);
@@ -268,7 +270,7 @@ int activesetqp (const mat& H, const vec& g, vec& y, int maxiter,
     add_to_working_set = false;
     
     // Check that the search direction is close to zero.
-    if ((p.max() <= zerosearchdir) && (-p.min() <= zerosearchdir)) {
+    if (norm(p,"inf") <= zerosearchdir) {
 
       // Calculate b for all co-ordinates.
       b = g + H*y;

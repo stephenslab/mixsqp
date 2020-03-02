@@ -36,7 +36,7 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' 
 #' The Expectation Maximization (EM) algorithm can be used to solve
 #' this optimization problem, but it is intolerably slow in many
-#' interesting cases, and mixsqp is much faster.
+#' interesting cases, and mixsqp is much faster. 
 #'
 #' A special feature of this optimization problem is that the gradient
 #' of the objective does not change with re-scaling; for example, if
@@ -165,9 +165,9 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' \code{min(20,1 + ncol(L))}.}
 #'
 #' \item{\code{numiter.em}}{Number of expectation maximization (EM)
-#' updates to perform prior to running mix-SQP. This "pre-fitting"
-#' step can help to improve the convergence of mix-SQP at a small
-#' computational cost.}
+#' updates to perform prior to running mix-SQP. Although EM can often
+#' be slow to converge, this "pre-fitting" step can help to obtain a
+#' good initial estimate for mix-SQP at a small cost.}
 #' 
 #' \item{\code{verbose}}{If \code{verbose = TRUE}, the algorithm's
 #' progress and a summary of the optimization settings are printed to
@@ -426,7 +426,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # Print a brief summary of the analysis, if requested.
   if (verbose) {
-    cat(sprintf("Running mix-SQP algorithm 0.3-26 on %d x %d matrix\n",n,m))
+    cat(sprintf("Running mix-SQP algorithm 0.3-27 on %d x %d matrix\n",n,m))
     cat(sprintf("convergence tol. (SQP):     %0.1e\n",convtol.sqp))
     cat(sprintf("conv. tol. (active-set):    %0.1e\n",convtol.activeset))
     cat(sprintf("zero threshold (solution):  %0.1e\n",zero.threshold.solution))
@@ -508,7 +508,8 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # SOLVE OPTIMIZATION PROBLEM USING mix-SQP
   # ----------------------------------------
-  out <- mixsqp_rcpp(L,U,V,w,z,x,use.svd,convtol.sqp,convtol.activeset,
+  runem <- TRUE
+  out <- mixsqp_rcpp(L,U,V,w,z,x,use.svd,runem,convtol.sqp,convtol.activeset,
                      zero.threshold.solution,zero.threshold.searchdir,
                      suffdecr.linesearch,stepsizereduce,minstepsize,
                      identity.contrib.increase,eps,maxiter.sqp,
@@ -527,15 +528,19 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # the optimal solution, and a status = 1 means that the algorithm
   # reached the maximum number of iterations before converging to a
   # solution.
-  if (out$status == 0)
+  if (out$status == 0) {
     status <- mixsqp.status.converged
-  else
-    status <- mixsqp.status.didnotconverge
-  if (verbose) {
-    if (out$status == 0)
+    if (verbose)
       cat("Convergence criteria met---optimal solution found.\n")
-    else
-      cat("Failed to converge within iterations limit.\n")
+  } else {
+    status <- mixsqp.status.didnotconverge
+    warning(paste(strwrap(paste("Failed to converge within iterations limit.",
+      "If \"maxiter.sqp\" is small, consider increasing it. Otherwise,",
+      "convergence failure is typically a numerical issue remedied by",
+      "increasing \"eps\" slightly, at the cost of slightly less accurate",
+      "solution; see help(mixsqp). An issue report may also be submitted",
+      "to https://github.com/stephenslab/mixsqp/issues, accompanied by an",
+      ".rds or .RData file containing the mixsqp inputs.")),collapse = "\n"))
   }
 
   # POST-PROCESS RESULT
@@ -590,7 +595,7 @@ mixsqp_control_default <- function()
        convtol.sqp               = 1e-8,
        convtol.activeset         = 1e-10,
        zero.threshold.solution   = 1e-8,
-       zero.threshold.searchdir  = 1e-10,
+       zero.threshold.searchdir  = 1e-14,
        suffdecr.linesearch       = 0.01,
        stepsizereduce            = 0.75,
        minstepsize               = 1e-8,
