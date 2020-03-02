@@ -100,7 +100,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
 
     // Compute the gradient and Hessian.
     compute_grad(L,U,V,w,x,eps,g,H,Z,usesvd);
-    
+
     // Report on the algorithm's progress. Here we compute: the
     // smallest gradient value (gmin), which is used as a convergence
     // criterion; and the number of nonzeros in the solution (nnz).
@@ -143,7 +143,12 @@ List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
     nqp(i) = (double) activesetqp(H,ghat,y,maxiteractiveset,
 				  zerothresholdsearchdir,convtolactiveset,
 				  identitycontribincrease);
-    
+    // Extra code used to diagnose line search issues:
+    //
+    //   if (verbose)
+    //     Rprintf("%0.2e\n",norm(x - y,"inf"));
+    // 
+
     // Run backtracking line search.
     nls(i) = (double) backtracking_line_search(obj(i),L,U,V,w,z,g,x,y,eps,
 					       usesvd,suffdecr,stepsizereduce,
@@ -337,7 +342,7 @@ inline double init_hessian_correction (const mat& H, double a0) {
 void compute_activeset_searchdir (const mat& H, const vec& y, vec& p,
 				  mat& B, double ainc) {
   double a0   = 1e-15;
-  double amax = 1;
+  double amax = 1e15;
   int    n    = y.n_elem;
   mat    I(n,n,fill::eye);
   mat    R(n,n);
@@ -355,16 +360,16 @@ void compute_activeset_searchdir (const mat& H, const vec& y, vec& p,
     // Attempt to compute the Cholesky factorization of the modified
     // Hessian. If this fails, increase the contribution of the
     // identity matrix in the modified Hessian.
-    if (chol(R,B) || (a*ainc > amax))
+    if (a*ainc > amax)
       break;
-    else if (a*ainc > amax)
+    else if (chol(R,B))
       break;
     else if (a <= 0)
       a = a0;
     else
       a *= ainc;
   }
-  
+
   // Compute the search direction using the modified Hessian.
   p = solve(B,-y);
 }
@@ -396,7 +401,7 @@ int backtracking_line_search (double f, const mat& L, const mat& U,
 
     // Set the initial step size.
     a = min(1,afeas);
-    
+
     // Iteratively reduce the step size until either (1) we can't reduce
     // any more (because we have hit the minimum step size constraint),
     // or (2) the new candidate solution satisfies the "sufficient
@@ -410,9 +415,9 @@ int backtracking_line_search (double f, const mat& L, const mat& U,
       // sufficient decrease condition, and remains feasible. If so,
       // accept this candidate solution.
       if ((xnew.min() >= 0) &&
-  	 (fnew + sum(xnew) <= f + sum(x) + suffdecr*a*dot(y - x,g + 1)))
+  	  (fnew + sum(xnew) <= f + sum(x) + suffdecr*a*dot(y - x,g + 1)))
         break;
-    
+
       // If we cannot decrease the step size further, terminate the
       // backtracking line search, and set the step size to be the
       // minimum step size.
