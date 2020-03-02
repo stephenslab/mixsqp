@@ -233,13 +233,13 @@ test_that(paste("mix-SQP gives correct solution for Beckett & Diaconis",
 # This is mainly to test post-processing of the output when the
 # algorithm reaches the maximum number of iterations. This example is
 # used in one of the other tests above.
-test_that("mix-SQP does not report an error with convergence failure",{
+test_that("mix-SQP gives warning with convergence failure",{
   e <- 1e-8
   L <- rbind(c(1,1,e),
              c(1,1,1))
-  capture_output(out <- mixsqp(L,x0 = c(0,1,1),
-                               control = list(numiter.em  = 0,
-                                              maxiter.sqp = 1)))
+  expect_warning(capture_output(out <- mixsqp(L,x0 = c(0,1,1),
+                                  control = list(numiter.em  = 0,
+                                                 maxiter.sqp = 1))))
   expect_equal(out$status,mixsqp.status.didnotconverge)
   expect_equal(dim(out$progress),c(1,7))
 })
@@ -277,8 +277,8 @@ test_that(paste("mix-SQP converges, and outputs correct solution, for example",
   # stability measure is used for the active-set linear systems (i.e.,
   # eps = 0). Also, when convtol.sqp = 0, the mix-SQP algorithm should
   # report that it failed to converge in this example.
-  capture.output(out1 <- mixsqp(L,control = list(eps = 0,convtol.sqp = 0,
-                                                 maxiter.sqp = 10)))
+  suppressWarnings(capture.output(out1 <-
+    mixsqp(L,control = list(eps = 0,convtol.sqp = 0,maxiter.sqp = 10))))
   capture.output(out2 <- mixsqp(L))
   capture.output(out3 <- mixsqp(L,control = list(eps = 0)))
   expect_equal(out1$status,"exceeded maximum number of iterations")
