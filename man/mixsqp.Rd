@@ -111,7 +111,7 @@ data point \eqn{j}.
 
 The Expectation Maximization (EM) algorithm can be used to solve
 this optimization problem, but it is intolerably slow in many
-interesting cases, and mixsqp is much faster.
+interesting cases, and mixsqp is much faster. 
 
 A special feature of this optimization problem is that the gradient
 of the objective does not change with re-scaling; for example, if
@@ -137,6 +137,13 @@ algebra library, which can automatically take advantage of
 multithreaded matrix computations to speed up \code{mixsqp} for
 large \code{L} matrices, but only when R has been configured with a
 multithreaded BLAS/LAPACK library (e.g., OpenBLAS).
+
+When "debugging mode" is activated by setting the
+"mixsqp.debug.mode" global option,
+\code{options("mixsqp.debug.mode" = TRUE)}, the mixsqp inputs and
+\code{sessionInfo()} will be written to a file, \code{mixsqp.RData}.
+The name of this output file may be changed by setting the
+"mixsqp.debug.file" global option.
 
 The \code{control} argument is a list in which any of the
 following named components will override the default optimization
@@ -240,9 +247,9 @@ iterations taken to solve each of the quadratic subproblems. If
 \code{min(20,1 + ncol(L))}.}
 
 \item{\code{numiter.em}}{Number of expectation maximization (EM)
-updates to perform prior to running mix-SQP. This "pre-fitting"
-step can help to improve the convergence of mix-SQP at a small
-computational cost.}
+updates to perform prior to running mix-SQP. Although EM can often
+be slow to converge, this "pre-fitting" step can help to obtain a
+good initial estimate for mix-SQP at a small cost.}
 
 \item{\code{verbose}}{If \code{verbose = TRUE}, the algorithm's
 progress and a summary of the optimization settings are printed to
