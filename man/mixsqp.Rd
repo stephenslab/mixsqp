@@ -138,12 +138,14 @@ multithreaded matrix computations to speed up \code{mixsqp} for
 large \code{L} matrices, but only when R has been configured with a
 multithreaded BLAS/LAPACK library (e.g., OpenBLAS).
 
-When "debugging mode" is activated by setting the
-"mixsqp.debug.mode" global option,
-\code{options("mixsqp.debug.mode" = TRUE)}, the mixsqp inputs and
-\code{sessionInfo()} will be written to a file, \code{mixsqp.RData}.
-The name of this output file may be changed by setting the
-"mixsqp.debug.file" global option.
+A "debugging mode" is provided to aid in reproducing convergence
+failures or other issues. When activated, mixsqp will generate an
+.RData file containing the exact \code{mixsqp} inputs, and will
+stop execution upon convergence failure. To activate the debugging
+mode, run \code{options(mixsqp.debug.mode = TRUE)} prior to calling
+\code{mixsqp}. By default, the output file is \code{mixsqp.RData};
+the file can be changed by setting the \code{"mixsqp.debug.file"}
+global option.
 
 The \code{control} argument is a list in which any of the
 following named components will override the default optimization
