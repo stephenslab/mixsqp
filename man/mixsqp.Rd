@@ -162,13 +162,6 @@ this setting is ignored becase the rows are already normalized.
 Note that the objective is computed on the original (unnormalized)
 matrix to make the results easier to interpret.}
 
-\item{force.sparse.init}{The computational complexity of the SQP
-updates grows rapidly by the number of nonzeros in the current
-solution estimate. When \code{force.sparse.init = TRUE}, and there
-are more than 20 nonzeros in the solution before beginning the SQP
-updates, only the 20 largest entries are kept, the rest are forced
-to zero.}
-
 \item{\code{tol.svd}}{Setting used to determine rank of truncated
 SVD approximation for L. The rank of the truncated singular value
 decomposition is determined by the number of singular values

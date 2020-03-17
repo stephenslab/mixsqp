@@ -87,13 +87,6 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' Note that the objective is computed on the original (unnormalized)
 #' matrix to make the results easier to interpret.}
 #'
-#' \item{force.sparse.init}{The computational complexity of the SQP
-#' updates grows rapidly by the number of nonzeros in the current
-#' solution estimate. When \code{force.sparse.init = TRUE}, and there
-#' are more than 20 nonzeros in the solution before beginning the SQP
-#' updates, only the 20 largest entries are kept, the rest are forced
-#' to zero.}
-#'
 #' \item{\code{tol.svd}}{Setting used to determine rank of truncated
 #' SVD approximation for L. The rank of the truncated singular value
 #' decomposition is determined by the number of singular values
@@ -343,7 +336,6 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
     stop("Argument \"control\" contains unknown parameter names")
   control <- modifyList(control0,control,keep.null = TRUE)
   normalize.rows            <- control$normalize.rows
-  force.sparse.init         <- control$force.sparse.init
   tol.svd                   <- control$tol.svd
   convtol.sqp               <- control$convtol.sqp
   convtol.activeset         <- control$convtol.activeset
@@ -400,10 +392,9 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
     stop(paste("Behavior of algorithm will be unpredictable if",
                "zero.threshold > 1/m, where m = ncol(X)"))
   
-  # Input arguments "normalize.rows", "force.sparse.init" and
-  # "verbose" should be TRUE or FALSE.
+  # Input arguments "normalize.rows" and "verbose" should be TRUE or
+  # FALSE.
   verify.logical.arg(normalize.rows)
-  verify.logical.arg(force.sparse.init)
   verify.logical.arg(verbose)
   
   # When all the entries of one or more columns are zero, the mixture
@@ -446,7 +437,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # Print a brief summary of the analysis, if requested.
   if (verbose) {
-    cat(sprintf("Running mix-SQP algorithm 0.3-30 on %d x %d matrix\n",n,m))
+    cat(sprintf("Running mix-SQP algorithm 0.3-31 on %d x %d matrix\n",n,m))
     cat(sprintf("convergence tol. (SQP):     %0.1e\n",convtol.sqp))
     cat(sprintf("conv. tol. (active-set):    %0.1e\n",convtol.activeset))
     cat(sprintf("zero threshold (solution):  %0.1e\n",zero.threshold.solution))
@@ -517,14 +508,6 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
     rm(out)
   } else
     progress.em <- NULL
-
-  # MAKE SOLUTION SPARSE
-  # --------------------
-  # If force.sparse.init = TRUE, and there are more than 20 nonzeros
-  # in the current solution estimate, force the solution estimate to
-  # have exactly 20 nonzeros.
-  if (force.sparse.init & sum(x > 0) > 20)
-    x <- force.sparse(x,20)
   
   # SOLVE OPTIMIZATION PROBLEM USING mix-SQP
   # ----------------------------------------
@@ -617,7 +600,6 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
 #' 
 mixsqp_control_default <- function()
   list(normalize.rows            = TRUE,
-       force.sparse.init         = TRUE,
        tol.svd                   = 1e-6,
        convtol.sqp               = 1e-8,
        convtol.activeset         = 1e-10,
@@ -633,17 +615,6 @@ mixsqp_control_default <- function()
        numiter.em                = 10,
        verbose                   = TRUE)
 
-# Return x such that the top n entries are the same (up to a constant
-# of proportionality), and the remaining entries are zero.
-force.sparse <- function (x, n) {
-  i    <- order(x,decreasing = TRUE)
-  i    <- i[1:n]
-  y    <- x
-  y[]  <- 0
-  y[i] <- x[i]
-  return(y/sum(y))
-}
-
 # This function is used within mixsqp to run several EM updates.
 run.mixem.updates <- function (L, w, x, z, numiter, eps,
                                zero.threshold, verbose) {
@@ -655,5 +626,5 @@ run.mixem.updates <- function (L, w, x, z, numiter, eps,
                          max.diff  = drop(out$max.diff),
                          nqp       = rep(as.numeric(NA),numiter),
                          nls       = rep(as.numeric(NA),numiter))
-  return(list(x = out$x,progress = progress))
+  return(list(x = drop(out$x),progress = progress))
 }

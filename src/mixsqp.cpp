@@ -92,7 +92,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
     // Run a single EM update.
     if (runem)
       mixem_update(L,w,x,P);
-    
+
     // Zero any co-ordinates that are below the specified threshold.
     j = find(x <= zerothresholdsolution);
     x(j).fill(0);

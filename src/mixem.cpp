@@ -61,7 +61,7 @@ void mixem_update (const mat& L, const vec& w, vec& x, mat& P) {
   //   P <- P / rowSums(P)
   // 
   P = L;
-  scalecols(P,x);
+  scalecols(P,x + e);
   normalizerowsbymax(P);
   P += e;
   normalizerows(P);
