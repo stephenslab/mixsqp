@@ -4,7 +4,8 @@
 \name{tacks}
 \alias{tacks}
 \title{Beckett & Diaconis tack rolling example.}
-\format{\code{tacks} is a list with the following elements:
+\format{
+\code{tacks} is a list with the following elements:
 
 \describe{
   \item{L}{9 x 299 likelihood matrix.}
@@ -14,7 +15,8 @@
 
   \item{x}{Solution provided by the \code{\link[REBayes]{KWDual}}
     solver.}
-}}
+}
+}
 \description{
 This data set contains the likelihood matrix and
 weights for the Beckett-Diaconis tacks example, in which the data

@@ -234,6 +234,13 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' \item{value}{The value of the objective function, \eqn{f(x)}, at
 #' \code{x}.}
 #'
+#' \item{grad}{The gradient of the objective function at \code{x}.}
+#'
+#' \item{hessian}{The Hessian of the objective function at
+#' \code{x}. When the truncated SVD approximation of L is used instead
+#' of the full matrix L inside mix-SQP, it is also used to compute
+#' the Hessian matrix at \code{x}.}
+#' 
 #' \item{status}{A character string describing the status of the
 #' algorithm upon termination.}
 #'
@@ -293,7 +300,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # -----------------------------
   if (getOption("mixsqp.debug.mode")) {
     out.file <- getOption("mixsqp.debug.file")
-    sinfo <- sessionInfo()
+    sinfo    <- sessionInfo()
     message("mixsqp debugging mode is turned on; writing mixsqp inputs and ",
             "sessionInfo to ",out.file)
     save(list = c("L","w","x0","log","control","sinfo"),file = out.file)
@@ -437,7 +444,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # Print a brief summary of the analysis, if requested.
   if (verbose) {
-    cat(sprintf("Running mix-SQP algorithm 0.3-31 on %d x %d matrix\n",n,m))
+    cat(sprintf("Running mix-SQP algorithm 0.3-32 on %d x %d matrix\n",n,m))
     cat(sprintf("convergence tol. (SQP):     %0.1e\n",convtol.sqp))
     cat(sprintf("conv. tol. (active-set):    %0.1e\n",convtol.activeset))
     cat(sprintf("zero threshold (solution):  %0.1e\n",zero.threshold.solution))
@@ -564,8 +571,19 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   out$nqp[out$nqp < 0]           <- NA
   out$nls[out$nls < 0]           <- NA
 
-  # Compute the value of the objective at the estimated solution.
+  # Compute the objective, gradient and Hessian at the estimated
+  # solution.
+  e <- control$eps
   f <- mixobj(L,w,x,z)
+  u <- drop(L %*% x + e)
+  g <- drop((-w/u) %*% L)
+  # if (use.svd) {
+    # Z = U;
+    # Z.each_col() %= (sqrt(w)/u);
+    # H = V * (trans(Z) * Z) * trans(V);
+  # } else {
+  H <- crossprod(sqrt(w)/u * L)
+  # } 
   
   # If necessary, insert the zero mixture weights associated with the
   # columns of zeros.
@@ -577,13 +595,18 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # Label the elements of the solution (x) by the column labels of the
   # likelihood matrix (L).
-  names(x) <- colnames(L)
-
+  names(x)    <- colnames(L)
+  names(g)    <- colnames(L)
+  rownames(H) <- colnames(L)
+  colnames(H) <- colnames(L)
+  
   # CONSTRUCT OUTPUT
   # ----------------
   return(list(x        = x,
               status   = status,
               value    = f,
+              grad     = g,
+              hessian  = H,
               progress = rbind(progress.em,
                                data.frame(objective = out$objective,
                                           max.rdual = out$max.rdual,
