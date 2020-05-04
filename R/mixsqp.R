@@ -237,9 +237,8 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' \item{grad}{The gradient of the objective function at \code{x}.}
 #'
 #' \item{hessian}{The Hessian of the objective function at
-#' \code{x}. When the truncated SVD approximation of L is used instead
-#' of the full matrix L inside mix-SQP, it is also used to compute
-#' the Hessian matrix at \code{x}.}
+#' \code{x}. The truncated SVD approximation of L is used to compute
+#' the Hessian when it is also used for mix-SQP.}
 #' 
 #' \item{status}{A character string describing the status of the
 #' algorithm upon termination.}
@@ -444,7 +443,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # Print a brief summary of the analysis, if requested.
   if (verbose) {
-    cat(sprintf("Running mix-SQP algorithm 0.3-32 on %d x %d matrix\n",n,m))
+    cat(sprintf("Running mix-SQP algorithm 0.3-33 on %d x %d matrix\n",n,m))
     cat(sprintf("convergence tol. (SQP):     %0.1e\n",convtol.sqp))
     cat(sprintf("conv. tol. (active-set):    %0.1e\n",convtol.activeset))
     cat(sprintf("zero threshold (solution):  %0.1e\n",zero.threshold.solution))
@@ -577,13 +576,10 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   f <- mixobj(L,w,x,z)
   u <- drop(L %*% x + e)
   g <- drop((-w/u) %*% L)
-  # if (use.svd) {
-    # Z = U;
-    # Z.each_col() %= (sqrt(w)/u);
-    # H = V * (trans(Z) * Z) * trans(V);
-  # } else {
-  H <- crossprod(sqrt(w)/u * L)
-  # } 
+  if (use.svd)
+    H <- V %*% crossprod(sqrt(w)/u * U) %*% t(V)
+  else
+    H <- crossprod(sqrt(w)/u * L)
   
   # If necessary, insert the zero mixture weights associated with the
   # columns of zeros.

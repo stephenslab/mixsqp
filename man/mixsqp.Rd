@@ -66,9 +66,8 @@ constraint; that is, the entries of \code{x} may not sum to 1.}
 \item{grad}{The gradient of the objective function at \code{x}.}
 
 \item{hessian}{The Hessian of the objective function at
-\code{x}. When the truncated SVD approximation of L is used instead
-of the full matrix L inside mix-SQP, it is also used to compute
-the Hessian matrix at \code{x}.}
+\code{x}. The truncated SVD approximation of L is used to compute
+the Hessian when it is also used for mix-SQP.}
 
 \item{status}{A character string describing the status of the
 algorithm upon termination.}
