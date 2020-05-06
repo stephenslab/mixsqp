@@ -150,7 +150,11 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' increasing the identity contribution in this modified Hessian is
 #' determined by this control parameter.}
 #' 
-#' \item{\code{lambda}}{Describe "lambda" optimization setting here.}
+#' \item{\code{lambda}}{A small, non-negative number specifying the
+#' strength of the L2-norm penalty inserted in the objective to be
+#' minimized. When \code{lambda > 0}, a penalty term
+#' \eqn{lambda*norm(x)^2/n} is added to the objective, where
+#' \eqn{norm(x)} denotes the L2 (or Euclidean) norm of \eqn{x}.}
 #' 
 #' \item{\code{eps}}{A small, non-negative number that is added to the
 #' terms inside the logarithms to sidestep computing logarithms of
@@ -447,7 +451,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # Print a brief summary of the analysis, if requested.
   if (verbose) {
-    cat(sprintf("Running mix-SQP algorithm 0.3-34 on %d x %d matrix\n",n,m))
+    cat(sprintf("Running mix-SQP algorithm 0.3-35 on %d x %d matrix\n",n,m))
     cat(sprintf("L2-norm penalty:            %0.1e\n",lambda))
     cat(sprintf("convergence tol. (SQP):     %0.1e\n",convtol.sqp))
     cat(sprintf("conv. tol. (active-set):    %0.1e\n",convtol.activeset))
@@ -643,7 +647,7 @@ mixsqp_control_default <- function()
 # This function is used within mixsqp to run several EM updates.
 run.mixem.updates <- function (L, w, x, z, numiter, lambda, eps,
                                zero.threshold, verbose) {
-  out      <- mixem_rcpp(L,w,z,x,lambda,eps,numiter,zero.threshold,verbose)
+  out      <- mixem_rcpp(L,w,z,x,eps,numiter,zero.threshold,verbose)
   progress <- data.frame(objective = drop(out$objective),
                          max.rdual = rep(as.numeric(NA),numiter),
                          nnz       = drop(out$nnz),

@@ -11,6 +11,9 @@ using namespace arma;
 
 // FUNCTION DECLARATIONS
 // ---------------------
+void   safe_mixem_update (const mat& L, const mat& U, const mat& V, 
+			  const vec& w, vec& x, const vec& z, double lambda, 
+			  const vec& eps, bool usesvd, mat& P);
 void   compute_grad (const mat& L, const mat& U, const mat& V, const vec& w, 
 		     const vec& x, double lambda, const vec& e, vec& g, 
 		     mat& H, mat& Z, bool usesvd);
@@ -90,9 +93,9 @@ List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
     // Store the current estimate of the mixture weights.
     xold = x;
     
-    // Run a single EM update.
+    // Perform a single EM update.
     if (runem)
-      mixem_update(L,w,x,P,lambda);
+      safe_mixem_update(L,U,V,w,x,z,lambda,eps,usesvd,P);
 
     // Zero any co-ordinates that are below the specified threshold.
     j = find(x <= zerothresholdsolution);
@@ -186,6 +189,24 @@ inline double min (double a, double b) {
   else
     y = b;
   return y;
+}
+
+// Perform a single EM update. The EM update is not guaranteed to improve
+// (decrease) the mix-SQP objective since it does not take into
+// account (1) the low-rank approximation to L, and (2) the L2-norm
+// penalty. So this "safe" update checks that the objective is
+// improved, and only accepts the EM update if it does indeed decrease
+// the objective.
+void safe_mixem_update (const mat& L, const mat& U, const mat& V, 
+			const vec& w, vec& x, const vec& z, double lambda, 
+			const vec& eps, bool usesvd, mat& P) {
+  double f0, f1;
+  vec    x1 = x;
+  mixem_update(L,w,x1,P);
+  f0 = compute_objective(L,U,V,w,x,z,lambda,eps,usesvd);
+  f1 = compute_objective(L,U,V,w,x1,z,lambda,eps,usesvd);
+  if (f1 < f0)
+    x = x1;
 }
 
 // Compute the gradient and Hessian of the (unmodified) objective at x.

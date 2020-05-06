@@ -12,7 +12,7 @@ using namespace arma;
 // [[Rcpp::depends(RcppArmadillo)]]
 // [[Rcpp::export]]
 List mixem_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& z,
-		 const arma::vec& x0, double lambda, const arma::vec& eps, 
+		 const arma::vec& x0, const arma::vec& eps, 
 		 int numiter, double zerothresholdsolution, bool verbose) {
   vec obj(numiter);
   vec nnz(numiter);
@@ -28,10 +28,10 @@ List mixem_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& z,
     xold = x;
     
     // Run a single EM update.
-    mixem_update(L,w,x,P,lambda);
+    mixem_update(L,w,x,P);
     
     // Compute the value of the objective at x.
-    obj(i) = compute_objective(L,w,x,z,lambda,eps);
+    obj(i) = compute_objective(L,w,x,z,0,eps);
     
     // Record the algorithm's progress.
     nnz(i)  = sum(x > zerothresholdsolution);
@@ -49,7 +49,7 @@ List mixem_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& z,
 }
 
 // Perform a single EM update of the mixture weights.
-void mixem_update (const mat& L, const vec& w, vec& x, mat& P, double lambda) {
+void mixem_update (const mat& L, const vec& w, vec& x, mat& P) {
   double e = 1e-15;
   
   // Compute the n x m matrix of posterior mixture assignment
