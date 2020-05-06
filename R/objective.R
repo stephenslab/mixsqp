@@ -53,17 +53,18 @@ mixobjective <- function (L, x, w = rep(1,nrow(L))) {
 }
 
 # Compute the value of the objective at x; arguments L and w specify
-# the objective, and e is an additional constant that can be set to a
-# small, positive number (zero by default) to better ensure numerical
+# the objective, lambda specifies the strength of the L2-norm penalty
+# term, and e is an additional constant that can be set to a small,
+# positive number (zero by default) to better ensure numerical
 # stability of the optimization. Argument z is an additional
 # "normalization factor" used to recover the objective with the
 # unnormalized L after normalizing the rows of L; setting z[i] to a
 # value different than zero is equivalent to multiplying the ith row
 # of L by exp(z[i]).
-mixobj <- function (L, w, x, z = rep(0,length(w)), e = 0) {
+mixobj <- function (L, w, x, z = rep(0,length(w)), lambda = 0, e = 0) {
  y <- drop(L %*% x) + e
  if (all(y > 0))
-   return(-sum(w * (z + log(y))))
+   return(lambda*sum(x^2)/2 - sum(w * (z + log(y))))
  else
    return(Inf)
 }

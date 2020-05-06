@@ -7,8 +7,8 @@
 using namespace Rcpp;
 
 // mixem_rcpp
-List mixem_rcpp(const arma::mat& L, const arma::vec& w, const arma::vec& z, const arma::vec& x0, const arma::vec& eps, int numiter, double zerothresholdsolution, bool verbose);
-RcppExport SEXP _mixsqp_mixem_rcpp(SEXP LSEXP, SEXP wSEXP, SEXP zSEXP, SEXP x0SEXP, SEXP epsSEXP, SEXP numiterSEXP, SEXP zerothresholdsolutionSEXP, SEXP verboseSEXP) {
+List mixem_rcpp(const arma::mat& L, const arma::vec& w, const arma::vec& z, const arma::vec& x0, double lambda, const arma::vec& eps, int numiter, double zerothresholdsolution, bool verbose);
+RcppExport SEXP _mixsqp_mixem_rcpp(SEXP LSEXP, SEXP wSEXP, SEXP zSEXP, SEXP x0SEXP, SEXP lambdaSEXP, SEXP epsSEXP, SEXP numiterSEXP, SEXP zerothresholdsolutionSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -16,17 +16,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::vec& >::type w(wSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type z(zSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type x0(x0SEXP);
+    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type eps(epsSEXP);
     Rcpp::traits::input_parameter< int >::type numiter(numiterSEXP);
     Rcpp::traits::input_parameter< double >::type zerothresholdsolution(zerothresholdsolutionSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(mixem_rcpp(L, w, z, x0, eps, numiter, zerothresholdsolution, verbose));
+    rcpp_result_gen = Rcpp::wrap(mixem_rcpp(L, w, z, x0, lambda, eps, numiter, zerothresholdsolution, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
 // mixsqp_rcpp
-List mixsqp_rcpp(const arma::mat& L, const arma::mat& U, const arma::mat& V, const arma::vec& w, const arma::vec& z, const arma::vec& x0, bool usesvd, bool runem, double convtolsqp, double convtolactiveset, double zerothresholdsolution, double zerothresholdsearchdir, double suffdecr, double stepsizereduce, double minstepsize, double identitycontribincrease, const arma::vec& eps, int maxitersqp, int maxiteractiveset, bool verbose);
-RcppExport SEXP _mixsqp_mixsqp_rcpp(SEXP LSEXP, SEXP USEXP, SEXP VSEXP, SEXP wSEXP, SEXP zSEXP, SEXP x0SEXP, SEXP usesvdSEXP, SEXP runemSEXP, SEXP convtolsqpSEXP, SEXP convtolactivesetSEXP, SEXP zerothresholdsolutionSEXP, SEXP zerothresholdsearchdirSEXP, SEXP suffdecrSEXP, SEXP stepsizereduceSEXP, SEXP minstepsizeSEXP, SEXP identitycontribincreaseSEXP, SEXP epsSEXP, SEXP maxitersqpSEXP, SEXP maxiteractivesetSEXP, SEXP verboseSEXP) {
+List mixsqp_rcpp(const arma::mat& L, const arma::mat& U, const arma::mat& V, const arma::vec& w, const arma::vec& z, double lambda, const arma::vec& x0, bool usesvd, bool runem, double convtolsqp, double convtolactiveset, double zerothresholdsolution, double zerothresholdsearchdir, double suffdecr, double stepsizereduce, double minstepsize, double identitycontribincrease, const arma::vec& eps, int maxitersqp, int maxiteractiveset, bool verbose);
+RcppExport SEXP _mixsqp_mixsqp_rcpp(SEXP LSEXP, SEXP USEXP, SEXP VSEXP, SEXP wSEXP, SEXP zSEXP, SEXP lambdaSEXP, SEXP x0SEXP, SEXP usesvdSEXP, SEXP runemSEXP, SEXP convtolsqpSEXP, SEXP convtolactivesetSEXP, SEXP zerothresholdsolutionSEXP, SEXP zerothresholdsearchdirSEXP, SEXP suffdecrSEXP, SEXP stepsizereduceSEXP, SEXP minstepsizeSEXP, SEXP identitycontribincreaseSEXP, SEXP epsSEXP, SEXP maxitersqpSEXP, SEXP maxiteractivesetSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -35,6 +36,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::mat& >::type V(VSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type w(wSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type z(zSEXP);
+    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type x0(x0SEXP);
     Rcpp::traits::input_parameter< bool >::type usesvd(usesvdSEXP);
     Rcpp::traits::input_parameter< bool >::type runem(runemSEXP);
@@ -50,14 +52,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type maxitersqp(maxitersqpSEXP);
     Rcpp::traits::input_parameter< int >::type maxiteractiveset(maxiteractivesetSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(mixsqp_rcpp(L, U, V, w, z, x0, usesvd, runem, convtolsqp, convtolactiveset, zerothresholdsolution, zerothresholdsearchdir, suffdecr, stepsizereduce, minstepsize, identitycontribincrease, eps, maxitersqp, maxiteractiveset, verbose));
+    rcpp_result_gen = Rcpp::wrap(mixsqp_rcpp(L, U, V, w, z, lambda, x0, usesvd, runem, convtolsqp, convtolactiveset, zerothresholdsolution, zerothresholdsearchdir, suffdecr, stepsizereduce, minstepsize, identitycontribincrease, eps, maxitersqp, maxiteractiveset, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_mixsqp_mixem_rcpp", (DL_FUNC) &_mixsqp_mixem_rcpp, 8},
-    {"_mixsqp_mixsqp_rcpp", (DL_FUNC) &_mixsqp_mixsqp_rcpp, 20},
+    {"_mixsqp_mixem_rcpp", (DL_FUNC) &_mixsqp_mixem_rcpp, 9},
+    {"_mixsqp_mixsqp_rcpp", (DL_FUNC) &_mixsqp_mixsqp_rcpp, 21},
     {NULL, NULL, 0}
 };
 
