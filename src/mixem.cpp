@@ -12,8 +12,8 @@ using namespace arma;
 // [[Rcpp::depends(RcppArmadillo)]]
 // [[Rcpp::export]]
 List mixem_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& z,
-		 const arma::vec& x0, const arma::vec& eps, 
-		 int numiter, double zerothresholdsolution, bool verbose) {
+		 const arma::vec& x0, const arma::vec& eps, int numiter,
+		 double zerothresholdsolution, bool verbose) {
   vec obj(numiter);
   vec nnz(numiter);
   vec dmax(numiter);
@@ -31,7 +31,7 @@ List mixem_rcpp (const arma::mat& L, const arma::vec& w, const arma::vec& z,
     mixem_update(L,w,x,P);
     
     // Compute the value of the objective at x.
-    obj(i) = compute_objective(L,w,x,z,0,eps);
+    obj(i) = compute_objective(L,w,x,z,eps);
     
     // Record the algorithm's progress.
     nnz(i)  = sum(x > zerothresholdsolution);

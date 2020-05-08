@@ -5,9 +5,8 @@
 
 // FUNCTION DECLARATIONS
 // ---------------------
-double norm2              (const arma::vec& x);
-void   scalecols          (arma::mat& A, const arma::vec& b);
-void   normalizerows      (arma::mat& A);
-void   normalizerowsbymax (arma::mat& A);
+void scalecols          (arma::mat& A, const arma::vec& b);
+void normalizerows      (arma::mat& A);
+void normalizerowsbymax (arma::mat& A);
 
 #endif

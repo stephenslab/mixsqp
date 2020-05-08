@@ -280,8 +280,7 @@ test_that(paste("mix-SQP converges, and outputs correct solution, for example",
   # eps = 0). Also, when convtol.sqp = 0, the mix-SQP algorithm should
   # report that it failed to converge in this example.
   suppressWarnings(capture.output(out1 <-
-    mixsqp(L,control = list(lambda = 0,eps = 0,convtol.sqp = 0,
-                            maxiter.sqp = 10))))
+    mixsqp(L,control = list(eps = 0,convtol.sqp = 0,maxiter.sqp = 10))))
   capture.output(out2 <- mixsqp(L))
   capture.output(out3 <- mixsqp(L,control = list(eps = 0)))
   expect_equal(out1$status,"exceeded maximum number of iterations")

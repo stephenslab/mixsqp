@@ -231,12 +231,6 @@ Hessian to ensure a unique search direction. The factor for
 increasing the identity contribution in this modified Hessian is
 determined by this control parameter.}
 
-\item{\code{lambda}}{A small, non-negative number specifying the
-strength of the L2-norm penalty inserted in the objective to be
-minimized. When \code{lambda > 0}, a penalty term
-\eqn{lambda*norm(x)^2/n} is added to the objective, where
-\eqn{norm(x)} denotes the L2 (or Euclidean) norm of \eqn{x}.}
-
 \item{\code{eps}}{A small, non-negative number that is added to the
 terms inside the logarithms to sidestep computing logarithms of
 zero. This prevents numerical problems at the cost of introducing a

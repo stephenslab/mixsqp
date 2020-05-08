@@ -4,12 +4,6 @@ using namespace arma;
 
 // FUNCTION DEFINITIONS
 // --------------------
-// Return the square of the Euclidean norm of x.
-double norm2 (const vec& x) {
-  double y = norm(x);
-  return y*y;
-}
-
 // Scale each column A[,i] by b[i].
 void scalecols (mat& A, const vec& b) {
   unsigned int n = A.n_cols;

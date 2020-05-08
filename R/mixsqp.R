@@ -150,12 +150,6 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' increasing the identity contribution in this modified Hessian is
 #' determined by this control parameter.}
 #' 
-#' \item{\code{lambda}}{A small, non-negative number specifying the
-#' strength of the L2-norm penalty inserted in the objective to be
-#' minimized. When \code{lambda > 0}, a penalty term
-#' \eqn{lambda*norm(x)^2/n} is added to the objective, where
-#' \eqn{norm(x)} denotes the L2 (or Euclidean) norm of \eqn{x}.}
-#' 
 #' \item{\code{eps}}{A small, non-negative number that is added to the
 #' terms inside the logarithms to sidestep computing logarithms of
 #' zero. This prevents numerical problems at the cost of introducing a
@@ -357,7 +351,6 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   stepsizereduce            <- control$stepsizereduce
   minstepsize               <- control$minstepsize
   identity.contrib.increase <- control$identity.contrib.increase
-  lambda                    <- control$lambda
   eps                       <- control$eps
   maxiter.sqp               <- control$maxiter.sqp
   maxiter.activeset         <- control$maxiter.activeset
@@ -392,7 +385,6 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   verify.nonneg.scalar.arg(stepsizereduce)
   verify.nonneg.scalar.arg(minstepsize)
   verify.nonneg.scalar.arg(identity.contrib.increase)
-  verify.nonneg.scalar.arg(lambda)
   verify.nonneg.scalar.arg(eps)
   if (!(0 < stepsizereduce & stepsizereduce < 1 &
         identity.contrib.increase > 0  &
@@ -451,8 +443,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # Print a brief summary of the analysis, if requested.
   if (verbose) {
-    cat(sprintf("Running mix-SQP algorithm 0.3-35 on %d x %d matrix\n",n,m))
-    cat(sprintf("L2-norm penalty:            %0.1e\n",lambda))
+    cat(sprintf("Running mix-SQP algorithm 0.3-36 on %d x %d matrix\n",n,m))
     cat(sprintf("convergence tol. (SQP):     %0.1e\n",convtol.sqp))
     cat(sprintf("conv. tol. (active-set):    %0.1e\n",convtol.activeset))
     cat(sprintf("zero threshold (solution):  %0.1e\n",zero.threshold.solution))
@@ -516,9 +507,9 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
     cat("iter        objective max(rdual) nnz stepsize max.diff nqp nls\n")
   t1 <- proc.time()
   if (numiter.em > 0) {
-    out         <- run.mixem.updates(L,w,x,z,numiter.em,lambda/n,eps,
-                                     zero.threshold.solution,verbose)
-    x           <- out$x
+    out <- run.mixem.updates(L,w,x,z,numiter.em,eps,zero.threshold.solution,
+                             verbose)
+    x <- out$x
     progress.em <- out$progress
     rm(out)
   } else
@@ -527,11 +518,11 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # SOLVE OPTIMIZATION PROBLEM USING mix-SQP
   # ----------------------------------------
   runem <- TRUE
-  out <- mixsqp_rcpp(L,U,V,w,z,lambda/n,x,use.svd,runem,convtol.sqp,
-                     convtol.activeset,zero.threshold.solution,
-                     zero.threshold.searchdir,suffdecr.linesearch,
-                     stepsizereduce,minstepsize,identity.contrib.increase,
-                     eps,maxiter.sqp,maxiter.activeset,verbose)
+  out <- mixsqp_rcpp(L,U,V,w,z,x,use.svd,runem,convtol.sqp,convtol.activeset,
+                     zero.threshold.solution,zero.threshold.searchdir,
+                     suffdecr.linesearch,stepsizereduce,minstepsize,
+                     identity.contrib.increase,eps,maxiter.sqp,
+                     maxiter.activeset,verbose)
   t2 <- proc.time()
   if (verbose)
     cat(sprintf("Optimization took %0.2f seconds.\n",
@@ -589,7 +580,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
     H <- V %*% crossprod(sqrt(w)/u * U) %*% t(V)
   else
     H <- crossprod(sqrt(w)/u * L)
-  
+
   # If necessary, insert the zero mixture weights associated with the
   # columns of zeros.
   if (m < m0) {
@@ -637,7 +628,6 @@ mixsqp_control_default <- function()
        stepsizereduce            = 0.75,
        minstepsize               = 1e-8,
        identity.contrib.increase = 10,
-       lambda                    = 1e-8,
        eps                       = 1e-8,
        maxiter.sqp               = 1000,
        maxiter.activeset         = NULL,
@@ -645,8 +635,8 @@ mixsqp_control_default <- function()
        verbose                   = TRUE)
 
 # This function is used within mixsqp to run several EM updates.
-run.mixem.updates <- function (L, w, x, z, numiter, lambda, eps,
-                               zero.threshold, verbose) {
+run.mixem.updates <- function (L, w, x, z, numiter, eps, zero.threshold,
+                               verbose) {
   out      <- mixem_rcpp(L,w,z,x,eps,numiter,zero.threshold,verbose)
   progress <- data.frame(objective = drop(out$objective),
                          max.rdual = rep(as.numeric(NA),numiter),

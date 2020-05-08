@@ -2,7 +2,6 @@
 // system is singular or close to singular.
 #define ARMA_DONT_PRINT_ERRORS
 
-#include "misc.h"
 #include "objective.h"
 #include "mixem.h"
 
@@ -11,22 +10,19 @@ using namespace arma;
 
 // FUNCTION DECLARATIONS
 // ---------------------
-void   safe_mixem_update (const mat& L, const mat& U, const mat& V, 
-			  const vec& w, vec& x, const vec& z, double lambda, 
-			  const vec& eps, bool usesvd, mat& P);
-void   compute_grad (const mat& L, const mat& U, const mat& V, const vec& w, 
-		     const vec& x, double lambda, const vec& e, vec& g, 
-		     mat& H, mat& Z, bool usesvd);
-int    activesetqp  (const mat& H, const vec& g, vec& y, int maxiter,
+void compute_grad (const mat& L, const mat& U, const mat& V, const vec& w,
+		   const vec& x, const vec& e, vec& g, mat& H, mat& Z,
+		   bool usesvd);
+int  activesetqp  (const mat& H, const vec& g, vec& y, int maxiter,
 		     double zerosearchdir, double tol, double ainc);
-void   compute_activeset_searchdir (const mat& H, const vec& y, vec& p, mat& B,
-				    double ainc);
-int    backtracking_line_search (double f, const mat& L, const mat& U,
-				 const mat& V, const vec& w, const vec& z,
-				 const vec& g, const vec& x, const vec& y,
-				 double lambda, const vec& e, bool usesvd, 
-				 double suffdecr, double beta, double amin, 
-				 double& a, vec& xnew);
+void compute_activeset_searchdir (const mat& H, const vec& y, vec& p, mat& B,
+				  double ainc);
+int  backtracking_line_search (double f, const mat& L, const mat& U,
+			       const mat& V, const vec& w, const vec& z,
+			       const vec& g, const vec& x, const vec& y,
+			       const vec& e, bool usesvd, double suffdecr, 
+			       double beta, double amin, double& a, 
+			       vec& xnew);
 
 // FUNCTION DEFINITIONS
 // --------------------
@@ -38,11 +34,11 @@ int    backtracking_line_search (double f, const mat& L, const mat& U,
 // [[Rcpp::depends(RcppArmadillo)]]
 // [[Rcpp::export]]
 List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
-		  const arma::vec& w, const arma::vec& z, double lambda, 
-		  const arma::vec& x0, bool usesvd, bool runem, 
-		  double convtolsqp, double convtolactiveset, 
-		  double zerothresholdsolution, double zerothresholdsearchdir,
-		  double suffdecr, double stepsizereduce, double minstepsize,
+		  const arma::vec& w, const arma::vec& z, const arma::vec& x0, 
+		  bool usesvd, bool runem, double convtolsqp, 
+		  double convtolactiveset, double zerothresholdsolution, 
+		  double zerothresholdsearchdir, double suffdecr, 
+		  double stepsizereduce, double minstepsize,
 		  double identitycontribincrease, const arma::vec& eps,
 		  int maxitersqp, int maxiteractiveset, bool verbose) {
   
@@ -95,17 +91,17 @@ List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
     
     // Perform a single EM update.
     if (runem)
-      safe_mixem_update(L,U,V,w,x,z,lambda,eps,usesvd,P);
+      mixem_update(L,w,x,P);
 
     // Zero any co-ordinates that are below the specified threshold.
     j = find(x <= zerothresholdsolution);
     x(j).fill(0);
     
     // Compute the value of the objective at x.
-    obj(i) = compute_objective(L,U,V,w,x,z,lambda,eps,usesvd);
+    obj(i) = compute_objective(L,U,V,w,x,z,eps,usesvd);
 
     // Compute the gradient and Hessian.
-    compute_grad(L,U,V,w,x,lambda,eps,g,H,Z,usesvd);
+    compute_grad(L,U,V,w,x,eps,g,H,Z,usesvd);
 
     // Report on the algorithm's progress. Here we compute: the
     // smallest gradient value (gmin), which is used as a convergence
@@ -156,10 +152,9 @@ List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
     // 
 
     // Run backtracking line search.
-    nls(i) = (double) backtracking_line_search(obj(i),L,U,V,w,z,g,x,y,lambda,
-					       eps,usesvd,suffdecr,
-					       stepsizereduce,minstepsize,
-					       stepsize(i),xnew);
+    nls(i) = (double) backtracking_line_search(obj(i),L,U,V,w,z,g,x,y,eps,
+					       usesvd,suffdecr,stepsizereduce,
+					       minstepsize,stepsize(i),xnew);
     
     // Update the solution, and store the largest change in the
     // mixture weights.
@@ -191,30 +186,10 @@ inline double min (double a, double b) {
   return y;
 }
 
-// Perform a single EM update. The EM update is not guaranteed to improve
-// (decrease) the mix-SQP objective since it does not take into
-// account (1) the low-rank approximation to L, and (2) the L2-norm
-// penalty. So this "safe" update checks that the objective is
-// improved, and only accepts the EM update if it does indeed decrease
-// the objective.
-void safe_mixem_update (const mat& L, const mat& U, const mat& V, 
-			const vec& w, vec& x, const vec& z, double lambda, 
-			const vec& eps, bool usesvd, mat& P) {
-  double f0, f1;
-  vec    x1 = x;
-  mixem_update(L,w,x1,P);
-  f0 = compute_objective(L,U,V,w,x,z,lambda,eps,usesvd);
-  f1 = compute_objective(L,U,V,w,x1,z,lambda,eps,usesvd);
-  if (f1 < f0)
-    x = x1;
-}
-
 // Compute the gradient and Hessian of the (unmodified) objective at x.
 void compute_grad (const mat& L, const mat& U, const mat& V, const vec& w,
-		   const vec& x, double lambda, const vec& e, vec& g, mat& H, 
-		   mat& Z, bool usesvd) {
-  int m = L.n_cols;
-  mat I(m,m,fill::eye);
+		   const vec& x, const vec& e, vec& g, mat& H, mat& Z, 
+		   bool usesvd) {
   vec u;
   if (usesvd) {
     u = U*(trans(V)*x) + e;
@@ -229,8 +204,6 @@ void compute_grad (const mat& L, const mat& U, const mat& V, const vec& w,
     Z.each_col() %= (sqrt(w)/u);
     H = trans(Z) * Z;
   } 
-  g += lambda*x;
-  H += lambda*I;
 }
 
 // Return the largest step size maintaining feasibility (x >= 0) for
@@ -368,8 +341,8 @@ inline double init_hessian_correction (const mat& H, double a0) {
 
 // This implements Algorithm 3.3, "Cholesky with added multiple of the
 // identity", from Nocedal & Wright, 2nd ed, p. 51.
-void compute_activeset_searchdir (const mat& H, const vec& y, vec& p, mat& B, 
-				  double ainc) {
+void compute_activeset_searchdir (const mat& H, const vec& y, vec& p, 
+				  mat& B, double ainc) {
   double a0   = 1e-15;
   double amax = 1e15;
   int    n    = y.n_elem;
@@ -409,9 +382,9 @@ void compute_activeset_searchdir (const mat& H, const vec& y, vec& p, mat& B,
 int backtracking_line_search (double f, const mat& L, const mat& U,
 			      const mat& V, const vec& w, const vec& z,
 			      const vec& g, const vec& x, const vec& y,
-			      double lambda, const vec& e, bool usesvd, 
-			      double suffdecr, double beta, double amin, 
-			      double& a, vec& xnew) {
+			      const vec& e, bool usesvd, double suffdecr, 
+			      double beta, double amin, double& a, 
+			      vec& xnew) {
   int    k;
   double afeas;
   double fnew;
@@ -437,7 +410,7 @@ int backtracking_line_search (double f, const mat& L, const mat& U,
     // decrease" condition.
     while (true) {
       xnew = a*y + (1 - a)*x;
-      fnew = compute_objective(L,U,V,w,xnew,z,lambda,e,usesvd);
+      fnew = compute_objective(L,U,V,w,xnew,z,e,usesvd);
       nls++;
 
       // Check whether the new candidate solution satisfies the
