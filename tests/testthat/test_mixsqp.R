@@ -229,7 +229,7 @@ test_that(paste("mix-SQP gives correct solution for Beckett & Diaconis",
   # and, more importantly, the quality of the mix-SQP solution should
   # be as good or greater.
   expect_equal(out$status,mixsqp:::mixsqp.status.converged)
-  expect_equal(tacks$x,out$x,tolerance = 5e-4,scale = 1)
+  expect_equal(tacks$x,out$x,tolerance = 1e-3,scale = 1)
   expect_lte(out$value,mixobjective(L,tacks$x,w))
 })
 

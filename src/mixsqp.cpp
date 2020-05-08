@@ -14,7 +14,7 @@ void compute_grad (const mat& L, const mat& U, const mat& V, const vec& w,
 		   const vec& x, const vec& e, vec& g, mat& H, mat& Z,
 		   bool usesvd);
 int  activesetqp  (const mat& H, const vec& g, vec& y, int maxiter,
-		     double zerosearchdir, double tol, double ainc);
+		   double zerosearchdir, double tol, double ainc);
 void compute_activeset_searchdir (const mat& H, const vec& y, vec& p, mat& B,
 				  double ainc);
 int  backtracking_line_search (double f, const mat& L, const mat& U,

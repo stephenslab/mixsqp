@@ -443,7 +443,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # Print a brief summary of the analysis, if requested.
   if (verbose) {
-    cat(sprintf("Running mix-SQP algorithm 0.3-37 on %d x %d matrix\n",n,m))
+    cat(sprintf("Running mix-SQP algorithm 0.3-38 on %d x %d matrix\n",n,m))
     cat(sprintf("convergence tol. (SQP):     %0.1e\n",convtol.sqp))
     cat(sprintf("conv. tol. (active-set):    %0.1e\n",convtol.activeset))
     cat(sprintf("zero threshold (solution):  %0.1e\n",zero.threshold.solution))
@@ -480,9 +480,12 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
       if (ncol(out$U) < m) {
 
         # Only use the SVD of L if it might be worthwhile to do so.
-        U       <- out$U
-        V       <- out$V
-        use.svd <- TRUE
+        U           <- out$U
+        V           <- out$V
+        rownames(U) <- rownames(L)
+        rownames(V) <- colnames(L)
+        L           <- tcrossprod(U,V)
+        use.svd     <- TRUE
       }
       rm(out)
     }
