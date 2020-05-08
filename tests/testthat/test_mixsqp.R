@@ -191,11 +191,12 @@ test_that(paste("mix-SQP returns the same solution when using full data",
   capture.output(out1 <- mixsqp(L,w,control = list(tol.svd = 0)))
   capture.output(out2 <- mixsqp(L,w,control = list(tol.svd = 1e-8)))
 
-  # The outputted solutions---and the Hessians as the estimated
-  # solutions---should be nearly identical.
-  expect_equal(out1$value,out2$value,tolerance = 1e-8,scale = 1)
-  expect_equal(out1$x,out2$x,tolerance = 1e-8,scale = 1)
-  expect_equal(out1$hessian,out2$hessian,tolerance = 1e-8,scale = 1)
+  # The outputted solutions---and the gradients and Hessians at the
+  # estimated solutions---should be nearly identical.
+  expect_equal(out1$value,out2$value,tolerance = 1e-6,scale = 1)
+  expect_equal(out1$x,out2$x,tolerance = 1e-6,scale = 1)
+  expect_equal(out1$grad,out2$grad,tolerance = 1e-6,scale = 1)
+  expect_equal(out1$hessian,out2$hessian,tolerance = 1e-6,scale = 1)
 })
 
 test_that("mix-SQP successfully \"escapes\" a sparse initial estimate",{
