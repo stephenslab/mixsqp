@@ -106,9 +106,6 @@ test_that(paste("mix-SQP and KWDual return the same solution for",
 test_that(paste("mix-SQP & KWDual return the same solution for",
                 "1000 x 10 likelihood matrix with unequal row weights"),{
 
-  # The REBayes package is required to run this test.
-  skip_if_mixkwdual_doesnt_work()
-  
   # Simulate a 1000 x 10 likelihood matrix, and different weights for
   # the rows of this matrix.
   set.seed(1)
@@ -405,8 +402,8 @@ test_that("mix-SQP works for difficult smashr example",{
 #                 mode = "estimate")
 #
 test_that("mix-SQP works for difficult ashr example with binomial likelihood",{
-  load("ashr.binom.example.RData")
   skip_if_mixkwdual_doesnt_work()
+  load("ashr.binom.example.RData")
   capture.output(out1 <- mixsqp(L))
   out2 <- mixkwdual(L)
   expect_equal(out1$value,out2$value,tolerance = 1e-8,scale = 1)
@@ -415,10 +412,26 @@ test_that("mix-SQP works for difficult ashr example with binomial likelihood",{
 
 # This test comes from stephens999/ashr Issue #76.
 test_that("mix-SQP works for a difficult mashr example",{
-  load("mashr.example.RData")
   skip_if_mixkwdual_doesnt_work()
+  load("mashr.example.RData")
   capture.output(out1 <- mixsqp(L,w))
   out2 <- mixkwdual(L,w)
   expect_equal(out1$value,out2$value,tolerance = 1e-8,scale = 1)
   expect_equal(out1$x,out2$x,tolerance = 1e-4,scale = 1)
+})
+
+# This test comes from Issue #42.
+test_that(paste("mix-SQP converges, and gives solution that is equally as",
+                "good as KWDual for difficult NPMLE problem"),{
+  load("npmle.RData")
+  capture.output(out1 <- mixsqp(L))
+  expect_equal(out1$status,mixsqp:::mixsqp.status.converged)
+  skip_if_mixkwdual_doesnt_work()
+  out2 <- mixkwdual(L)
+
+  # The likelihood surface is very "flat", so the solutions are not
+  # expected to be the same; however, the quality of the mix-SQP
+  # solution should be as good, or nearly as good, as the solution
+  # returned by the KWDual solver.
+  expect_equal(out1$value,out2$value,tolerance = 1e-4,scale = 1)
 })
