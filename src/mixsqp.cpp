@@ -71,7 +71,8 @@ List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
   vec  g(m);
   vec  ghat(m);
   mat  H(m,m);
-  uvec j(m);
+  uvec j0(m);
+  uvec j1(m);
   vec  y(m);
   vec  d(m);
   vec  xnew(m);
@@ -93,9 +94,12 @@ List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
     if (runem)
       mixem_update(L,w,x,P);
 
+    // Find the zero (j0) and non-zero (j1) co-ordinates.
+    j0 = find(x <= zerothresholdsolution);
+    j1 = find(x > zerothresholdsolution);
+
     // Zero any co-ordinates that are below the specified threshold.
-    j = find(x <= zerothresholdsolution);
-    x(j).fill(0);
+    x(j0).fill(0);
     
     // Compute the value of the objective at x.
     obj(i) = compute_objective(L,U,V,w,x,z,eps,usesvd);
@@ -104,11 +108,12 @@ List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
     compute_grad(L,U,V,w,x,eps,g,H,Z,usesvd);
 
     // Report on the algorithm's progress. Here we compute: the
-    // smallest gradient value (gmin), which is used as a convergence
-    // criterion; and the number of nonzeros in the solution (nnz).
-    // Note that only the dual residuals (gmin's) corresponding to the
-    // nonzero co-ordinates are relevant.
-    gmin(i) = 1 + g.min();
+    // smallest gradient value, or, equivalently, dual residual,
+    // corresponding to the nonzero co-ordinates (gmin), which is used
+    // as a convergence criterion; and the number of nonzeros in the
+    // solution (nnz). Note that only the dual residuals (gmin's)
+    // corresponding to the nonzero co-ordinates are relevant.
+    gmin(i) = 1 + g(j1).min();
     nnz(i)  = sum(x > 0);
     if (verbose) {
       if (i == 0)
@@ -123,11 +128,7 @@ List mixsqp_rcpp (const arma::mat& L, const arma::mat& U, const arma::mat& V,
     // Check convergence. Convergence is reached with the maximum dual
     // residual is small. The negative of "gmin" is also the maximum
     // dual residual (denoted as "rdual" on p. 609 of Boyd &
-    // Vandenberghe, "Convex Optimization", 2009). Although "gmin"
-    // here includes both zero (active) and non-zero (inactive)
-    // co-ordinates, this condition is trivially satisfied for the
-    // zero co-ordinates as the gradient must be non-negative for
-    // these co-ordinates.
+    // Vandenberghe, "Convex Optimization", 2009).
     if (gmin(i) >= -convtolsqp) {
       status = 0;
       i++;

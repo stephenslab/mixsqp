@@ -222,7 +222,8 @@ test_that(paste("mix-SQP gives correct solution for Beckett & Diaconis",
   data(tacks)
   L   <- tacks$L
   w   <- tacks$w
-  capture.output(out <- mixsqp(L,w))
+  capture.output(
+    out <- mixsqp(L,w,control = list(eps = 1e-15)))
 
   # The mix-SQP solution should be very close to the KWDual solution
   # and, more importantly, the quality of the mix-SQP solution should
