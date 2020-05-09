@@ -319,9 +319,10 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
     storage.mode(L) <- "double"
 
   # Get the number of rows (n) and columns (m) of the matrix L.
-  n <- nrow(L)
-  m <- ncol(L)
-
+  n      <- nrow(L)
+  m      <- ncol(L)
+  coords <- colnames(L)
+      
   # Check and process the weights.
   w <- verify.weights(L,w)
 
@@ -414,7 +415,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
                   "\"x\" are zero. No optimization algorithm was needed."))
     x               <- rep(0,m)
     x[nonzero.cols] <- 1
-    names(x)        <- colnames(L)
+    names(x)        <- coords
     return(list(x        = x,
                 status   = mixsqp.status.didnotrun,
                 value    = mixobj(L,w,x),
@@ -443,7 +444,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # Print a brief summary of the analysis, if requested.
   if (verbose) {
-    cat(sprintf("Running mix-SQP algorithm 0.3-39 on %d x %d matrix\n",n,m))
+    cat(sprintf("Running mix-SQP algorithm 0.3-40 on %d x %d matrix\n",n,m))
     cat(sprintf("convergence tol. (SQP):     %0.1e\n",convtol.sqp))
     cat(sprintf("conv. tol. (active-set):    %0.1e\n",convtol.activeset))
     cat(sprintf("zero threshold (solution):  %0.1e\n",zero.threshold.solution))
@@ -588,13 +589,13 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   # columns of zeros.
   if (m < m0) {
     xnz <- x
-    x   <- rep(0,m)
+    x   <- rep(0,m0)
     x[nonzero.cols] <- xnz
   }
   
   # Label the elements of the solution (x) by the column labels of the
   # likelihood matrix (L).
-  names(x)    <- colnames(L)
+  names(x)    <- coords
   names(g)    <- colnames(L)
   rownames(H) <- colnames(L)
   colnames(H) <- colnames(L)
