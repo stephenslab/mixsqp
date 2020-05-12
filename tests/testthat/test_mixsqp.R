@@ -218,17 +218,15 @@ test_that(paste("mix-SQP gives correct solution for Beckett & Diaconis",
                 "tack rolling example"),{
 
   data(tacks)
-  L   <- tacks$L
-  w   <- tacks$w
-  capture.output(
-    out <- mixsqp(L,w,control = list(eps = 1e-15)))
+  L <- tacks$L
+  w <- tacks$w
+  capture.output(out <- mixsqp(L,w))
 
-  # The mix-SQP solution should be very close to the KWDual solution
-  # and, more importantly, the quality of the mix-SQP solution should
-  # be as good or greater.
+  # The objective value at the mix-SQP solution should be very close
+  # to the objective value at the KWDual solution.
   expect_equal(out$status,mixsqp:::mixsqp.status.converged)
-  expect_equal(tacks$x,out$x,tolerance = 1e-3,scale = 1)
-  expect_lte(out$value,mixobjective(L,tacks$x,w))
+  expect_equal(mixobjective(L,out$x,w),mixobjective(L,tacks$x,w),
+               tolerance = 1e-6)
 })
 
 # This is mainly to test post-processing of the output when the
