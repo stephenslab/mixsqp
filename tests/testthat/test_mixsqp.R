@@ -226,7 +226,7 @@ test_that(paste("mix-SQP gives correct solution for Beckett & Diaconis",
   # to the objective value at the KWDual solution.
   expect_equal(out$status,mixsqp:::mixsqp.status.converged)
   expect_equal(mixobjective(L,out$x,w),mixobjective(L,tacks$x,w),
-               tolerance = 1e-6)
+               tolerance = 1e-4)
 })
 
 # This is mainly to test post-processing of the output when the
