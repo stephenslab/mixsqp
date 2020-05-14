@@ -411,6 +411,7 @@ test_that("mix-SQP works for difficult ashr example with binomial likelihood",{
 # This test comes from stephens999/ashr Issue #76.
 test_that("mix-SQP works for a difficult mashr example",{
   skip_if_mixkwdual_doesnt_work()
+  skip_if_not(file.exists("mashr.example.RData"))
   load("mashr.example.RData")
   capture.output(out1 <- mixsqp(L,w))
   out2 <- mixkwdual(L,w)
@@ -421,6 +422,7 @@ test_that("mix-SQP works for a difficult mashr example",{
 # This test comes from Issue #42.
 test_that(paste("mix-SQP converges, and gives solution that is equally as",
                 "good as KWDual for difficult NPMLE problem"),{
+  skip_if_not(file.exists("npmle.RData"))
   load("npmle.RData")
   capture.output(out1 <- mixsqp(L))
   expect_equal(out1$status,mixsqp:::mixsqp.status.converged)

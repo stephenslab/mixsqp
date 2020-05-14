@@ -3,5 +3,6 @@
 ^\.travis\.yml$
 ^appveyor\.yml$
 ^_pkgdown\.yml$
+^tests/testthat/npmle\.RData$
+^tests/testthat/mashr\.example\.RData$
 ^docs$
-^pre-commit$
