@@ -257,7 +257,7 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #'
 #' @references
 #' 
-#' Y. Kim, P. Carbonetto, M. Stephens and M. Anitescu (2018). A fast
+#' Y. Kim, P. Carbonetto, M. Stephens and M. Anitescu (2020). A fast
 #' algorithm for maximum likelihood estimation of mixture proportions
 #' using sequential quadratic programming. \emph{Journal of
 #' Computational and Graphical Statistics} \bold{29},
