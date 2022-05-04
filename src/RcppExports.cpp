@@ -6,6 +6,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // mixem_rcpp
 List mixem_rcpp(const arma::mat& L, const arma::vec& w, const arma::vec& z, const arma::vec& x0, const arma::vec& eps, int numiter, double zerothresholdsolution, bool verbose);
 RcppExport SEXP _mixsqp_mixem_rcpp(SEXP LSEXP, SEXP wSEXP, SEXP zSEXP, SEXP x0SEXP, SEXP epsSEXP, SEXP numiterSEXP, SEXP zerothresholdsolutionSEXP, SEXP verboseSEXP) {
