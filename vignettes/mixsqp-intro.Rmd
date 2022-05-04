@@ -11,7 +11,7 @@ vignette: >
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(collapse = TRUE,results = "hold",comment = "#",
-                      fig.align="center",eval = FALSE)
+                      fig.align = "center",eval = FALSE)
 if (requireNamespace("REBayes",quietly = TRUE) &
     requireNamespace("Rmosek",quietly = TRUE)) {
   if (!is.element("mosek_attachbuilder",getNamespaceExports("Rmosek"))) {
