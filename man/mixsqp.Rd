@@ -294,7 +294,7 @@ Y. Kim, P. Carbonetto, M. Stephens and M. Anitescu (2020). A fast
 algorithm for maximum likelihood estimation of mixture proportions
 using sequential quadratic programming. \emph{Journal of
 Computational and Graphical Statistics} \bold{29},
-261-273. \url{https://doi.org/10.1080/10618600.2019.1689985}
+261-273. \doi{10.1080/10618600.2019.1689985}
 }
 \seealso{
 \code{\link{mixobjective}}, \code{\link{mixkwdual}}

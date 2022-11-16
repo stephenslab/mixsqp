@@ -189,8 +189,8 @@ with contributions from [Matthew Stephens][matthew] and
 [uchicago]: https://www.uchicago.edu
 [youngseok]: https://github.com/youngseok-kim
 [peter]: https://pcarbo.github.io
-[matthew]: http://stephenslab.uchicago.edu
-[mihai]: http://www.mcs.anl.gov/~anitescu
+[matthew]: https://stephenslab.uchicago.edu
+[mihai]: https://web.cels.anl.gov/~anitescu/
 [mit-license]: https://opensource.org/licenses/mit-license.html
 [devtools]: https://github.com/r-lib/devtools
 [roxygen2]: https://cran.r-project.org/package=roxygen2
