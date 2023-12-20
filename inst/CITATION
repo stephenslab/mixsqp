@@ -1,13 +1,13 @@
 citHeader("To cite the mixsqp package, please use:")
 
-citEntry(entry = "Article",
+bibentry(bibtype = "Article",
          title = paste("A fast algorithm for maximum likelihood estimation",
                        "of mixture proportions using sequential quadratic",
                        "programming"),
-         author = personList(as.person("Youngseok Kim"),
-                             as.person("Peter Carbonetto"),
-                             as.person("Matthew Stephens"),
-                             as.person("Mihai Anitescu")),
+         author = c(person("Youngseok Kim"),
+                    person("Peter Carbonetto"),
+                    person("Matthew Stephens"),
+                    person("Mihai Anitescu")),
          journal = "Journal of Computational and Graphical Statistics",
          volume  = 29,
          number  = 2,
