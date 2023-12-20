@@ -12,23 +12,10 @@ vignette: >
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(collapse = TRUE,results = "hold",comment = "#",
                       fig.align = "center",eval = FALSE)
-if (requireNamespace("REBayes",quietly = TRUE) &
-    requireNamespace("Rmosek",quietly = TRUE)) {
-  if (!is.element("mosek_attachbuilder",getNamespaceExports("Rmosek"))) {
-    knitr::opts_chunk$set(eval = TRUE)
-	cat("!!!\n")
-  }
-}
 ```
 
 In this vignette, we illustrate the use of the sequential quadratic
-programming (SQP) algorithm implemented in `mixsqp`, and we compare
-its runtime and accuracy against an interior-point (IP) solver
-implemented by the [MOSEK][mosek] commercial software (it is called by
-the "KWDual" function in the [REBayes package][rebayes]).
-
-If you do not have the Rmosek and REBayes packages installed on your
-computer, you may skip over these steps in the vignette.
+programming (SQP) algorithm implemented in `mixsqp`.
 
 ## Environment set-up
 
@@ -101,63 +88,6 @@ plot(1:numiter,fit.sqp$progress$objective,type = "b",
      ylab = "objective",xaxp = c(1,numiter,numiter - 1))
 ```
 
-To assess the accuracy of the SQP solution, we can compare against the
-solution computed by the IP algorithm. (If you do not have the REBayes
-package installed, you can skip this step.)
-
-```{r fit-model-kwdual-small}
-fit.ip <- mixkwdual(L)
-```
-
-If you run the IP algorithm, you should see that the IP and SQP
-solutions achieve nearly the same objective value.
-
-```{r compare-solutions-smaller}
-cat(sprintf("Objective at SQP solution: %0.16f\n",fit.sqp$value,digits = 16))
-cat(sprintf("Objective at IP solution:  %0.16f\n",fit.ip$value,digits = 16))
-cat(sprintf("Difference in objectives:  %0.4e\n",fit.sqp$value - fit.ip$value))
-```
-
-## Comparing the SQP and IP solvers in a large data set
-
-We observed that the SQP and IP methods achieve nearly the same
-solution quality in the example above. Here, we explore the
-computational properties of the SQP and IP algorithms in a larger data
-set.
-
-As before, we compute the $n \times m$ likelihood matrix for a mixture
-of zero-centered normals. This time, we use a finer grid of $m = 100$
-normal densities, as well as many more samples.
-
-```{r sim-data-large, eval=TRUE}
-L <- simulatemixdata(1e5,100)$L
-dim(L)
-```
-
-Now we fit the model using the SQP algorithm:
-
-```{r fit-model-sqp-large, eval=TRUE}
-timing <- system.time(fit.sqp <- mixsqp(L))
-cat(sprintf("Computation took %0.2f seconds\n",timing["elapsed"]))
-```
-
-If you have the REBayes package, you can also run the IP method:
-
-```{r fit-model-ip-large}
-timing <- system.time(fit.ip  <- mixkwdual(L))
-cat(sprintf("Computation took %0.2f seconds\n",timing["elapsed"]))
-```
-
-If you run the IP algorithm, you should find that the SQP algorithm was
-considerably faster than the IP solver, and it converged to a solution
-with nearly the same objective value as the IP solution.
-
-```{r compare-solutions-large}
-cat(sprintf("Objective at SQP solution: %0.16f\n",fit.sqp$value,digits = 16))
-cat(sprintf("Objective at IP solution:  %0.16f\n",fit.ip$value,digits = 16))
-cat(sprintf("Difference in objectives:  %0.4e\n",fit.sqp$value - fit.ip$value))
-```
-
 ## Session information
 
 This next code chunk gives information about the computing environment
@@ -168,5 +98,3 @@ version of R and the packages used.
 sessionInfo()
 ```
 
-[mosek]: https://www.mosek.com
-[rebayes]: https://cran.r-project.org/package=REBayes
