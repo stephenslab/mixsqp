@@ -263,7 +263,7 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' Computational and Graphical Statistics} \bold{29},
 #' 261-273. \doi{10.1080/10618600.2019.1689985}
 #'
-#' @seealso \code{\link{mixobjective}}, \code{\link{mixkwdual}}
+#' @seealso \code{\link{mixobjective}}
 #' 
 #' @examples
 #' set.seed(1)
@@ -274,16 +274,7 @@ mixsqp.status.didnotrun      <- "SQP algorithm was not run"
 #' out.mixsqp <- mixsqp(L,w)
 #' f <- mixobjective(L,out.mixsqp$x,w)
 #' print(f,digits = 16)
-#' 
-#' # We can also compare this result with solution found from an 
-#' # interior-point approach called via the "KWDual" function from the 
-#' # REBayes package. (This requires installation of the MOSEK 
-#' # optimization library as well as the REBayes package, so we have
-#' # made this step optional.)
-#' \dontrun{ 
-#' out.kwdual <- mixkwdual(L,w)
-#' print(mixobjective(L,out.kwdual$x,w),digits = 16)
-#' }
+#'
 #' @useDynLib mixsqp
 #'
 #' @importFrom utils modifyList
@@ -445,7 +436,7 @@ mixsqp <- function (L, w = rep(1,nrow(L)), x0 = rep(1,ncol(L)),
   
   # Print a brief summary of the analysis, if requested.
   if (verbose) {
-    cat(sprintf("Running mix-SQP algorithm 0.3-50 on %d x %d matrix\n",n,m))
+    cat(sprintf("Running mix-SQP algorithm 0.3-51 on %d x %d matrix\n",n,m))
     cat(sprintf("convergence tol. (SQP):     %0.1e\n",convtol.sqp))
     cat(sprintf("conv. tol. (active-set):    %0.1e\n",convtol.activeset))
     cat(sprintf("zero threshold (solution):  %0.1e\n",zero.threshold.solution))

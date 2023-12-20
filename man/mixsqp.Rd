@@ -279,15 +279,6 @@ out.mixsqp <- mixsqp(L,w)
 f <- mixobjective(L,out.mixsqp$x,w)
 print(f,digits = 16)
 
-# We can also compare this result with solution found from an 
-# interior-point approach called via the "KWDual" function from the 
-# REBayes package. (This requires installation of the MOSEK 
-# optimization library as well as the REBayes package, so we have
-# made this step optional.)
-\dontrun{ 
-out.kwdual <- mixkwdual(L,w)
-print(mixobjective(L,out.kwdual$x,w),digits = 16)
-}
 }
 \references{
 Y. Kim, P. Carbonetto, M. Stephens and M. Anitescu (2020). A fast
@@ -297,5 +288,5 @@ Computational and Graphical Statistics} \bold{29},
 261-273. \doi{10.1080/10618600.2019.1689985}
 }
 \seealso{
-\code{\link{mixobjective}}, \code{\link{mixkwdual}}
+\code{\link{mixobjective}}
 }

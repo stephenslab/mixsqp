@@ -1,8 +1,5 @@
 context("mixsqp")
 
-# The Rmosek package on CRAN will not work with REBayes. This function
-# is used for some of the tests to check whether the correct Rmosek
-# package (the one downloaded from mosek.com) is installed.
 skip_if_mixkwdual_doesnt_work <- function() {
   skip_if_not_installed("REBayes")
   skip_if_not_installed("Rmosek")
@@ -342,8 +339,9 @@ test_that("Case is properly handled in which one column of L is all zeros",{
 })
 
 test_that("Case is properly handled when L has only one column",{
+  skip_if_mixkwdual_doesnt_work()
   set.seed(1)
-  L    <- matrix(runif(100))
+  L <- matrix(runif(100))
   suppressWarnings(out1 <- mixsqp(L))
   suppressWarnings(out2 <- mixkwdual(L))
   expect_equal(out1$x,1)
